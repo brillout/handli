@@ -52,10 +52,10 @@ console.log('I will never make it to the console :-(');
 ~~~
 
 Handli never rejects the promise.
-If a request fails,
+Instead, if a request fails,
 Handli will periodically retry the request,
 block the UI with an overlay,
-and show a modal letting the user know of the problem and that another attempt will be tried in x seconds.
+and display a modal letting the user know of the problem and that another attempt will be tried in x seconds.
 
 For example,
 if the user looses internet connection and your website runs `await handli(() => fetch('http://example.org')`,
@@ -72,9 +72,6 @@ For example, when the browser cannot connect to your server,
 Handli will block the UI, regularly retry, and resolve the promise only once the retrying has succedded.
 This is not the best user experience, but this means 0 effort for you
 and this case is fully handled for you.
-
-Handli is fully customizable.
-You can progressively remove/customize Handli as your prototype grows into a serious application.
 
 ## API
 
@@ -101,7 +98,7 @@ where:
 `handli` resolves the promise if and only if the request is successfull.
 (That is, the server replied with a `2xx` status code.)
 
-And, throwing an error upon erronous server responses is futile:
+Note that it is therefore futile to throw an error upon a `!response.ok` request:
 ~~~diff
 -const response = await fetch(url);
 -if( !response.ok ) {

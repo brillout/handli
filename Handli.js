@@ -124,7 +124,9 @@ function FetchErrorHandler(options_global) {
   }
 }
 
-// TODO ping some always available resources to differiente between not internet connection and server is down
+// TODO ping some always available resources to differiente between
+//  - no internet connection, and
+//  - server is down
 async function noInternet() {
   return !window.navigator.onLine;
 }
