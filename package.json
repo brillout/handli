@@ -1,5 +1,5 @@
 {
-  "name": "@brillout/fetch-error-handler",
+  "name": "handli",
   "version": "0.0.1",
   "description": "Automatically handle fetch errors such as network failures.",
   "dependencies": {

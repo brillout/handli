@@ -6,11 +6,20 @@ function FetchErrorHandler(options_global) {
 
   async function errorHandler(makeRequest, options_local) {
 
-    const {displayError} = {...options_global, ...options_local};
+    const {
+      displayError,
+      disableAll,
+    } = {...options_global, ...options_local};
+
+    if( disableAll ) {
+      return getResponse();
+    };
 
     const response = await getResponse();
 
-		console.log(response.ok, response.statusCode);
+    /*
+		console.log(response, await response.text(), response.ok, response.statusCode);
+    */
     if( response.ok ) {
       return response;
     }
@@ -53,7 +62,7 @@ function FetchErrorHandler(options_global) {
         return response;
       }
 
-      const message = "\u26A0 Cannot connect to server.";
+      const message = "Cannot connect to server.";
       const {close, update} = displayError(message);
 
       await wait(timeLeft => {

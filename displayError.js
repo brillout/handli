@@ -17,14 +17,31 @@ function showModal(html) {
     justifyContent: 'center',
   });
 
-  const modalContentEl = window.document.createElement('div');
-  Object.assign(modalContentEl.style, {
+  const modalBodyEl = window.document.createElement('div');
+  modalEl.appendChild(modalBodyEl);
+  Object.assign(modalBodyEl.style, {
     padding: '10px 20px',
     borderRadius: '5px',
     background: 'white',
+    display: 'flex',
   });
 
-  modalEl.appendChild(modalContentEl);
+  const modalImageEl = window.document.createElement('div');
+  modalBodyEl.appendChild(modalImageEl);
+  modalImageEl.innerHTML = "\u26A0";
+  Object.assign(modalImageEl.style, {
+    fontSize: '3em',
+    paddingRight: '20px',
+  });
+
+  const modalContentEl = window.document.createElement('div');
+  modalBodyEl.appendChild(modalContentEl);
+  Object.assign(modalContentEl.style, {
+    alignSelf: 'center',
+  });
+
+  const overflow_original = document.body.style.overflow;
+  document.body.style.overflow = 'hidden';
   document.body.appendChild(modalEl);
 
   update(html);
@@ -32,6 +49,7 @@ function showModal(html) {
   return {close, update};
 
   function close() {
+    document.body.style.overflow = overflow_original;
     modalEl.parentElement.removeChild(modalEl);
   }
   function update(html) {
