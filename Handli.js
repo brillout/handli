@@ -24,52 +24,63 @@ function FetchErrorHandler(options_global) {
 
     const response = await getResponse();
 
-    /*
-    */
-		console.log(response, await response.text(), response.ok, response.statusCode);
-    if( response.ok ) {
-      return response;
-    }
+    assert.internal(response.ok);
+    assert.internal(200 <= response.status && response.status <= 299);
 
-    throw new Error(response.statusText);
-
-    return;
+    return response;
 
     async function getResponse(close) {
       try {
         const requestPromise = makeRequest();
-        console.log(requestPromise);
         const response = await requestPromise;
+        /*
+        console.log(response, await response.text(), response.ok, response.statusCode);
+        */
         if( close ) close();
+        if( !response.ok ) {
+          assert.internal(!(200 <= response.status && response.status <= 299));
+          return handleErrorResponse(response);
+        }
         return response;
       } catch(_) {
         if( close ) close();
-        return handleNoconnection();
+        return handleNoConnection();
       }
     }
 
-    async function handleNoconnection() {
+    async function handleNoConnection() {
       if( await noInternet() ) {
-        const {close, update} = displayError(
-          [
-            "You seem to have no connection to the internet.",
-            "Retrying as soon as you connect to the internet.",
-          ].join('<br/>')
-        );
-
-        await awaitInternetConnection();
-
-        update(
-          [
-            "You seem to have an internet connection now.",
-            "Retrying now...",
-          ].join('<br/>')
-        );
-        const response = await getResponse(close);
-        return response;
+        return handleOffline();
+      } else {
+        return handlePeriodicRetry("Cannot connect to server.");
       }
+    }
 
-      const message = "Cannot connect to server.";
+    function handleErrorResponse(response) {
+      return handlePeriodicRetry("Server received the request but did not process it.");
+    }
+
+    async function handleOffline() {
+      const {close, update} = displayError(
+        [
+          "You seem to have no connection to the internet.",
+          "Retrying as soon as you connect to the internet.",
+        ].join('<br/>')
+      );
+
+      await awaitInternetConnection();
+
+      update(
+        [
+          "You now seem to be connected to the network.",
+          "Retrying...",
+        ].join('<br/>')
+      );
+      const response = await getResponse(close);
+      return response;
+    }
+
+    async function handlePeriodicRetry(message) {
       const {close, update} = displayError(message);
 
       await wait(timeLeft => {
@@ -113,7 +124,7 @@ function FetchErrorHandler(options_global) {
   }
 }
 
-// TODO ping some always available resources to check internet connection
+// TODO ping some always available resources to differiente between not internet connection and server is down
 async function noInternet() {
   return !window.navigator.onLine;
 }
