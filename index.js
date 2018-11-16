@@ -1,7 +1,7 @@
-const FetchErrorHandler = require('./FetchErrorHandler');
+const Handli = require('./Handli');
 const displayError = require('./displayError');
 
-module.exports = new FetchErrorHandler({
+module.exports = new Handli({
   displayError,
 });
 

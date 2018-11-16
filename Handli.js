@@ -25,8 +25,8 @@ function FetchErrorHandler(options_global) {
     const response = await getResponse();
 
     /*
-		console.log(response, await response.text(), response.ok, response.statusCode);
     */
+		console.log(response, await response.text(), response.ok, response.statusCode);
     if( response.ok ) {
       return response;
     }

@@ -18,19 +18,18 @@ Usage is simple:
 
 ~~~diff
 const url = 'http://example.org';
+const handli = require('handli');
+
 -const response = await fetch(url);
--if( !response.ok ) {
--  throw new Error(response.statusText);
--}
-+const handli = require('handli');
 +const response = await handli(() => fetch(url));
+
 // Do something with sucessful response
 console.log(await response.text());
 ~~~
 
 That's it.
 Upon an error, Handli will:
- - Perdiodically retry the request
+ - Perdiodically retry the request.
  - Displaying a UI-blocking modal letting the user know what's going on.
 
 # Example
@@ -39,7 +38,7 @@ Upon an error, Handli will:
 
 ## Example
 
-Let's do a request that will fail:
+Let's make a failing request:
 
 ~~~js
 const handli = require('handli');
@@ -51,9 +50,6 @@ const response = await handli(() => fetch('http://unreachable-server.example.org
 // the following line never executed
 console.log('I will never make it to the console :-(');
 ~~~
-
-Handli resolves the promise if and only if the request is successfull.
-(That is, the server replied with a `2xx` status code.)
 
 Handli never rejects the promise.
 If a request fails,
@@ -80,7 +76,43 @@ and this case is fully handled for you.
 Handli is fully customizable.
 You can progressively remove/customize Handli as your prototype grows into a serious application.
 
-# API
+## API
 
+### `require('handli')`
 
+Usage:
+~~~js
+  const handli = require('handli');
+  const response = await handli(
+    () => someFetchLikeLibrary('http://example.org'),
+    {displayError}
+  );
+  assert(200 <= response.status && response.status <= 299);
+~~~
 
+where:
+ - `someFetchLikeLibrary` is a library
+ - `const {close, update} = displayError(errorMessage);` is a function to customize what happens with the UI upon a request error.
+    The `displayError` function is optional and, if missing, handli will show a UI-blocking modal displaying the error message.
+    Handli calls that function upon request error and expects the function to return `close` and `update` functions.
+    Handli calls `close` when it wants to close the 
+    Handli provides the argument `errorMessage` which is a string that holds the message to be shown to the user.
+
+`handli` resolves the promise if and only if the request is successfull.
+(That is, the server replied with a `2xx` status code.)
+
+And, throwing an error upon erronous server responses is futile:
+~~~diff
+-const response = await fetch(url);
+-if( !response.ok ) {
+-  throw new Error(response.statusText);
+-}
++const handli = require('handli');
++const response = await handli(() => fetch(url));
+// This assertion holds before and after our change
+assert(200 <= response.status && response.status <= 299);
+~~~
+
+### `require('handli').Handli`
+
+Fine grained
