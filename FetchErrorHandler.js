@@ -1,3 +1,5 @@
+const assert = require('reassert');
+
 module.exports = FetchErrorHandler;
 
 function FetchErrorHandler(options_global) {
@@ -5,6 +7,11 @@ function FetchErrorHandler(options_global) {
   return errorHandler;
 
   async function errorHandler(makeRequest, options_local) {
+
+    assert.usage(
+      typeof window !== "undefined" && window.document,
+      "Handli only works in the browser"
+    );
 
     const {
       displayError,
@@ -106,7 +113,7 @@ function FetchErrorHandler(options_global) {
   }
 }
 
-// TODO ping some CORS always available resources to check internet connection
+// TODO ping some always available resources to check internet connection
 async function noInternet() {
   return !window.navigator.onLine;
 }
