@@ -15,21 +15,21 @@ function FetchErrorHandler(options_global) {
 
     const {
       displayError,
-      disableAll,
+      disableHandli,
     } = {...options_global, ...options_local};
 
-    if( disableAll ) {
-      return getResponse();
+    if( disableHandli ) {
+      return makeRequest();
     };
 
-    const response = await getResponse();
+    const response = await runRequest();
 
     assert.internal(response.ok);
     assert.internal(200 <= response.status && response.status <= 299);
 
     return response;
 
-    async function getResponse(close) {
+    async function runRequest(close) {
       try {
         const requestPromise = makeRequest();
         const response = await requestPromise;
@@ -76,7 +76,7 @@ function FetchErrorHandler(options_global) {
           "Retrying...",
         ].join('<br/>')
       );
-      const response = await getResponse(close);
+      const response = await runRequest(close);
       return response;
     }
 
@@ -99,7 +99,7 @@ function FetchErrorHandler(options_global) {
         ].join('<br/>')
       );
 
-      const response = await getResponse(close);
+      const response = await runRequest(close);
       return response;
     }
 
