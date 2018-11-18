@@ -2,7 +2,7 @@
 
 # Handli
 
-Handli is a little JavaScript library to automatically handle network corner cases.
+Handli is a little JavaScript library that automatically handles network corner cases.
 
 For example:
 When the user looses his internet connection,
@@ -17,9 +17,9 @@ A customized network handling tailored to your app is prefered.
 
 That said, Handli handles *all* network corner cases.
 So that you can quickly ship a prototype without worrying about network corner cases at first.
-You can later progressively remove Handli and implement custom network handling.
+You can later progressively replace Handli and implement custom network handling.
 
-The live demo fully shows how Handli handles network corner cases.
+The live demo shows how Handli handles all network corner cases.
 
 ###### Usage
 
@@ -58,20 +58,20 @@ const handli = require('handli');
 const response = await handli(() => fetch('http://unreachable-server.example.org'));
 
 // The request will never succeed,
-// Handli will never resolve the promise, and
+// `handli` never resolves, and
 // the following line will never execute.
 console.log('I will never make it to the console :-(');
 ~~~
 
-Handli will periodically retry the request,
+Handli periodically retries the request,
 block the UI with an overlay,
-and display a modal letting the user know of the problem and that the request will be retried in x seconds.
+and displays a modal letting the user know of the problem and that the request will be retried in x seconds.
 
-Because our request permanently fails, `handli` will never resolve.
+Because our request permanently fails, `handli` never resolves.
 
 In general, `handli` never rejects and resolves only if/once the request succeeds.
 This means that you can write code as if all requests succeed
-and you can rely upon Handli for corner cases.
+while relying on Handli for corner cases.
 
 <br/>
 
@@ -83,7 +83,7 @@ and you can rely upon Handli for corner cases.
 
 ## API
 
-### `require('handli')`
+### `handli`
 
 Usage:
 ~~~js
@@ -97,7 +97,7 @@ Usage:
 
 Where:
  - `someFetchLikeLibrary`
-    is any request library with a
+    is a request library with a
     [Fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)-like interface.
  - `const {close, update} = displayError(errorMessage);`
     is a function to customize how error messages are shown to the user.
@@ -110,29 +110,29 @@ Where:
 
  - `handli` resolves if and only if the server replies with a `2xx` status code.
 
-Any other status code is treated as error.
+    Any other status code is treated as error.
 
-Thus, the common `response.ok` handling is superfluous with Handli:
-~~~diff
--const response = await fetch(url);
--if( !response.ok ) {
--  throw new Error(response.statusText);
--}
-+const handli = require('handli');
-+const response = await handli(() => fetch(url));
+    Thus, the common `response.ok` handling is superfluous with Handli:
+    ~~~diff
+    -const response = await fetch(url);
+    -if( !response.ok ) {
+    -  throw new Error(response.statusText);
+    -}
+    +const handli = require('handli');
+    +const response = await handli(() => fetch(url));
 
-// This assertion holds before and after our change
-assert(200 <= response.status && response.status <= 299);
-~~~
+    // This assertion holds before and after our change
+    assert(200 <= response.status && response.status <= 299);
+    ~~~
 
  - `handli` never rejects.
 
-That is:
-~~~js
-try {
-  const response = await handli(() => fetch(url));
-} catch(err) {
-  // This will never happen
-  assert(false);
-}
-~~~
+    That is:
+    ~~~js
+    try {
+      const response = await handli(() => fetch(url));
+    } catch(err) {
+      // This will never happen
+      assert(false);
+    }
+    ~~~
