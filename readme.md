@@ -1,18 +1,26 @@
-**WIP AREA**
-
-This readme is work-in-progress.
+**WIP AREA** - This readme is work-in-progress.
 
 # Handli
 
-Handli is a little JavaScript library to automatically handle failed requests such as when the network fails.
+Handli is a little JavaScript library to automatically handle network corner cases.
+For example:
+What should happen when the user looses his internet connection?
+What should happen with the UI?
 
-Using the network brings a lot of boilerplate burden:
- - What should be displayed to the user when he looses internet connection? When the server is down?
- - Should the request be periodically retried? What should happen with the UI while retrying?
- - ...
+Handli aims to bring sensible defaults for such questions.
 
-Handli aims to bring sensible defaults to all these questions.
-So that you can ship a prototype without worrying about all that.
+###### Why Handli
+
+Handli doesn't know your app and can provide a good user experience only to a certain extent.
+A customized network handling tailored to your app is prefered.
+
+That said, Handli handles *all* network corner cases.
+So that you can quickly ship a prototype without worrying about network corner cases at first.
+Later when you progressively remove Handli and implement custom network handling.
+
+The live demo fully shows how Handli handle network corner cases.
+
+###### Usage
 
 Usage is simple:
 
@@ -32,9 +40,14 @@ Upon an error, Handli will:
  - Perdiodically retry the request.
  - Displaying a UI-blocking modal letting the user know what's going on.
 
-# Example
-# Live demos
-# API
+#### Contents
+
+ - [Example](#example)
+ - [Live Demo](#live-demo)
+ - [API](#API)
+
+
+<br/>
 
 ## Example
 
@@ -72,6 +85,15 @@ For example, when the browser cannot connect to your server,
 Handli will block the UI, regularly retry, and resolve the promise only once the retrying has succedded.
 This is not the best user experience, but this means 0 effort for you
 and this case is fully handled for you.
+
+
+<br/>
+
+## Live Demo
+
+[WIP]
+
+<br/>
 
 ## API
 
