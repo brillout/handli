@@ -4,7 +4,6 @@
 
 Handli is a little JavaScript library that automatically handles network corner cases.
 
-For example:
 When the user looses his internet connection,
 what should happen and what should be shown to the user?
 
@@ -16,8 +15,8 @@ Handli doesn't know your app and can provide a good user experience only to a ce
 A customized network handling tailored to your app is prefered.
 
 That said, Handli handles *all* network corner cases.
-So that you can quickly ship a prototype without worrying about network corner cases at first.
-You can later progressively replace Handli and implement custom network handling.
+So, you can quickly ship a prototype without worrying about network corner cases at first.
+You can later progressively replace Handli with a custom network handling implementation.
 
 The live demo shows how Handli handles all network corner cases.
 
@@ -64,8 +63,8 @@ console.log('I will never make it to the console :-(');
 ~~~
 
 Handli periodically retries the request,
-block the UI with an overlay,
-and displays a modal letting the user know of the problem and that the request will be retried in x seconds.
+blocks the UI with an overlay,
+and displays a modal letting the user know of the problem and that the request will be retried in `x` seconds.
 
 Because our request permanently fails, `handli` never resolves.
 
@@ -118,7 +117,6 @@ Where:
     -if( !response.ok ) {
     -  throw new Error(response.statusText);
     -}
-    +const handli = require('handli');
     +const response = await handli(() => fetch(url));
 
     // This assertion holds before and after our change
