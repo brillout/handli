@@ -1,7 +1,9 @@
 import handli from 'handli';
 
-(async () => {
-  const response = await handli(() => fetch('/game-of-thrones.json'));
-  const data = await response.text();
-  alert("+++ Response +++\n"+data);
-})();
+export default run;
+
+async function run() {
+const response = await handli(() => fetch('/game-of-thrones.json'));
+const data = await response.text();
+alert("+++ Response +++\n"+data);
+}
