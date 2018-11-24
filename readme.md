@@ -2,83 +2,38 @@
 
 # Handli
 
-Handli is a little JavaScript library that automatically handles network corner cases.
+Handli is a small JavaScript library to **automatically handle network corner cases**.
 
-When the user looses his internet connection,
+For example: When the user looses his internet connection,
 what should happen and what should be shown to the user?
+Handli aims to bring sensible defaults to such question.
 
-Handli aims to bring sensible defaults to such questions.
+Live demo: [WIP]
 
-###### Why Handli
-
-Handli doesn't know your app and can provide a good user experience only to a certain extent.
-A customized network handling tailored to your app is prefered.
-
-That said, Handli handles *all* network corner cases.
-So, you can quickly ship a prototype without worrying about network corner cases at first.
-You can later progressively replace Handli with a custom network handling implementation.
-
-The live demo shows how Handli handles all network corner cases.
-
-###### Usage
-
+Usage is trivial:
 ~~~diff
-const url = 'http://example.org';
-const handli = require('handli');
-
 -const response = await fetch(url);
 +const response = await handli(() => fetch(url));
-
-// Do something with successful response
-console.log(await response.text());
 ~~~
-
-That's it.
-Upon error, Handli will:
- - Perdiodically retry the request.
- - Displaying a UI-blocking modal letting the user know what's going on.
 
 #### Contents
 
- - [Example](#example)
- - [Live Demo](#live-demo)
+ - [Why Handli](#why-handli)
  - [API](#API)
 
 
 <br/>
 
-## Example
+## Why Handli
 
-Let's make a failing request:
+Handli doesn't know your app and can provide a good user experience only to a certain extent.
+A customized network handling tailored to your app is prefered.
 
-~~~js
-const handli = require('handli');
+That said, Handli handles *all* network corner cases.
+So that you can **quickly ship a prototype without worrying about network corner cases**.
+You can **later progressively replace Handli with a custom network handling implementation**.
 
-const response = await handli(() => fetch('http://unreachable-server.example.org'));
-
-// The request will never succeed,
-// `handli` never resolves, and
-// the following line will never execute.
-console.log('I will never make it to the console :-(');
-~~~
-
-Handli periodically retries the request,
-blocks the UI with an overlay,
-and displays a modal letting the user know of the problem and that the request will be retried in `x` seconds.
-
-Because our request permanently fails, `handli` never resolves.
-
-In general, `handli` never rejects and resolves only if/once the request succeeds.
-This means that you can write code as if all requests succeed
-while relying on Handli for corner cases.
-
-<br/>
-
-## Live Demo
-
-[WIP]
-
-<br/>
+The live demo shows how Handli handles all network corner cases.
 
 ## API
 
