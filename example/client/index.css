@@ -1,9 +1,13 @@
-pre {
-  width: 600px;
-  font-size: 0.9em;
-  line-height: 0.4em;
+body > div {
+  display: flex;
+  justify-content: center;
 }
-.use_case_list {
-  width: 100%;
+.cls_examples {
   display: grid;
+  grid-template-columns: 300px 450px;
+  grid-row-gap: 50px;
+  grid-column-gap: 30px;
+}
+.cls_examples pre {
+  font-size: 0.9em;
 }

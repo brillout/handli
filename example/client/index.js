@@ -4,63 +4,109 @@ import 'prismjs/themes/prism.css';
 import './index.css';
 import {readFileSync} from 'fs';
 import 'babel-polyfill';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 //setTimeout(() => require('./success'), 2000);
 //const response = handli(() => Fetch('/does-not-exist'));
 
-const ul = document.createElement('div');
-ul.classList.add('use_case_list');
-document.body.appendChild(ul);
+const examples = getExamples();
 
-addExample(
-  readFileSync(__dirname+'/success.js', 'utf-8'),
-  require('./success').default,
-  'Success',
-  [
-    'bla',
-    'blu'
-  ].join('<br/>')
+ReactDOM.render(
+  <Examples {...{examples}}/>,
+  document.body.appendChild(document.createElement('div'))
 );
 
-addExample(
-  readFileSync(__dirname+'/offline.js', 'utf-8'),
-  require('./offline.js').default,
-  'Offline'
-  [
-    'bla',
-    'blu'
-  ].join('<br/>'),
-);
+function getExamples() {
+  const examples = [
+    [
+      readFileSync(__dirname+'/success.js', 'utf-8'),
+      require('./success').default,
+      'Success',
+      <div>
+        The request was successful.
+      </div>
+    ],
+    [
+      readFileSync(__dirname+'/offline.js', 'utf-8'),
+      require('./offline.js').default,
+      'Offline',
+      <div>
+        This when the user is not connted to the internet.
+      </div>
+    ],
+    [
+      readFileSync(__dirname+'/404.js', 'utf-8'),
+      require('./404.js').default,
+      'Error',
+      <div>
+        This happens when:
+        <ul>
+          <li>1xx</li>
+          <li>3xx</li>
+          <li>4xx</li>
+          <li>5xx</li>
+        </ul>
+        We treat all this because Handli is assumed to be used by 
+        because the user doesn't care.
+        The only thing the user wants to be toled that something went wrong.
+        He doesn't care if the error was an internal server error,
+        or a resource that doesn't exist anymore.
+      </div>
+    ],
+  ];
 
-addExample(
-  readFileSync(__dirname+'/404.js', 'utf-8'),
-  require('./404.js').default,
-  '404'
-  [
-    'bla',
-    'blu'
-  ].join('<br/>'),
-);
+  return examples;
+}
 
-function addExample(codeSource, run, title, description) {
-  let html;
-  html = '<h2>'+title+'</h2>';
+function Examples({examples}) {
+  return (
+    <div className='cls_examples'>{
+      examples.map((example, key) =>
+        <Example {...{example, key}}/>
+      )
+    }</div>
+  );
+}
 
-  codeSource = stripContext(codeSource);
-  html += (
-    '<pre><code class="language-javascript">'+
-    Prism.highlight(codeSource, Prism.languages.javascript, 'javascript')+
-    '</code></pre>'
+function Example({example: [codeSource, run, title, description]}) {
+  const leftView = (
+    <div>
+      <h2>{title}</h2>
+      {description}
+    </div>
   );
 
-  html += '<button>Run</button>';
+  const middleView = (
+    <div>{
+      CodeView(codeSource)
+    }</div>
+  );
+  return (
+    <React.Fragment>
+      {leftView}
+      {middleView}
+    </React.Fragment>
+  );
+}
 
-  const li = document.createElement('div');
-  li.innerHTML = html;
-  ul.appendChild(li);
+function CodeView(codeSource) {
+  codeSource = stripContext(codeSource);
 
-  const btn = li.querySelector('button');
-  btn.onclick = run;
+  const codeHtml = Prism.highlight(
+    codeSource,
+    Prism.languages.javascript,
+    'javascript',
+  );
+
+  return (
+    <pre>
+      <code
+        className="language-javascript"
+        dangerouslySetInnerHTML={{__html: codeHtml}}
+      />
+    </pre>
+  );
 }
 
 function stripContext(codeSource) {

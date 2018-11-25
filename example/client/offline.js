@@ -1,4 +1,5 @@
 import handli_original from 'handli';
+import {fetch, console} from './utils';
 
 const offlineSimulator = {
   install: () => {
@@ -28,11 +29,9 @@ const response = await handli(() => {
   }
 });
 
-const data = await response.text();
-
 alert([
   "I am displayed only after the second attempt.",
   "+++Response+++",
-  data
+  response
 ].join('\n'));
 }
