@@ -1,29 +1,21 @@
-import handli as handli_original from 'handli';
+import handli_original from 'handli';
 
-const handliOptions
-const handli
-const handliOptions = {
-  alwaysAvailableResources: ['/fake-always-available-resource'],
+const offlineSimulator = {
+  install: () => {
+    handliOptions.alwaysAvailableResources = ['/fake-always-available-resource'];
+    fetch = () => fetch_original('/does-not-exist');
+  },
+  remove: () => {
+    delete handliOptions.alwaysAvailableResources;
+    fetch = fetch_original;
+  },
 };
 
-export default run;
+const fetch_original = fetch;
+const handliOptions = {};
+const handli = url => handli_original(url, handliOptions);
 
-async function run() {
-const response = await handli(
-  async () => {
-    if( handliOptions.alwaysAvailableResources ) {
-      try {
-        return fetch('/does-not-exist');
-      } finally {
-        delete handliOptions.alwaysAvailableResources;
-      }
-    }
-    return fetch('/game-of-thrones.json');
-  },
-  handliOptions
-);
-alert("I am displayed only after the second attempt");
-}
+export default run;
 
 async function run() {
 offlineSimulator.install();
@@ -38,5 +30,9 @@ const response = await handli(() => {
 
 const data = await response.text();
 
-alert("+++ Response +++\n"+data);
+alert([
+  "I am displayed only after the second attempt.",
+  "+++Response+++",
+  data
+].join('\n'));
 }

@@ -1,3 +1,9 @@
 pre {
-  width: 800px;
+  width: 600px;
+  font-size: 0.9em;
+  line-height: 0.4em;
+}
+.use_case_list {
+  width: 100%;
+  display: grid;
 }

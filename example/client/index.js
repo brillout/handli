@@ -8,21 +8,43 @@ import 'babel-polyfill';
 //setTimeout(() => require('./success'), 2000);
 //const response = handli(() => Fetch('/does-not-exist'));
 
+const ul = document.createElement('div');
+ul.classList.add('use_case_list');
+document.body.appendChild(ul);
+
 addExample(
   readFileSync(__dirname+'/success.js', 'utf-8'),
   require('./success').default,
-  'Success'
+  'Success',
+  [
+    'bla',
+    'blu'
+  ].join('<br/>')
+);
+
+addExample(
+  readFileSync(__dirname+'/offline.js', 'utf-8'),
+  require('./offline.js').default,
+  'Offline'
+  [
+    'bla',
+    'blu'
+  ].join('<br/>'),
 );
 
 addExample(
   readFileSync(__dirname+'/404.js', 'utf-8'),
   require('./404.js').default,
   '404'
+  [
+    'bla',
+    'blu'
+  ].join('<br/>'),
 );
 
-function addExample(codeSource, run, description) {
+function addExample(codeSource, run, title, description) {
   let html;
-  html = '<h2>'+description+'</h2>';
+  html = '<h2>'+title+'</h2>';
 
   codeSource = stripContext(codeSource);
   html += (
@@ -33,9 +55,8 @@ function addExample(codeSource, run, description) {
 
   html += '<button>Run</button>';
 
-  const li = document.createElement('li');
+  const li = document.createElement('div');
   li.innerHTML = html;
-  const ul = document.querySelector('ul');
   ul.appendChild(li);
 
   const btn = li.querySelector('button');
