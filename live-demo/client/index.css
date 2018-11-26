@@ -27,20 +27,18 @@ body > div > div {
   padding: 7px;
   width: 400px;
 }
-/*
-.cls_examples {
-  display: grid;
-  grid-template-columns: 300px 450px 200px;
-  grid-row-gap: 50px;
-  grid-column-gap: 30px;
+.cls_case h3 {
+  margin-top: 50px;
 }
-*/
 
-.cls_examples pre {
+.cls_example {
+  font-size: 0.9em;
+  margin-bottom: 60px;
+}
+.cls_example pre {
   font-size: 0.9em;
 }
-
-.cls_examples code {
+.cls_example code {
   line-height: 1.25em!important;
 }
 

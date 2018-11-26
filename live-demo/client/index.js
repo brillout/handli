@@ -19,7 +19,10 @@ ReactDOM.render(
 function LiveDemo() {
   return (
     <React.Fragment>
-      <h1>Handli</h1>
+      <h1>
+        <img src="/logo.svg" height="34" style={{marginRight: 10, marginBottom: -5}}/>
+        Handli
+      </h1>
       <Intro/>
     </React.Fragment>
   );
@@ -139,7 +142,7 @@ function getExamples() {
 
 function Examples({examples}) {
   return (
-    <div className='cls_examples'>{
+    <div>{
       examples.map((example, key) =>
         <Example {...{example, key}}/>
       )
@@ -166,11 +169,11 @@ function Example({example: [codeSource, codeModule, title, description]}) {
   );
 
   return (
-    <React.Fragment>
+    <div className="cls_example">
       {textView}
       {codeView}
       {resultView}
-    </React.Fragment>
+    </div>
   );
 }
 
