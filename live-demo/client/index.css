@@ -44,6 +44,7 @@ body > div > div {
   line-height: 1.25em!important;
 }
 
+/* stripes copy pasted from https://css-tricks.com/stripes-css/ */
 /*
 .cls_expected {
   background-color: #080;
@@ -79,6 +80,42 @@ body > div > div {
   );
 }
 */
+
+/*
+.cls_case {
+  border-width: 0 0 0 5px;
+  border-style: solid;
+}
+.cls_expected {
+  border-color: #00ff003f;
+}
+.cls_internet {
+  border-color: #ffff0050;
+}
+.cls_bug {
+  border-color: #ff000031;
+}
+*/
+
+.cls_case h2,
+.cls_case h3 {
+  border-width: 0 0 0 5px;
+  border-style: solid;
+	margin-left: -5px;
+	padding-left: 5px;
+}
+.cls_expected h2,
+.cls_expected h3 {
+  border-color: #00ff008f;
+}
+.cls_internet h2,
+.cls_internet h3 {
+  border-color: #ffff0090;
+}
+.cls_bug h2,
+.cls_bug h3 {
+  border-color: #ff000071;
+}
 
 
 
