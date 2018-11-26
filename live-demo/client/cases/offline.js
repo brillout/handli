@@ -1,5 +1,10 @@
 import handli_original from 'handli';
-import {fetch, console} from './utils';
+import {Console} from '../utils';
+
+export {run};
+export {console};
+
+const console = new Console();
 
 const offlineSimulator = {
   install: () => {
@@ -16,22 +21,19 @@ const fetch_original = fetch;
 const handliOptions = {};
 const handli = url => handli_original(url, handliOptions);
 
-export default run;
-
 async function run() {
 offlineSimulator.install();
 
-const response = await handli(() => {
-  try {
-    return fetch('/game-of-thrones.json');
-  } finally {
-    offlineSimulator.remove();
-  }
-});
+setTimeout(() => {
+  offlineSimulator.remove();
+}, 4000);
 
-alert([
-  "I am displayed only after the second attempt.",
-  "+++Response+++",
-  response
-].join('\n'));
+const response = await handli(
+  () => fetch('/data.json')
+);
+
+console.log(
+  "+++ Response +++",
+  await response.text()
+);
 }

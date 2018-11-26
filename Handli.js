@@ -6,7 +6,7 @@ function FetchErrorHandler(options_global) {
 
   return errorHandler;
 
-  async function errorHandler(makeRequest, options_local) {
+  async function errorHandler(requestFunction, options_local) {
 
     assert.usage(
       typeof window !== "undefined" && window.document,
@@ -19,33 +19,51 @@ function FetchErrorHandler(options_global) {
     } = {...options_global, ...options_local};
 
     if( disableHandli ) {
-      return makeRequest();
+      return requestFunction();
     };
 
     const response = await runRequest();
 
-    assert.internal(response.ok);
-    assert.internal(200 <= response.status && response.status <= 299);
-
     return response;
 
     async function runRequest(close) {
+      let response;
       try {
-        const requestPromise = makeRequest();
-        const response = await requestPromise;
-        /*
-        console.log(response, await response.text(), response.ok, response.statusCode);
-        */
-        if( close ) close();
-        if( !response.ok ) {
-          assert.internal(!(200 <= response.status && response.status <= 299));
-          return handleErrorResponse(response);
-        }
-        return response;
-      } catch(_) {
+        const responsePromise = requestFunction();
+        response = await responsePromise;
+      } catch(err) {
+        console.error(err);
         if( close ) close();
         return handleNoConnection();
       }
+
+      /*
+      console.log(response, await response.text(), response.ok, response.status);
+      */
+      if( close ) close();
+
+      if( isErrorResponse(response) ) {
+        return handleErrorResponse(response);
+      }
+
+      return response;
+    }
+
+    function isErrorResponse(response) {
+      // TODO-eventually: This is too loose, make a stricter check to avoid conflict
+      const isFetchResponse = response instanceof Object && ('ok' in response || 'status' in response);
+
+      if( ! isFetchResponse ) {
+        return false;
+      }
+
+      const isSuccessCode = 200 <= response.status && response.status <= 299;
+
+      if( response.ok===false || !isSuccessCode ) {
+        return true;
+      }
+
+      return false;
     }
 
     async function handleNoConnection() {

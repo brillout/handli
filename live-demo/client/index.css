@@ -1,13 +1,93 @@
 body > div {
   display: flex;
   justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
+body > div > div {
+  margin-bottom: 30px;
+}
+.cls_cases {
+  display: flex;
+  justify-content: space-around;
+  width: 100vw;
+  max-width: 1300px;
+  /*
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  */
+}
+/*
+.cls_case + .cls_case {
+  padding-left: 15px;
+}
+*/
+.cls_case {
+  padding: 7px;
+  width: 400px;
+}
+/*
 .cls_examples {
   display: grid;
-  grid-template-columns: 300px 450px;
+  grid-template-columns: 300px 450px 200px;
   grid-row-gap: 50px;
   grid-column-gap: 30px;
 }
+*/
+
 .cls_examples pre {
   font-size: 0.9em;
+}
+
+.cls_examples code {
+  line-height: 1.25em!important;
+}
+
+/*
+.cls_expected {
+  background-color: #080;
+  background-color: #00ff001f;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(0,255,0,.07) 10px,
+    rgba(0,255,0,.07) 20px
+  );
+}
+.cls_internet {
+  background-color: #880;
+  background-color: #ffff0030;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(255,255,0,.13) 10px,
+    rgba(255,255,0,.13) 20px
+  );
+}
+.cls_bug {
+  background-color: #800;
+  background-color: #ff000021;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(255,0,0,.05) 10px,
+    rgba(255,0,0,.05) 20px
+  );
+}
+*/
+
+
+
+/* copy pasted from https://reactjs.org/ */
+html {
+	box-sizing: border-box;
+	font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+	font-weight: 400;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
