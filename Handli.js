@@ -1,12 +1,15 @@
 const assert = require('reassert');
 
-module.exports = FetchErrorHandler;
+module.exports = Handli;
 
-function FetchErrorHandler(options_global) {
+function Handli(options_global) {
 
-  return errorHandler;
+  let requestIsPending = false;
+  let currentModal = null;
 
-  async function errorHandler(requestFunction, options_local) {
+  return handli;
+
+  async function handli(requestFunction, options_local) {
 
     assert.usage(
       typeof window !== "undefined" && window.document,
@@ -14,7 +17,7 @@ function FetchErrorHandler(options_global) {
     );
 
     const {
-      displayError,
+      showMessage,
       disableHandli,
     } = {...options_global, ...options_local};
 
@@ -22,7 +25,17 @@ function FetchErrorHandler(options_global) {
       return requestFunction();
     };
 
-    const response = await runRequest();
+    if( requestIsPending ) {
+      await handleOverflow();
+    }
+
+    requestIsPending = true;
+    let response;
+    try {
+      response = await runRequest();
+    } finally {
+      requestIsPending = false;
+    }
 
     return response;
 
@@ -66,6 +79,11 @@ function FetchErrorHandler(options_global) {
       return false;
     }
 
+    async function handleOverflow() {
+      if( close ) close();
+      await new Promise();
+    }
+
     async function handleNoConnection() {
       if( await noInternet() ) {
         return handleOffline();
@@ -78,11 +96,22 @@ function FetchErrorHandler(options_global) {
       return handlePeriodicRetry("Server received the request but did not process it.");
     }
 
+    function showModal(messageHtml) {
+      const {close, update} = showMessage(messageHtml);
+      currentModal = {
+        closeModal: () => {
+          close();
+          currentModal = null;
+        },
+        updateModal: update,
+      };
+    }
+
     async function handleOffline() {
-      const {close, update} = displayError(
+      showModal(
         [
-          "You seem to have no connection to the internet.",
-          "Retrying as soon as you connect to the internet.",
+          "You are offline.",
+          "Go online to proceed.",
         ].join('<br/>')
       );
 
@@ -99,10 +128,10 @@ function FetchErrorHandler(options_global) {
     }
 
     async function handlePeriodicRetry(message) {
-      const {close, update} = displayError(message);
+      showModal(message);
 
       await wait(timeLeft => {
-        update(
+        currentModal.updateModal(
           [
             message,
             "Retrying in "+timeLeft+".",
@@ -110,14 +139,14 @@ function FetchErrorHandler(options_global) {
         );
       });
 
-      update(
+      currentModal.updateModal(
         [
           message,
           "Retrying now...",
         ].join('<br/>')
       );
 
-      const response = await runRequest(close);
+      const response = await runRequest();
       return response;
     }
 

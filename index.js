@@ -1,12 +1,12 @@
 const Handli = require('./Handli');
-const displayError = require('./displayError');
+const showMessage = require('./showMessage');
 
 module.exports = new Handli({
-  displayError,
+  showMessage,
 });
 
 /*
-function displayError(...args) {
+function showMessage(...args) {
   console.log(...args);
   return {close: () => {console.log('close');}, update: (...args) => {console.log(...args)}};
 }
