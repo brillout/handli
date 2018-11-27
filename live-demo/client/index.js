@@ -20,8 +20,12 @@ function LiveDemo() {
   return (
     <React.Fragment>
       <h1>
-        <img src="/logo.svg" height="34" width="34" style={{marginRight: 10, marginBottom: -5}}/>
-        Handli
+        <img
+          src="/logo.svg"
+          height="34"
+          style={{marginRight: 10, marginBottom: -5}}
+          alt="Handli"
+        />
       </h1>
       <Intro/>
     </React.Fragment>
