@@ -1,13 +1,13 @@
 {
   "private": true,
   "scripts": {
-    "build": "cd client && parcel build *.html",
+    "build": "cd client && parcel build *.html --public-url /handli/",
     "build-dev": "cd client && parcel watch *.html",
     "server": "node ./server/start.js",
     "install-yarn": "npm install --only=dev --no-save",
     "setup": "npm run install-yarn && yarn",
     "setup-dev": "npm run install-yarn && (cd .. && yarn && yarn link) && yarn link handli && yarn",
-    "deploy": "cd .. && git checkout gh-pages && git reset --hard clean-dist && git reset gh-pages && cp live-demo/client/dist/* . && git add -A && git commit -m 'deploy new live demo' && git push && git checkout master"
+    "deploy": "npm run build && cd .. && git checkout gh-pages && git reset --hard clean-dist && git reset origin/gh-pages && mv live-demo/client/dist/* . && git add -A && git commit -m 'deploy new live demo' && git push && git checkout master"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",

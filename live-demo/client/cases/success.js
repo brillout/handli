@@ -8,7 +8,7 @@ const console = new Console();
 
 async function run() {
 const response = await handli(
-  () => fetch('/data.json')
+  () => fetch('data.json')
 );
 
 console.log(
