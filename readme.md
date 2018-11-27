@@ -5,6 +5,7 @@
 </a>
 </p>
 <br/>
+<br/>
 
 Handli is a small JavaScript library that **handles network corner cases** for you.
 
