@@ -1,8 +1,9 @@
 module.exports = {
-  FATAL: "Error. Reload and retry.",
-  BUG: "There was a problem.",
-  OFFLINE: "You are offline. Go online to proceed.",
+  BUG: "Something unexpected happened.",
+  OFFLINE: "You are offline.",
   ONLINE: "You are back online.",
+  RETRY_MANUALLY: "Please reload and retry.",
+  RETRYING_WHEN_ONLINE: "Go online to proceed.",
   RETRYING_NOW: "Retrying...",
   RETRYING_IN: seconds => "Retrying in "+seconds+".",
 };

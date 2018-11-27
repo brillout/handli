@@ -20,7 +20,7 @@ function LiveDemo() {
   return (
     <React.Fragment>
       <h1>
-        <img src="/logo.svg" height="34" style={{marginRight: 10, marginBottom: -5}}/>
+        <img src="/logo.svg" height="34" width="34" style={{marginRight: 10, marginBottom: -5}}/>
         Handli
       </h1>
       <Intro/>
@@ -42,16 +42,20 @@ function Intro() {
     <div>
       <div className="cls_cases">
         <Case title={'Expected'} className='cls_expected'>
-          When the request succeeds or
-          the request fails but your code handles the error.
+          <CaseExplanation>
+            When the request succeeds or
+            the request fails but your code handles the error.
+          </CaseExplanation>
           <p>
           Handli does nothing and simply returns what your request function returns.
           </p>
           <Examples examples={examples.expected}/>
         </Case>
         <Case title={'Flaky Internet Connection'} className='cls_internet'>
-          When the user is offline or
-          has a poor internet connection.
+          <CaseExplanation>
+            When the user is offline or
+            has a poor internet connection.
+          </CaseExplanation>
           <p>
           {handliBehavior}
           {' '}
@@ -60,9 +64,11 @@ function Intro() {
           <Examples examples={examples.connection}/>
         </Case>
         <Case title={'Bug'} className='cls_bug'>
-          When your server is not replying
-          or
-          replies with an error that is not handled by your code.
+          <CaseExplanation>
+            When your server is not replying
+            or
+            replies with an error that is not handled by your code.
+          </CaseExplanation>
           <p>
           {handliBehavior}
           {' '}
@@ -84,6 +90,10 @@ function Case({title, children, className}) {
       {children}
     </div>
   );
+}
+
+function CaseExplanation({children}) {
+  return <p><i>{children}</i></p>;
 }
 
 function getExamples() {

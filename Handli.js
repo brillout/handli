@@ -79,7 +79,10 @@ function Handli(options_global={}) {
 
     async function handleOverflow() {
       closeModal();
-      showModal(getMsg('FATAL'));
+      showModal(
+        getMsg('BUG'),
+        getMsg('RETRY_MANUALLY'),
+      );
       await new Promise();
     }
 
@@ -178,7 +181,10 @@ function Handli(options_global={}) {
     }
 
     async function handleOffline() {
-      showModal(getMsg("OFFLINE"));
+      showModal(
+        getMsg("OFFLINE"),
+        getMsg("RETRYING_WHEN_ONLINE"),
+      );
 
       await awaitInternetConnection();
 

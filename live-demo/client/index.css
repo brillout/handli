@@ -117,11 +117,11 @@ body > div > div {
 
 
 
-/* copy pasted from https://reactjs.org/ */
+/* copy-pasted & adapated from https://reactjs.org/ */
 html {
 	box-sizing: border-box;
-	font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
-	font-weight: 400;
+	font-family: Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+	font-weight: 300;
 	font-style: normal;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
