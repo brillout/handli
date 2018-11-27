@@ -22,7 +22,7 @@ To use Handli, simply wrap your requests with `handli`:
 +const response = await handli(() => fetch(url));
 ~~~
 
-Handli never rejects and guarantees that `response` is a successful response
+Handli never rejects and guarantees that `response` hold a successful server reply
 (that is `assert(200<=response.status && response.status<=299);`).
 This means that you can **write code as if network issues are non-existent**
 and rely upon Handli for handling errors.
