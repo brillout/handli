@@ -1,4 +1,5 @@
 {
   "name": "handli",
-  "version": "0.0.1-alpha.0"
+  "description: "Automatic Network Handling",
+  "version": "0.0.1-alpha.1"
 }
