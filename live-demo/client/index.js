@@ -46,8 +46,8 @@ function Intro() {
           the request fails but your code handles the error.
           <p>
           Handli does nothing and simply returns what your request function returns.
-          <Examples examples={examples.expected}/>
           </p>
+          <Examples examples={examples.expected}/>
         </Case>
         <Case title={'Flaky Internet Connection'} className='cls_internet'>
           When the user is offline or
@@ -56,8 +56,8 @@ function Intro() {
           {handliBehavior}
           {' '}
           The request is retried when the user reconnects.
-          <Examples examples={examples.connection}/>
           </p>
+          <Examples examples={examples.connection}/>
         </Case>
         <Case title={'Bug'} className='cls_bug'>
           When your server is not replying
