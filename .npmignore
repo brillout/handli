@@ -1,2 +1,3 @@
-examples/
-*.template.md
+live-demo/
+*.md
+yarn.lock
