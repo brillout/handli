@@ -2011,9 +2011,10 @@ grapheme-breaker@^0.3.2:
     brfs "^1.2.0"
     unicode-trie "^0.3.1"
 
-handli@^0.0.1-alpha.0:
-  version "0.0.1-alpha.0"
-  resolved "https://registry.yarnpkg.com/handli/-/handli-0.0.1-alpha.0.tgz#d48187fa422aa9b0b76db504276af33940e2cd5b"
+handli@*:
+  version "0.0.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/handli/-/handli-0.0.1-alpha.2.tgz#ceb389f6f3e99ee7dae040e759b541d1bd858396"
+  integrity sha512-nFFmha9+7TLSUafP/M0Qv3hUUbNq5mzg9XjJnMxVuNZJuz43lAiJK4IHE7h6QbxnF1WnvqMTMkAMZNeznWZKzA==
 
 has-ansi@^2.0.0:
   version "2.0.0"
