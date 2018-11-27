@@ -1,10 +1,10 @@
 const Handli = require('./Handli');
 const showMessage = require('./showMessage');
-const errorMessages = require('./errorMessages');
+const messages = require('./messages');
 
 module.exports = new Handli({
   showMessage,
-  errorMessages,
+  messages,
 });
 
 /*

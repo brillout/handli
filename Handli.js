@@ -4,15 +4,13 @@ module.exports = Handli;
 
 function Handli(options_global={}) {
 
-  let requestIsPending = false;
-  let currentModal = null;
-
   const options_default = {
     devMode: typeof window !== "undefined" && window.location && window.location.hostname==='localhost',
   };
 
   return handli;
 
+  var requestIsPending;
   async function handli(requestFunction, options_local={}) {
 
     assert.usage(
@@ -45,14 +43,14 @@ function Handli(options_global={}) {
         response = await responsePromise;
       } catch(err) {
         console.error(err);
-        if( currentModal ) currentModal.closeModal();
+        closeModal();
         return handleNoConnection();
       }
 
       /*
       console.log(response, await response.text(), response.ok, response.status);
       */
-      if( currentModal ) currentModal.closeModal();
+      closeModal();
 
       if( isErrorResponse(response) ) {
         console.error(response);
@@ -80,8 +78,8 @@ function Handli(options_global={}) {
     }
 
     async function handleOverflow() {
-      if( currentModal ) currentModal.closeModal();
-      showModal(getErrorMessage('FATAL'));
+      closeModal();
+      showModal(getMsg('FATAL'));
       await new Promise();
     }
 
@@ -94,81 +92,99 @@ function Handli(options_global={}) {
     }
 
     async function handleBug(response) {
-      let errorMessage = getErrorMessage('BUG');
+      let errorMessage = getMsg('BUG');
       let devMessage;
       if( getOption('devMode') ) {
-        devMessage = await getDevMessage(response, err);
+        devMessage = await getDevMessage(response);
+        console.log(devMessage);
       }
       return handlePeriodicRetry(errorMessage, devMessage);
     }
 
     async function getDevMessage(response) {
-      let devMessage = "<br/><br/>===== DEV DEBUG =====<br/>";
+      let devMessage = "<br/>-------------------------- debug info --------------------------";
+      devMessage += '<br/><small style="color: #777">(debug info is only shown in developer mode)</small><br/><br/>';
 
-      if( response ) {
-        devMessage +=
-
+      if( response && (response.status || response.statusText) ) {
         devMessage += (
           '<span style="color: red">'+
           [
             response.status,
             response.statusText,
           ].filter(Boolean).join(' ')+
-          '<span>'
+          '</span>'
         );
+      }
 
-        devMessage += " "+response.url;
+      if( response && response.url ) {
+        devMessage += ' <a target="_blank" href="'+response.url+'">'+response.url+'</a>';
+      }
 
-        let bodyText;
-        try {
-          bodyText = await response.text();
-        } catch(err) {}
-        if( bodyText ) {
-          devMessage += "<br><br>"+bodyText;
+      if( response ) {
+        const responseHtml = await getResponseHtml(response);
+        if( responseHtml ) {
+          devMessage += "<br><br>"+responseHtml;
         }
-      } else {
+      }
+
+      if( ! response ) {
         devMessage += (
           '<span style="color: red">'+
           'Could not connect to server.'+
-          '<span>'+
+          '</span>'+
           '<br/><br/>'+
           'Is the server running? Is CORS correctly set up?'
         );
       }
 
-      devMessage += '<br/><br/><small style="color: #777">You are seeing this because you are in developer mode.</small>';
-
       return devMessage;
+    }
+
+    async function getResponseHtml(response) {
+      let bodyText;
+      try {
+        bodyText = await response.text();
+      } catch(err) {
+        return null;
+      }
+
+      try {
+        return JSON.stringify(JSON.parse(bodyText), null, 2);
+      } catch(err) {}
+
+      /*
+      const untrustedHtml = encodeURIComponent(bodyText);
+      return '<iframe src="/displayUntrustedHtml?untrustedHtml='+untrustedHtml+'"></iframe>';
+      */
     }
 
     function handleErrorResponse(response) {
       return handleBug(response);
     }
 
+    var currentModal;
     function showModal(...messageHtmls) {
       const messageHtml = messageHtmls.filter(Boolean).join('<br/>');
 
-      const {close, update} = getOption('showMessage')(messageHtml);
-      currentModal = {
-        closeModal: () => {
-          close();
-          currentModal = null;
-        },
-        updateModal: update,
-      };
+      if( currentModal ) {
+        currentModal.update(messageHtml);
+      } else {
+        currentModal = getOption('showMessage')(messageHtml);
+      }
     }
-    function updateModal() {
-      
+    function closeModal() {
+      if( currentModal ) currentModal.close();
+      currentModal = null;
     }
 
     async function handleOffline() {
-      showModal(getErrorMessage("OFFLINE"));
+      showModal(getMsg("OFFLINE"));
 
       await awaitInternetConnection();
 
       showModal(
-        getErrorMessage("ONLINE"),
-        getErrorMessage("RETRYING"),
+        getMsg("ONLINE"),
+        getMsg("RETRYING_NOW"),
       );
 
       const response = await runRequest();
@@ -178,19 +194,22 @@ function Handli(options_global={}) {
     async function handlePeriodicRetry(message, devMessage) {
       showModal(
         message,
-        getErrorMessage("RETRY_IN")(timeLeft)
-        devMessage
+        devMessage,
       );
 
       await wait(timeLeft => {
         showModal(
           message,
-          getErrorMessage("RETRY_IN")(timeLeft)
-          devMessage
+          getMsg("RETRYING_IN")(timeLeft),
+          devMessage,
         );
       });
 
-      currentModal.updateModal(getModalMessage(message, "Retrying now...", devMessage));
+      showModal(
+        message,
+        getMsg("RETRYING_NOW"),
+        devMessage,
+      );
 
       const response = await runRequest();
       return response;
@@ -230,11 +249,11 @@ function Handli(options_global={}) {
       return options_default[optionName];
     }
 
-    function getErrorMessage(errorCode) {
-      const errorMessages = getOption('errorMessages');
-      const errorMessage = errorMessages[errorCode];
-      assert.internal(errorMessage);
-      return errorMessage;
+    function getMsg(msgCode) {
+      const messages = getOption('messages');
+      const message = messages[msgCode];
+      assert.internal(message);
+      return message;
     }
   }
 }

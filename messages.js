@@ -3,6 +3,6 @@ module.exports = {
   BUG: "There was a problem.",
   OFFLINE: "You are offline. Go online to proceed.",
   ONLINE: "You are back online.",
-  RETRYING: "Retrying...",
-  RETRY_IN: seconds => "Retrying in "+seconds+".",
+  RETRYING_NOW: "Retrying...",
+  RETRYING_IN: seconds => "Retrying in "+seconds+".",
 };
