@@ -8,8 +8,8 @@ const console = new Console();
 
 const offlineSimulator = {
   install: () => {
-    handliOptions.alwaysAvailableResources = ['/fake-always-available-resource'];
-    fetch = () => fetch_original('/does-not-exist');
+    handliOptions.alwaysAvailableResources = ['fake-always-available-resource'];
+    fetch = () => fetch_original('does-not-exist');
   },
   remove: () => {
     delete handliOptions.alwaysAvailableResources;
@@ -29,7 +29,7 @@ setTimeout(() => {
 }, 4000);
 
 const response = await handli(
-  () => fetch('/data.json')
+  () => fetch('data.json')
 );
 
 console.log(

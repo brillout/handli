@@ -21,7 +21,7 @@ function LiveDemo() {
     <React.Fragment>
       <h1>
         <img
-          src="/logo.svg"
+          src="logo.svg"
           height="34"
           style={{marginRight: 10, marginBottom: -5}}
           alt="Handli"

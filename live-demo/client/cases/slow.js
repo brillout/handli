@@ -8,8 +8,8 @@ const console = new Console();
 
 const slowInternet = {
   install: () => {
-    handliOptions.alwaysAvailableResources = ['/fake-always-available-resource'];
-    fetch = () => fetch_original('/does-not-exist');
+    handliOptions.alwaysAvailableResources = ['fake-always-available-resource'];
+    fetch = () => fetch_original('does-not-exist');
   },
 };
 
@@ -21,7 +21,7 @@ async function run() {
 slowInternetSimulator.install();
 
 const response = await handli(
-  () => fetch('/data.json')
+  () => fetch('data.json')
 );
 
 console.log(

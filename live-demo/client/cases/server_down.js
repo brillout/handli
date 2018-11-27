@@ -28,7 +28,7 @@ setTimeout(() => {
 }, 7000);
 
 const response = await handli(
-  () => fetch('/data.json')
+  () => fetch('data.json')
 );
 
 console.log(

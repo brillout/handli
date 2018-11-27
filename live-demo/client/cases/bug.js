@@ -6,7 +6,7 @@ export {console};
 
 const serverErrorSimulator = {
   install: () => {
-    fetch = () => fetch_original('/does-not-exist');
+    fetch = () => fetch_original('does-not-exist');
   },
   remove: () => {
     fetch = fetch_original;
@@ -27,7 +27,7 @@ setTimeout(() => {
 }, 4000);
 
 const response = await handli(
-  () => fetch('/data.json')
+  () => fetch('data.json')
 );
 
 console.log(

@@ -157,7 +157,7 @@ function Handli(options_global={}) {
 
       /*
       const untrustedHtml = encodeURIComponent(bodyText);
-      return '<iframe src="/displayUntrustedHtml?untrustedHtml='+untrustedHtml+'"></iframe>';
+      return '<iframe src="displayUntrustedHtml?untrustedHtml='+untrustedHtml+'"></iframe>';
       */
     }
 
