@@ -1,8 +1,10 @@
+<br/>
 <p align="center">
 <a href="/../../#readme">
 <img src="https://github.com/brillout/handli/raw/master/logo.svg?sanitize=true" height="34" alt="Handli"/>
 </a>
 </p>
+<br/>
 
 Handli is a small JavaScript library that **handles network corner cases** for you.
 
@@ -32,4 +34,4 @@ and, as your prototype grows into a large application,
 **progressively replace Handli with a custom network handling implementation**.
 
 Live demo / usage manual:
-(**brillout.github.com/handli**)[https://brillout.github.com/handli].
+[**brillout.github.com/handli**](https://brillout.github.com/handli).
