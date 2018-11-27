@@ -1,0 +1,10 @@
+<body></body>
+<script>
+  var url = new URL(window.location.href);
+  var untrustedHtml = (
+    decodeURIComponent(
+      url.searchParams.get("untrustedHtml")
+    )
+  );
+  document.body.innerHTML = untrustedHtml;
+</script>
