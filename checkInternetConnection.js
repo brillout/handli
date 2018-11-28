@@ -14,7 +14,6 @@ async function checkInternetConnection(timeout) {
   if( noLanConnection() ) {
     noInternet = true;
   } else {
-  console.log(timeout);
     fastestPing = await getFastestPing(timeout);
     assert.internal(fastestPing===null || fastestPing>=0);
     if( fastestPing===null ) {
@@ -22,8 +21,10 @@ async function checkInternetConnection(timeout) {
     }
   }
 
+  /*
   console.log(noInternet);
   console.log(fastestPing);
+  */
 
   return {
     noInternet,
@@ -60,10 +61,14 @@ async function awaitLanConnection() {
 }
 async function getFastestPing(timeout) {
   const fastestPing = await PromiseRaceSuccess([
-    pingImage('https://google.com/favicon.ico', timeout),
-    pingImage('https://amazon.com/favicon.ico', timeout),
-    pingImage('https://apple.com/favicon.ico', timeout),
-    pingImage('https://facebook.com/favicon.ico', timeout),
+    pingImage('https://www.google.com/favicon.ico', timeout),
+    pingImage('https://www.facebook.com/favicon.ico', timeout),
+    pingImage('https://www.cloudflare.com/favicon.ico', timeout),
+    pingImage('https://www.amazon.com/favicon.ico', timeout),
+    /*
+    pingImage('https://www.apple.com/favicon.ico', timeout),
+    pingImage('https://www.microsoft.com/favicon.ico', timeout),
+    */
   ]);
   assert.internal(fastestPing===null || fastestPing>=0);
   return fastestPing;
@@ -76,21 +81,23 @@ function PromiseRaceSuccess(promises) {
     promises
     .map(async pingPromise => {
       const rtt = await pingPromise;
-      assert.internal(rtt===null || rtt>=0);
-      console.log(pingPromise);
+      /*
       console.log(rtt, pingPromise.imgUrl);
+      */
+      assert.internal(rtt===null || rtt>=0);
       if( rtt ) {
         resolve(rtt);
       }
     })
   )
   .then(() => {
-    resolve(true);
+    resolve(null);
   });
   return racePromise;
 }
-async function pingImage(imgUrl, timeout) {
+function pingImage(imgUrl, timeout) {
   assert.internal(imgUrl);
+  let resolve;
   const pingPromise = new Promise(r => resolve=r);
   const img = document.createElement('img');
 
@@ -98,13 +105,11 @@ async function pingImage(imgUrl, timeout) {
   img.onerror = () => resolve(null);
   if( timeout ) setTimeout(() => resolve(null), timeout);
 
-  const start = new Date();
-  const epochTime = new Date().getTime();
-  const src = imgUrl + '?_=' + epochTime;
+  const start = new Date().getTime();
+  const src = imgUrl + '?_=' + start;
   img.src = src;
 
   pingPromise.imgUrl = src;
-  console.log('d', pingPromise.imgUrl);
 
   return pingPromise;
 }

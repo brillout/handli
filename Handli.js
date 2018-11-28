@@ -9,8 +9,8 @@ function Handli(options_global={}) {
     timeout: null,
     timeoutServer: null,
     timeoutInternet: null,
-    thresholdSlowInternet: 200,
-    thresholdNoInternet: 600,
+    thresholdSlowInternet: 400,
+    thresholdNoInternet: 800,
   };
 
   return handli;
@@ -44,14 +44,17 @@ function Handli(options_global={}) {
     return response;
 
     async function runRequest() {
-      const NO_RESPONSE = Symbol();
-      let response = NO_RESPONSE;
+      const NO_RESPONSE_YET = Symbol();
+      let response = NO_RESPONSE_YET;
       const responsePromise = requestFunction();
 
       handleConnectionStatus();
-      handleSlowInternet();
-      handleSlowServer();
+      handleFlakyInternet();
+      handleFlakyServer();
 
+      /*
+      const start = new Date();
+      */
       try {
         response = await responsePromise;
       } catch(err) {
@@ -61,7 +64,7 @@ function Handli(options_global={}) {
       }
       assert_response(response);
       /*
-      console.log(response, await response.text(), response.ok, response.status);
+      console.log(response.url, response.ok, response.status, new Date() - start);
       */
 
       if( isErrorResponse(response) ) {
@@ -106,31 +109,36 @@ function Handli(options_global={}) {
         const connectionStatus = await connectionStatusPromise;
         return connectionStatus;
       }
-      function handleSlowInternet() {
+      function handleFlakyInternet() {
         const timeout = getInternetTimeout();
         if( ! timeout ) return;
         setTimeout(async () => {
-          if( response!==NO_RESPONSE ) return;
+          if( response!==NO_RESPONSE_YET ) return;
 
-          const {noInternet, slowInternet} = await getConnectionInfo();
-          if( response!==NO_RESPONSE ) return;
-          if( noInternet ) return;
-          if( !slowInternet ) return;
+          const {noInternet, slowInternet, awaitInternetConnection} = await getConnectionInfo();
+          if( response!==NO_RESPONSE_YET ) return;
 
-          showWarningModal(
-            getMsg('SLOW_INTERNET'),
-            getMsg('RETRYING_STILL'),
-          );
+          if( noInternet ) {
+            showWarningModal(
+              getMsg("OFFLINE_PROBABLY"),
+              getMsg('RETRYING_STILL'),
+            )
+          } else if( slowInternet ) {
+            showWarningModal(
+              getMsg('SLOW_INTERNET'),
+              getMsg('RETRYING_STILL'),
+            );
+          }
         }, timeout);
       }
-      function handleSlowServer() {
+      function handleFlakyServer() {
         const timeout = getServerTimeout();
         if( ! timeout ) return;
         setTimeout(async () => {
-          if( response!==NO_RESPONSE ) return;
+          if( response!==NO_RESPONSE_YET ) return;
 
           const {noInternet, slowInternet} = await getConnectionInfo();
-          if( response!==NO_RESPONSE ) return;
+          if( response!==NO_RESPONSE_YET ) return;
           if( noInternet ) return;
           if( slowInternet ) return;
 
