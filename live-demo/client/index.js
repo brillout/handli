@@ -44,8 +44,8 @@ function Intro() {
   );
   return (
     <div>
-      <div className="cls_cases">
-        <Case title={'Expected'} className='cls_expected'>
+      <Columns>
+        <Column title={'Expected'} className='cls_green'>
           <CaseExplanation>
             When the request succeeds or
             the request fails but your code handles the error.
@@ -54,8 +54,8 @@ function Intro() {
           Handli does nothing and simply returns what your request function returns.
           </p>
           <Examples examples={examples.expected}/>
-        </Case>
-        <Case title={'Flaky Internet Connection'} className='cls_internet'>
+        </Column>
+        <Column title={'Flaky Internet Connection'} className='cls_yellow'>
           <CaseExplanation>
             When the user is offline or
             has a poor internet connection.
@@ -66,8 +66,8 @@ function Intro() {
           The request is retried when the user reconnects.
           </p>
           <Examples examples={examples.connection}/>
-        </Case>
-        <Case title={'Bug'} className='cls_bug'>
+        </Column>
+        <Column title={'Bug'} className='cls_red'>
           <CaseExplanation>
             When your server is not replying
             or
@@ -79,18 +79,38 @@ function Intro() {
           The request is periodically retried.
           </p>
           <Examples examples={examples.bug}/>
-        </Case>
+        </Column>
+      </Columns>
+      <div className="cls_gray">
+        <ColumnTitle>Options</ColumnTitle>
       </div>
+      <Columns className="cls_gray">
+        <Column>
+          <Examples examples={examples.bug}/>
+        </Column>
+        <Column>
+          <Examples examples={examples.bug}/>
+        </Column>
+        <Column>
+          <Examples examples={examples.bug}/>
+        </Column>
+      </Columns>
     </div>
   );
 }
 function InlineCode({children}) {
   return <pre><code>{children}</code></pre>;
 }
-function Case({title, children, className}) {
+function Columns({children, className=''}) {
+  return <div className={"cls_columns "+className}>{children}</div>;
+}
+function ColumnTitle({children, ...props}) {
+  return <h2 {...props}>{children}</h2>;
+}
+function Column({title, children, className=''}) {
   return (
-    <div className={className+" cls_case"}>
-      <h2>{title}</h2>
+    <div className={className+" cls_column"}>
+      {title && <ColumnTitle>{title}</ColumnTitle>}
       {children}
     </div>
   );

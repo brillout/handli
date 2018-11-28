@@ -7,7 +7,7 @@ body > div {
 body > div > div {
   margin-bottom: 30px;
 }
-.cls_cases {
+.cls_columns {
   display: flex;
   justify-content: space-around;
   width: 100vw;
@@ -23,11 +23,11 @@ body > div > div {
   padding-left: 15px;
 }
 */
-.cls_case {
+.cls_column {
   padding: 7px;
   width: 400px;
 }
-.cls_case h3 {
+.cls_column h3 {
   margin-top: 50px;
 }
 
@@ -95,24 +95,30 @@ body > div > div {
 }
 */
 
-.cls_case h2,
-.cls_case h3 {
+
+
+h2,
+h3 {
   border-width: 0 0 0 5px;
   border-style: solid;
 	margin-left: -5px;
 	padding-left: 5px;
 }
-.cls_expected h2,
-.cls_expected h3 {
+.cls_green h2,
+.cls_green h3 {
   border-color: #00ff008f;
 }
-.cls_internet h2,
-.cls_internet h3 {
+.cls_yellow h2,
+.cls_yellow h3 {
   border-color: #ffff0090;
 }
-.cls_bug h2,
-.cls_bug h3 {
+.cls_red h2,
+.cls_red h3 {
   border-color: #ff000071;
+}
+.cls_gray h2,
+.cls_gray h3 {
+  border-color: gray;
 }
 
 
