@@ -21,10 +21,7 @@ const console = new Console();
 
 async function run() {
 serverErrorSimulator.install();
-
-setTimeout(() => {
-  serverErrorSimulator.remove();
-}, 4000);
+setTimeout(serverErrorSimulator.remove, 2000);
 
 const response = await handli(
   () => fetch('data.json')

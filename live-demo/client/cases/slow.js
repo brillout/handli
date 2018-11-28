@@ -8,10 +8,12 @@ const console = new Console();
 
 const slowInternetSimulator = {
   install: () => {
-    handliOptions.checkInternetConnection = () => {
+    handliOptions.checkInternetConnection = async () => {
+      const fastestPing = 500;
+      wait(fastestPing/1000);
       return {
         noInternet: false,
-        slowInternet: true,
+        fastestPing,
       };
     };
     fetch = async url => {
@@ -32,7 +34,7 @@ const response = await handli(
   () => fetch('data.json'),
   // If you provide a timeout then
   // Handli shows a warning modal.
-  {timeout: 1} // Timeout of 1 second
+  {timeout: 1000} // Timeout of 1 second
 );
 
 console.log(

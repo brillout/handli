@@ -22,7 +22,7 @@ function showMessages(html, isWarning) {
   Object.assign(modalBodyEl.style, {
     padding: '10px 20px',
     borderRadius: '5px',
-    borderWidth: '0 0 0 11px',
+    borderWidth: '0 0 0 10px',
     borderStyle: 'solid',
     borderColor: isWarning ? '#fff252' : '#ff6868',
     background: 'white',

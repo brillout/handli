@@ -48,7 +48,6 @@ function Handli(options_global={}) {
       let response = NO_RESPONSE;
       const responsePromise = requestFunction();
 
-      let connectionStatusPromise;
       handleConnectionStatus();
       handleSlowInternet();
       handleSlowServer();
@@ -58,7 +57,7 @@ function Handli(options_global={}) {
       } catch(err) {
         response = null;
         console.error(err);
-        return handleNoConnection();
+        return handleNoConnection(await getConnectionStatus());
       }
       assert_response(response);
       /*
@@ -94,12 +93,21 @@ function Handli(options_global={}) {
         );
 
         setTimeout(
-          () => connectionStatusPromise = checkInternetConnection(thresholdNoInternet),
+          () => getConnectionStatus(),
           checkTimeout
         );
       }
+      var connectionStatusPromise;
+      async function getConnectionStatus() {
+        if( ! connectionStatusPromise ) {
+          const thresholdNoInternet = getOption('thresholdNoInternet');
+          connectionStatusPromise = getOption('checkInternetConnection')(thresholdNoInternet);
+        }
+        const connectionStatus = await connectionStatusPromise;
+        return connectionStatus;
+      }
       function handleSlowInternet() {
-        const timeout = getOption('timeoutInternet') || getOption('timeout');
+        const timeout = getInternetTimeout();
         if( ! timeout ) return;
         setTimeout(async () => {
           if( response!==NO_RESPONSE ) return;
@@ -113,10 +121,10 @@ function Handli(options_global={}) {
             getMsg('SLOW_INTERNET'),
             getMsg('RETRYING_STILL'),
           );
-        }, timeout*1000);
+        }, timeout);
       }
       function handleSlowServer() {
-        const timeout = getOption('timeoutServer') || getOption('timeout');
+        const timeout = getServerTimeout();
         if( ! timeout ) return;
         setTimeout(async () => {
           if( response!==NO_RESPONSE ) return;
@@ -130,11 +138,11 @@ function Handli(options_global={}) {
             getMsg('SLOW_SERVER'),
             getMsg('RETRYING_STILL'),
           );
-        }, timeout*1000);
+        }, timeout);
       }
       async function getConnectionInfo() {
         assert.internal(connectionStatusPromise);
-        const connectionStatus = await connectionStatusPromise;
+        const connectionStatus = await getConnectionStatus();
         const {noInternet, fastestPing} = connectionStatus;
         assert.internal([true, false].includes(noInternet));
         assert.internal(noInternet===true || fastestPing>=0);
@@ -188,10 +196,11 @@ function Handli(options_global={}) {
       await new Promise();
     }
 
-    async function handleNoConnection() {
-      const {noInternet} = await checkInternetConnection();
+    async function handleNoConnection({noInternet, awaitInternetConnection}) {
+      assert.internal([true, false].includes(noInternet));
+      assert.internal(awaitInternetConnection);
       if( noInternet ) {
-        return handleOffline();
+        return handleOffline(awaitInternetConnection);
       } else {
         return handleBug();
       }
@@ -202,7 +211,6 @@ function Handli(options_global={}) {
       let devMessage;
       if( getOption('devMode') ) {
         devMessage = await getDevMessage(response);
-        console.log(devMessage);
       }
       return handlePeriodicRetry(errorMessage, devMessage);
     }
@@ -290,7 +298,7 @@ function Handli(options_global={}) {
       currentModal = null;
     }
 
-    async function handleOffline() {
+    async function handleOffline(awaitInternetConnection) {
       showWarningModal(
         getMsg("OFFLINE"),
         getMsg("RETRYING_WHEN_ONLINE"),
@@ -364,128 +372,17 @@ function Handli(options_global={}) {
       }
       return options_default[optionName];
     }
-
     function getMsg(msgCode) {
       const messages = getOption('messages');
       const message = messages[msgCode];
       assert.internal(message);
       return message;
     }
-  }
-}
-
-async function noInternet() {
-  return true;
-  return !window.navigator.onLine;
-}
-async function slowInternet() {
-  return true;
-}
-
-async function checkInternetConnection(timeout) {
-  let noInternet;
-  let fastestPing;
-  let awaitInternetConnection;
-
-  if( noLanConnection() ) {
-    noInternet = true;
-  } else {
-    fastestPing = await getFastestPing(timeout);
-    assert.internal(fastestPing===null || fastestPing>=0);
-    if( fastestPing===null ) {
-      noInternet = true;
+    function getInternetTimeout() {
+      return getOption('timeoutInternet') || getOption('timeout');
+    }
+    function getServerTimeout() {
+      return getOption('timeoutServer') || getOption('timeout');
     }
   }
-
-  return {
-    noInternet,
-    fastestPing,
-  }
-}
-function noLanConnection() {
-  return window.navigator.onLine===false;
-}
-function hasLanConnection() {
-  return window.navigator.onLine===true;
-}
-function noLanConnectionInfo() {
-  return ![true, false].includes(window.navigator.onLine);
-}
-async function awaitInternetConnection() {
-  await awaitLanConnection();
-  await awaitPing();
-}
-async function awaitLanConnection() {
-  if( hasLanConnection() ) {
-    return;
-  }
-  if( noLanConnectionInfo() ) {
-    return;
-  }
-
-  let resolve;
-  const promise = new Promise(r => resolve=r);
-  window.addEventListener('online', resolve);
-
-  await promise;
-}
-async function getFastestPing(timeout) {
-  const start = new Date();
-  const allRejected = await PromiseRaceSuccess([
-    pingImage('https://google.com/favicon.ico', timeout),
-    pingImage('https://amazon.com/favicon.ico', timeout),
-    pingImage('https://apple.com/favicon.ico', timeout),
-    pingImage('https://facebook.com/favicon.ico', timeout),
-  ]);
-  assert.internal([true, false].includes(allRejected));
-  if( allRejected ) return null;
-  return new Date() - start;
-}
-function PromiseRaceSuccess(promises) {
-  // Promise.race doesn't ignore rejected promises
-  let resolve;
-  const racePromise = new Promise(r => resolve=r);
-  Promise.all(
-    promises
-    .map(async pingPromise => {
-      const success = await pingPromise;
-      assert.internal([true, false].includes(success));
-      if( success ) {
-        resolve();
-      }
-    })
-  )
-  .then(() => {
-    resolve(true);
-  });
-  return racePromise;
-}
-async function pingImage(imgUrl, timeout) {
-  assert.internal(imgUrl);
-  assert.internal(timeout);
-  const pingPromise = new Promise(r => resolve=r);
-  const img = document.createElement('img');
-
-  img.onload = () => resolve(true);
-  img.onerror = () => resolve(false);
-  if( timeout ) setTimeout(() => resolve(false), timeout);
-
-  const epochTime = new Date().getTime();
-  img.src = imgUrl + '?_=' + epochTime;
-
-  return pingPromise;
-}
-async function awaitPing() {
-  while(true) {
-    const fastestPing = await getFastestPing();
-    assert.internal(fastestPing===null || fastestPing>=0);
-    if( fastestPing !== null ) return;
-    await wait(0.5);
-  }
-}
-function wait(seconds) {
-  let resolve;
-  const p = new Promise(r => resolve=r);
-  setTimeout(resolve, seconds*1000);
-  return p;
 }
