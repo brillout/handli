@@ -10,7 +10,7 @@ function Handli(options_global={}) {
 
   return handli;
 
-  var requestIsPending;
+  var pendingRequest;
   async function handli(requestFunction, options_local={}) {
 
     assert.usage(
@@ -22,35 +22,35 @@ function Handli(options_global={}) {
       return requestFunction();
     };
 
-    if( requestIsPending ) {
+    if( pendingRequest ) {
       await handleOverflow();
     }
 
-    requestIsPending = true;
+    pendingRequest = true;
     let response;
     try {
       response = await runRequest();
     } finally {
-      requestIsPending = false;
+      pendingRequest = false;
     }
+
+    closeModal();
 
     return response;
 
     async function runRequest() {
       let response;
+      const responsePromise = requestFunction();
       try {
-        const responsePromise = requestFunction();
         response = await responsePromise;
       } catch(err) {
         console.error(err);
-        closeModal();
         return handleNoConnection();
       }
-
+      assert_response(response);
       /*
       console.log(response, await response.text(), response.ok, response.status);
       */
-      closeModal();
 
       if( isErrorResponse(response) ) {
         console.error(response);
@@ -60,25 +60,33 @@ function Handli(options_global={}) {
       return response;
     }
 
-    function isErrorResponse(response) {
-      // TODO-eventually: This is too loose, make a stricter check to avoid conflict
-      const isFetchResponse = response instanceof Object && ('ok' in response || 'status' in response);
+    function assert_response(response) {
+      if( !isFetchLikeResponse(response) ) {
+        return;
+      }
 
-      if( ! isFetchResponse ) {
+      const isSuccessCode = 200 <= response.status && response.status <= 299;
+
+      assert.warning(
+        isSuccessCode === response.ok,
+        "Unexpected response object. Are you using a fetch-like library?"
+      );
+    }
+    function isFetchLikeResponse(response) {
+      const yes = response instanceof Object && 'ok' in response && 'status' in response;
+      return yes;
+    }
+    function isErrorResponse(response) {
+      if( ! isFetchLikeResponse(response) ) {
         return false;
       }
 
       const isSuccessCode = 200 <= response.status && response.status <= 299;
 
-      if( response.ok===false || !isSuccessCode ) {
-        return true;
-      }
-
-      return false;
+      return !isSuccessCode;
     }
 
     async function handleOverflow() {
-      closeModal();
       showModal(
         getMsg('BUG'),
         getMsg('RETRY_MANUALLY'),

@@ -11,7 +11,7 @@ async function run() {
 const err = await handli(async () => {
   try {
     return await (
-      fetch('http://void.example.org')
+      fetch('http://doesnt-exist.example.org')
     );
   } catch(err) {
     return "This error is handled!";

@@ -71,7 +71,7 @@ function Intro() {
           <CaseExplanation>
             When your server is not replying
             or
-            replies with an error that is not handled by your code.
+            replies an error that is not handled by your code.
           </CaseExplanation>
           <p>
           {handliBehavior}
@@ -191,7 +191,7 @@ function Example({example: [codeSource, codeModule, title, description]}) {
 }
 
 function ResultView({codeModule}) {
-  const [history, setHistory] = useState(codeModule.console.history);
+  const [history, setHistory] = useState([]);
 
   return (
     <React.Fragment>
@@ -221,16 +221,21 @@ function ResultView({codeModule}) {
             float: 'right',
             */
           }}
-          onClick={onClick}
+          onClick={onRun}
         >Run</button>
       </div>
-      <pre><code>{history.join('\n')}</code></pre>
+      { history===null ? (
+          <em style={{color: '#aaa'}}>waiting result...</em>
+        ) : (
+          <pre><code>{history.join('\n')}</code></pre>
+        )
+      }
     </React.Fragment>
   );
 
-  async function onClick() {
+  async function onRun() {
+    setHistory(null);
     codeModule.console.history.length = 0;
-    setHistory(codeModule.console.history);
     await codeModule.run();
     setHistory(codeModule.console.history);
   }
