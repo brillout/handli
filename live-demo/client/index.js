@@ -97,7 +97,7 @@ function Intro() {
         </Column>
         <Column>
           <ColumnTitlePlaceholder/>
-          <Examples examples={examples.options1}/>
+          <Examples examples={examples.options3}/>
         </Column>
       </Columns>
     </div>
@@ -202,6 +202,16 @@ function getExamples() {
         'Retry Timer',
         <div>
           Customize when the request is retried.
+        </div>
+      ],
+    ],
+    options3: [
+      [
+        readFileSync(__dirname+'/cases/customModal.js', 'utf-8'),
+        require('./cases/customModal.js'),
+        'Custom Modal',
+        <div>
+          Customize how messages are shown to the user.
         </div>
       ],
     ],

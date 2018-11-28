@@ -1,9 +1,10 @@
 import {Console, getServerDownSimulator} from '../utils';
+import handli from 'handli';
 
 export {run};
 export {console};
 
-const {serverDownSimulator, fetch, handli} = getServerDownSimulator();
+const {serverDownSimulator, fetch} = getServerDownSimulator();
 const console = new Console();
 
 async function run() {

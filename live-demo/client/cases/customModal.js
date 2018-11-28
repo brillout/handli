@@ -1,5 +1,5 @@
 import {Console, getServerDownSimulator} from '../utils';
-import handli from 'handli';
+import Handli from 'handli/Handli';
 
 export {run};
 export {console};
@@ -10,6 +10,8 @@ const console = new Console();
 async function run() {
 serverDownSimulator.install();
 setTimeout(serverDownSimulator.remove, 3000);
+
+const handli = new Handli();
 
 const response = await handli(
   () => fetch('data.json'),
