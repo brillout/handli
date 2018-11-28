@@ -8,11 +8,17 @@ const console = new Console();
 
 async function run() {
 serverDownSimulator.install();
-setTimeout(serverDownSimulator.remove, 3000);
+setTimeout(serverDownSimulator.remove, 5000);
+
+const retryTimer = (
+  seconds => seconds ? seconds+1 : 1
+);
 
 const response = await handli(
-  () => fetch('data.json')
+  () => fetch('data.json'),
+  {retryTimer}
 );
+
 
 console.log(
   "+++ Response +++",

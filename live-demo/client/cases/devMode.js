@@ -11,8 +11,10 @@ serverDownSimulator.install();
 setTimeout(serverDownSimulator.remove, 3000);
 
 const response = await handli(
-  () => fetch('data.json')
+  () => fetch('data.json'),
+  {devMode: true}
 );
+
 
 console.log(
   "+++ Response +++",

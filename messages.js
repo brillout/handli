@@ -9,5 +9,5 @@ module.exports = {
   RETRY_MANUALLY: "Please reload and retry.",
   RETRYING_WHEN_ONLINE: "Reconnect to the internet to proceed.",
   RETRYING_NOW: "Retrying...",
-  RETRYING_IN: seconds => "Retrying in "+seconds+".",
+  RETRYING_IN: seconds => "Retrying in "+seconds+" second"+(seconds===1?'':'s')+".",
 };

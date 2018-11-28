@@ -11,6 +11,7 @@ function Handli(options_global={}) {
     timeoutInternet: null,
     thresholdSlowInternet: 400,
     thresholdNoInternet: 800,
+    retryTimer: seconds => !seconds ? 3 : Math.ceil(seconds*1.5),
   };
 
   return handli;
@@ -350,17 +351,21 @@ function Handli(options_global={}) {
     function getModalMessage(message, statusMessage, devMessage) {
     }
 
-    var attempts;
+    var previousSeconds;
     function wait(timeListener) {
-      attempts = attempts || 0;
-      let secondsLeft = 5*Math.pow(2, attempts++)+1;
+      const seconds = getOption('retryTimer')(previousSeconds);
+      assert.usage(
+        seconds>0 && (previousSeconds===undefined || seconds>=previousSeconds),
+        "Wrong `retryTimer`",
+      );
+      let secondsLeft = previousSeconds = seconds;
       const callListener = () => {
-        --secondsLeft;
         if( secondsLeft===0 ) {
           resolve();
           return;
         }
-        timeListener(secondsLeft+" seconds");
+        timeListener(secondsLeft);
+        --secondsLeft;
         window.setTimeout(callListener, 1000);
       };
       let resolve;

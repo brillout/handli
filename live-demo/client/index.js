@@ -81,18 +81,23 @@ function Intro() {
           <Examples examples={examples.bug}/>
         </Column>
       </Columns>
-      <div className="cls_gray">
-        <ColumnTitle>Options</ColumnTitle>
+      {/*
+      <div className="cls_gray" style={{textAlign: 'center'}}>
+        <ColumnTitle style={{display: 'inline-block'}}>Options</ColumnTitle>
       </div>
+      */}
       <Columns className="cls_gray">
         <Column>
-          <Examples examples={examples.bug}/>
+          <ColumnTitle>Options</ColumnTitle>
+          <Examples examples={examples.options1}/>
         </Column>
         <Column>
-          <Examples examples={examples.bug}/>
+          <ColumnTitlePlaceholder/>
+          <Examples examples={examples.options2}/>
         </Column>
         <Column>
-          <Examples examples={examples.bug}/>
+          <ColumnTitlePlaceholder/>
+          <Examples examples={examples.options1}/>
         </Column>
       </Columns>
     </div>
@@ -106,6 +111,9 @@ function Columns({children, className=''}) {
 }
 function ColumnTitle({children, ...props}) {
   return <h2 {...props}>{children}</h2>;
+}
+function ColumnTitlePlaceholder() {
+  return <ColumnTitle style={{opacity: 0}}>I'm invisible</ColumnTitle>;
 }
 function Column({title, children, className=''}) {
   return (
@@ -173,6 +181,27 @@ function getExamples() {
         'Server Down',
         <div>
           When the server isn't replying.
+        </div>
+      ],
+    ],
+    options1: [
+      [
+        readFileSync(__dirname+'/cases/devMode.js', 'utf-8'),
+        require('./cases/devMode.js'),
+        'Dev Mode',
+        <div>
+          Show debug info.
+          Defaults to `true` when URL is `localhost`.
+        </div>
+      ],
+    ],
+    options2: [
+      [
+        readFileSync(__dirname+'/cases/retryTimer.js', 'utf-8'),
+        require('./cases/retryTimer.js'),
+        'Retry Timer',
+        <div>
+          Customize when the request is retried.
         </div>
       ],
     ],
