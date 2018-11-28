@@ -1,6 +1,6 @@
-module.exports = showModal;
+module.exports = showMessages;
 
-function showModal(html) {
+function showMessages(html, isWarning) {
   const modalEl = window.document.createElement('div');
   const id = '@brillout/fetch-error-handler/modal';
   modalEl.id = id;
@@ -22,10 +22,14 @@ function showModal(html) {
   Object.assign(modalBodyEl.style, {
     padding: '10px 20px',
     borderRadius: '5px',
+    borderWidth: '0 0 0 11px',
+    borderStyle: 'solid',
+    borderColor: isWarning ? '#fff252' : '#ff6868',
     background: 'white',
     display: 'flex',
   });
 
+  /*
   const modalImageEl = window.document.createElement('div');
   modalBodyEl.appendChild(modalImageEl);
   modalImageEl.innerHTML = "\u26A0";
@@ -33,6 +37,7 @@ function showModal(html) {
     fontSize: '3em',
     paddingRight: '20px',
   });
+  */
 
   const modalContentEl = window.document.createElement('div');
   modalBodyEl.appendChild(modalContentEl);

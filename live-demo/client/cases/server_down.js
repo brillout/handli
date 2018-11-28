@@ -23,9 +23,11 @@ const console = new Console();
 async function run() {
 serverDownSimulator.install();
 
+/*
 setTimeout(() => {
   serverDownSimulator.remove();
 }, 7000);
+*/
 
 const response = await handli(
   () => fetch('data.json')

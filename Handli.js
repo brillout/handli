@@ -87,7 +87,7 @@ function Handli(options_global={}) {
     }
 
     async function handleOverflow() {
-      showModal(
+      showErrorModal(
         getMsg('BUG'),
         getMsg('RETRY_MANUALLY'),
       );
@@ -114,7 +114,7 @@ function Handli(options_global={}) {
 
     async function getDevMessage(response) {
       let devMessage = "<br/>-------------------------- debug info --------------------------";
-      devMessage += '<br/><small style="color: #777">(debug info is only shown in developer mode)</small><br/><br/>';
+      devMessage += '<br/><small style="color: #777">(shown only in dev mode, see <a target="_blank" href="https://github.com/brillout/handli">github.com/brillout/handli</a>.)</small><br/><br/>';
 
       if( response && (response.status || response.statusText) ) {
         devMessage += (
@@ -174,13 +174,20 @@ function Handli(options_global={}) {
     }
 
     var currentModal;
-    function showModal(...messageHtmls) {
+    function showWarningModal(...args) {
+      _showModal(true, ...args);
+    }
+    function showErrorModal(...args) {
+      _showModal(false, ...args);
+    }
+    function _showModal(isWarning, ...messageHtmls) {
       const messageHtml = messageHtmls.filter(Boolean).join('<br/>');
 
-      if( currentModal ) {
+      if( currentModal && currentModal.isWarning===isWarning ) {
         currentModal.update(messageHtml);
       } else {
-        currentModal = getOption('showMessage')(messageHtml);
+        closeModal();
+        currentModal = getOption('showMessage')(messageHtml, isWarning);
       }
     }
     function closeModal() {
@@ -189,14 +196,14 @@ function Handli(options_global={}) {
     }
 
     async function handleOffline() {
-      showModal(
+      showWarningModal(
         getMsg("OFFLINE"),
         getMsg("RETRYING_WHEN_ONLINE"),
       );
 
       await awaitInternetConnection();
 
-      showModal(
+      showWarningModal(
         getMsg("ONLINE"),
         getMsg("RETRYING_NOW"),
       );
@@ -206,20 +213,20 @@ function Handli(options_global={}) {
     }
 
     async function handlePeriodicRetry(message, devMessage) {
-      showModal(
+      showErrorModal(
         message,
         devMessage,
       );
 
       await wait(timeLeft => {
-        showModal(
+        showErrorModal(
           message,
           getMsg("RETRYING_IN")(timeLeft),
           devMessage,
         );
       });
 
-      showModal(
+      showErrorModal(
         message,
         getMsg("RETRYING_NOW"),
         devMessage,
