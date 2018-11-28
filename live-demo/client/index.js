@@ -179,33 +179,53 @@ function Example({example: [codeSource, codeModule, title, description]}) {
     </div>
   );
 
-  const codeView = (
-    <div>{
-      ViewCode(codeSource)
-    }</div>
-  );
-
-  const resultView = (
-    <Result {...{codeModule}}/>
-  );
-
   return (
     <div className="cls_example">
       {textView}
-      {codeView}
-      {resultView}
+      <div className="cls_code_section">
+        {getCodView(codeSource)}
+        {<ResultView {...{codeModule}}/>}
+      </div>
     </div>
   );
 }
 
-function Result({codeModule}) {
+function ResultView({codeModule}) {
   const [history, setHistory] = useState(codeModule.console.history);
 
   return (
-    <div>
-      <button onClick={onClick}>Run</button>
+    <React.Fragment>
+      <div>
+        <span
+          style={{
+            textTransform: 'uppercase',
+            /*
+            fontSize: '1.1em',
+            fontWeight: 'bold',
+            letterSpacing: '1.01em',
+            float: 'left',
+            */
+            marginRight: 10,
+            fontSize: '14px',
+            fontWeight: 700,
+            letterSpacing: '1.12px',
+            color: '#afafaf',
+          }}
+        >
+          Result
+        </span>
+        <button
+          style={{
+            /*
+            textTransform: 'uppercase',
+            float: 'right',
+            */
+          }}
+          onClick={onClick}
+        >Run</button>
+      </div>
       <pre><code>{history.join('\n')}</code></pre>
-    </div>
+    </React.Fragment>
   );
 
   async function onClick() {
@@ -216,7 +236,7 @@ function Result({codeModule}) {
   }
 }
 
-function ViewCode(codeSource) {
+function getCodView(codeSource) {
   codeSource = stripContext(codeSource);
 
   const codeHtml = Prism.highlight(

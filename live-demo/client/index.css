@@ -126,3 +126,29 @@ html {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
+
+.cls_code_section {
+  margin-top: 0.5em;
+  display: grid;
+  background-color: #fcfcfc;
+  background-color: #fdfdfd;
+}
+.cls_code_section pre {
+  margin: 0;
+}
+.cls_code_section > * {
+  border-style: solid;
+  border-color: #ddd;
+  border-color: #f5f2f0;
+  border-width: 0 2px 0 2px;
+  padding: 5px 10px;
+}
+.cls_code_section > :first-child {
+  border-radius: 10px 10px 0 0;
+  border-width: 0;
+}
+.cls_code_section > :last-child {
+  border-radius: 0 0 10px 10px;
+  border-width: 0 2px 2px 2px;
+  min-height: 35px;
+}
