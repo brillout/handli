@@ -14,6 +14,7 @@ async function checkInternetConnection(timeout) {
   if( noLanConnection() ) {
     noInternet = true;
   } else {
+  console.log(timeout);
     fastestPing = await getFastestPing(timeout);
     assert.internal(fastestPing===null || fastestPing>=0);
     if( fastestPing===null ) {
@@ -58,16 +59,14 @@ async function awaitLanConnection() {
   await promise;
 }
 async function getFastestPing(timeout) {
-  const start = new Date();
-  const allRejected = await PromiseRaceSuccess([
+  const fastestPing = await PromiseRaceSuccess([
     pingImage('https://google.com/favicon.ico', timeout),
     pingImage('https://amazon.com/favicon.ico', timeout),
     pingImage('https://apple.com/favicon.ico', timeout),
     pingImage('https://facebook.com/favicon.ico', timeout),
   ]);
-  assert.internal([true, false].includes(allRejected));
-  if( allRejected ) return null;
-  return new Date() - start;
+  assert.internal(fastestPing===null || fastestPing>=0);
+  return fastestPing;
 }
 function PromiseRaceSuccess(promises) {
   // Promise.race doesn't ignore rejected promises
@@ -76,10 +75,12 @@ function PromiseRaceSuccess(promises) {
   Promise.all(
     promises
     .map(async pingPromise => {
-      const success = await pingPromise;
-      assert.internal([true, false].includes(success));
-      if( success ) {
-        resolve(false);
+      const rtt = await pingPromise;
+      assert.internal(rtt===null || rtt>=0);
+      console.log(pingPromise);
+      console.log(rtt, pingPromise.imgUrl);
+      if( rtt ) {
+        resolve(rtt);
       }
     })
   )
@@ -93,12 +94,17 @@ async function pingImage(imgUrl, timeout) {
   const pingPromise = new Promise(r => resolve=r);
   const img = document.createElement('img');
 
-  img.onload = () => resolve(true);
-  img.onerror = () => resolve(false);
-  if( timeout ) setTimeout(() => resolve(false), timeout);
+  img.onload = () => resolve(new Date() - start);
+  img.onerror = () => resolve(null);
+  if( timeout ) setTimeout(() => resolve(null), timeout);
 
+  const start = new Date();
   const epochTime = new Date().getTime();
-  img.src = imgUrl + '?_=' + epochTime;
+  const src = imgUrl + '?_=' + epochTime;
+  img.src = src;
+
+  pingPromise.imgUrl = src;
+  console.log('d', pingPromise.imgUrl);
 
   return pingPromise;
 }
