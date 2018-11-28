@@ -1,6 +1,6 @@
 {
   "name": "handli",
-  "description": "Automatic Network Handling",
+  "description": "Automatic handling of network corner cases",
   "version": "0.0.1",
   "dependencies": {
     "reassert": "^1.1.19"
