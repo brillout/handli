@@ -1,5 +1,6 @@
 export {fetch};
 export {Console};
+export {wait};
 
 async function fetch(url) {
   const response = await window.fetch(url);
@@ -15,4 +16,11 @@ function Console() {
     window.console.log(...args);
     history.push(args.join('\n'));
   }
+}
+
+function wait(seconds) {
+  let resolve;
+  const p = new Promise(r => resolve=r);
+  setTimeout(resolve, seconds*1000);
+  return p;
 }

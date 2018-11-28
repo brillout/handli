@@ -9,7 +9,7 @@ const console = new Console();
 const offlineSimulator = {
   install: () => {
     handliOptions.alwaysAvailableResources = ['fake-always-available-resource'];
-    fetch = () => fetch_original('does-not-exist');
+    fetch = () => fetch_original('http://non-existent-server.example.org/non-existent-resource');
   },
   remove: () => {
     delete handliOptions.alwaysAvailableResources;

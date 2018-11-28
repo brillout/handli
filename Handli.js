@@ -6,6 +6,9 @@ function Handli(options_global={}) {
 
   const options_default = {
     devMode: typeof window !== "undefined" && window.location && window.location.hostname==='localhost',
+    timeout: null,
+    timeoutServer: null,
+    timeoutInternet: null,
   };
 
   return handli;
@@ -39,11 +42,15 @@ function Handli(options_global={}) {
     return response;
 
     async function runRequest() {
-      let response;
+      const NO_RESPONSE = Symbol();
+      let response = NO_RESPONSE;
       const responsePromise = requestFunction();
+      handleSlowServer();
+      handleSlowInternet();
       try {
         response = await responsePromise;
       } catch(err) {
+        response = null;
         console.error(err);
         return handleNoConnection();
       }
@@ -58,6 +65,33 @@ function Handli(options_global={}) {
       }
 
       return response;
+
+      function handleSlowInternet() {
+        const timeout = getOption('timeout') || getOption('timeoutInternet');
+        if( ! timeout ) return;
+        setTimeout(async () => {
+          if( response!==NO_RESPONSE ) return;
+          if( !(await slowInternet()) ) return;
+          if( response!==NO_RESPONSE ) return;
+          showWarningModal(
+            getMsg('SLOW_INTERNET'),
+            getMsg('RETRYING_STILL'),
+          );
+        }, timeout*1000);
+      }
+      function handleSlowServer() {
+        const timeout = getOption('timeout') || getOption('timeoutServer');
+        if( ! timeout ) return;
+        setTimeout(async () => {
+          if( response!==NO_RESPONSE ) return;
+          if( await slowInternet() && !(await noInternet())  ) return;
+          if( response!==NO_RESPONSE ) return;
+          showErrorModal(
+            getMsg('SLOW_SERVER'),
+            getMsg('RETRYING_STILL'),
+          );
+        }, timeout*1000);
+      }
     }
 
     function assert_response(response) {
@@ -282,9 +316,6 @@ function Handli(options_global={}) {
 // TODO ping some always available resources to differiente between
 //  - no internet connection, and
 //  - server is down
-async function noInternet() {
-  return !window.navigator.onLine;
-}
 async function awaitInternetConnection() {
   if( ! await noInternet() ) {
     return;
@@ -298,4 +329,11 @@ async function awaitInternetConnection() {
   });
 
   return promise;
+}
+async function noInternet() {
+  return true;
+  return !window.navigator.onLine;
+}
+async function slowInternet() {
+  return true;
 }
