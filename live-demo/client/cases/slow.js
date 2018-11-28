@@ -33,7 +33,7 @@ slowInternetSimulator.install();
 const response = await handli(
   () => fetch('data.json'),
   // If you provide a timeout then
-  // Handli shows a warning modal.
+  // Handli handles slow connections.
   {timeout: 1000} // Timeout of 1 second
 );
 
