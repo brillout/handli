@@ -13,7 +13,8 @@ serverErrorSimulator.install();
 setTimeout(serverErrorSimulator.remove, 2000);
 
 const response = await handli(
-  () => fetch('data.json')
+  () => fetch('data.json'),
+  {messages: {BUG: 'Yo custom error'}}
 );
 
 console.log(

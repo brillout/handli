@@ -209,9 +209,17 @@ function getExamples() {
         require('./cases/custom-style/customStyle.js'),
         'Custom Style',
         <div>
-          Customize Handl's modal.
+          Customize Handli's modal.
         </div>,
         {codeLang: 'css', dontStrip: true}
+      ],
+      [
+        readFileSync(__dirname+'/cases/custom_text.js', 'utf-8'),
+        require('./cases/custom_text.js'),
+        'Custom Text',
+        <div>
+          Customize texts.
+        </div>,
       ],
     ],
     options3: [

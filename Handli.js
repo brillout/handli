@@ -382,22 +382,41 @@ function Handli(options_global={}) {
       return promise;
     }
 
-    function getOption(optionName) {
+    function getOption(prop, {required, subProp}={}) {
       assert.usage(options_global instanceof Object);
       assert.usage(options_local instanceof Object);
-      if( optionName in options_local ) {
-        return options_local[optionName];
-      }
-      if( optionName in options_global ) {
-        return options_global[optionName];
-      }
-      return options_default[optionName];
+
+      const val = (() => {
+        if( prop in options_local ) {
+          if( subProp ) {
+            if( subProp in options_local[prop] ) {
+              return options_local[prop][subProp];
+            }
+          } else {
+            return options_local[prop];
+          }
+        }
+        if( prop in options_global ) {
+          if( subProp ) {
+            if( subProp in options_global[prop] ) {
+              return options_global[prop][subProp];
+            }
+          } else {
+            return options_global[prop];
+          }
+        }
+        if( subProp ) {
+          return options_default[prop] && options_default[prop][subProp];
+        } else {
+          return options_default[prop];
+        }
+      })();
+
+      assert.internal(!required || val, {val, prop, subProp});
+      return val;
     }
     function getMsg(msgCode) {
-      const messages = getOption('messages');
-      const message = messages[msgCode];
-      assert.internal(message);
-      return message;
+      return getOption('messages', {subProp: msgCode, required: true});
     }
     function getInternetTimeout() {
       return getOption('timeoutInternet') || getOption('timeout');
