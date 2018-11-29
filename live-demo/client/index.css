@@ -159,3 +159,7 @@ html {
   min-height: 35px;
   padding-bottom: 11px;
 }
+
+pre {
+  overflow: auto;
+}

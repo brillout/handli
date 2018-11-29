@@ -299,7 +299,12 @@ function Handli(options_global={}) {
         currentModal.update(messageHtml);
       } else {
         closeModal();
-        currentModal = getOption('showMessage')(messageHtml, isWarning);
+        const {update, close} = getOption('showMessage')(messageHtml, isWarning);
+        currentModal = {
+          isWarning,
+          update,
+          close,
+        };
       }
     }
     function closeModal() {

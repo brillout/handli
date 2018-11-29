@@ -15,8 +15,9 @@
     "handli": "*",
     "parcel": "^1.10.3",
     "prismjs": "^1.15.0",
-    "react": "^16.7.0-alpha.2",
-    "react-dom": "^16.7.0-alpha.2"
+    "react": "16.7.0-alpha.2",
+    "react-dom": "16.7.0-alpha.2",
+    "react-toastify": "^4.4.3"
   },
   "devDependencies": {
     "parcel-plugin-static-files-copy": "^1.2.4",
