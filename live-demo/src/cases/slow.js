@@ -18,12 +18,12 @@ const slowInternetSimulator = {
     };
     fetch = async url => {
       await wait(3);
-      return fetch_original(url);
+      return window.fetch(url);
     };
   },
 };
 
-const fetch_original = fetch;
+let fetch;
 const handliOptions = {};
 const handli = (url, opts) => handli_original(url, {...opts, ...handliOptions});
 
