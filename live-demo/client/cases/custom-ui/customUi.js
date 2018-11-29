@@ -1,9 +1,11 @@
-import {Console, getServerDownSimulator} from '../utils';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import handli from 'handli';
+import {Console, getServerDownSimulator} from '../../utils';
+
 import {ToastContainer, toast as reactToastify } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import handli from 'handli';
+import './customUi.css';
 
 export {run};
 export {console};
@@ -58,13 +60,23 @@ const showMessage = msg => {
 };
 
 // Because our toaster doesn't block the UI,
-// we need to block it ourselfs
-const {body} = document;
+// we need to disable the "Run" buttons.
+// Blocking the UI makes sure that the
+// user doesn't trigger a second request.
+const buttons = [
+  ...document.querySelectorAll('button')
+];
 const uiBlocker = {
-  enable: () =>
-    body.classList.add('disableRun'),
-  disable: () =>
-    body.classList.remove('disableRun'),
+  enable: () => {
+    buttons.forEach(button => {
+      button.disabled = true;
+    });
+  },
+  disable: () => {
+    buttons.forEach(button => {
+      button.disabled = false;
+    });
+  }
 };
 
 serverDownSimulator.install();

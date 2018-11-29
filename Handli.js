@@ -202,7 +202,7 @@ function Handli(options_global={}) {
         getMsg('BUG'),
         getMsg('RETRY_MANUALLY'),
       );
-      await new Promise();
+      await new Promise(()=>{});
     }
 
     async function handleNoConnection({noInternet, awaitInternetConnection}) {

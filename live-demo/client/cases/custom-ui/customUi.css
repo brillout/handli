@@ -1,0 +1,9 @@
+.Toastify__close-button {
+  display: none!important;
+}
+.Toastify__toast-container * {
+  cursor: default!important;
+}
+[disabled] {
+  opacity: 0.3;
+}

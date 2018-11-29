@@ -207,8 +207,8 @@ function getExamples() {
     ],
     options3: [
       [
-        readFileSync(__dirname+'/cases/customModal.js', 'utf-8'),
-        require('./cases/customModal.js'),
+        readFileSync(__dirname+'/cases/custom-ui/customUi.js', 'utf-8'),
+        require('./cases/custom-ui/customUi.js'),
         'Custom Modal',
         <div>
           Customize how messages are shown to the user.
