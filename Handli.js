@@ -17,6 +17,7 @@ function Handli(options_global={}) {
   return handli;
 
   var pendingRequest;
+  var stateIsUnfixable;
   async function handli(requestFunction, options_local={}) {
 
     assert.usage(
@@ -202,6 +203,7 @@ function Handli(options_global={}) {
         getMsg('BUG'),
         getMsg('RETRY_MANUALLY'),
       );
+      stateIsUnfixable = true;
       await new Promise(()=>{});
     }
 
@@ -293,6 +295,7 @@ function Handli(options_global={}) {
       _showModal(false, ...args);
     }
     function _showModal(isWarning, ...messageHtmls) {
+      if( stateIsUnfixable ) return;
       const messageHtml = messageHtmls.filter(Boolean).join('<br/>');
 
       if( currentModal && currentModal.isWarning===isWarning ) {

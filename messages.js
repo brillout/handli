@@ -7,7 +7,7 @@ module.exports = {
   SLOW_SERVER: "Cannot connect to server.",
   RETRYING_STILL: "Still trying...",
   RETRY_MANUALLY: "Please reload and retry.",
-  RETRYING_WHEN_ONLINE: "Reconnect to the internet to proceed.",
+  RETRYING_WHEN_ONLINE: "Connect to the internet to proceed.",
   RETRYING_NOW: "Retrying...",
   RETRYING_IN: seconds => "Retrying in "+seconds+" second"+(seconds===1?'':'s')+".",
 };

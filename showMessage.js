@@ -1,7 +1,10 @@
 module.exports = showMessages;
 
 const CSS = `
-.handliModalWrapper > :first-child {
+body.handliModal {
+  overflow: hidden !important;
+}
+.handliModalBackground {
   position: fixed;
   height: 100vh;
   width: 100vw;
@@ -14,17 +17,15 @@ const CSS = `
   align-items: center;
   justify-content: center;
 }
-.handliModalWrapper > :first-child > :first-child {
+.handliModalContent {
   padding: 10px 20px;
   border-radius: 5px;
   background: white;
   border-width: 0 0 0 10px;
   border-style: solid;
-}
-.handliModalWrapper > :first-child > :first-child:not(.handliIsWarning) {
   border-color: #ff6868;
 }
-.handliModalWrapper > :first-child > :first-child.handliIsWarning {
+.handliIsWarning > * {
   border-color: #fff252;
 }
 `;
@@ -45,15 +46,17 @@ const CSS = `
 
 function showMessages(html, isWarning) {
   addCss();
+  /*
   const modalWrapper = window.document.createElement('div');
   modalWrapper.setAttribute('class', 'handliModalWrapper');
+  modalWrapper.appendChild(modalBackground);
+  */
 
   const modalBackground = window.document.createElement('div');
-  modalBackground.setAttribute('class', 'handliModalBackground');
-  modalWrapper.appendChild(modalBackground);
+  modalBackground.setAttribute('class', 'handliModalBackground'+(isWarning?' handliIsWarning':''));
 
   const modalContent = window.document.createElement('div');
-  modalContent.setAttribute('class', 'handliModalContent'+(isWarning?' handliIsWarning':''));
+  modalContent.setAttribute('class', 'handliModalContent');
   modalBackground.appendChild(modalContent);
 
   /*
@@ -72,17 +75,17 @@ function showMessages(html, isWarning) {
   });
   */
 
-  const overflow_original = document.body.style.overflow;
-  document.body.style.overflow = 'hidden';
-  prependChild(document.body, modalWrapper);
+  const bodyCls = 'handliModal';
+  document.body.classList.add(bodyCls);
+  document.body.appendChild(modalBackground);
 
   update(html);
 
   return {close, update};
 
   function close() {
-    document.body.style.overflow = overflow_original;
-    removeElement(modalWrapper);
+    removeElement(modalBackground);
+    document.body.classList.remove(bodyCls);
   }
   function update(html) {
     modalContent.innerHTML = html;
@@ -115,5 +118,4 @@ function addCss() {
   });
   //document.head -> https://caniuse.com/#feat=documenthead
   prependChild(document.head, css);
-//document.head.appendChild(css);
 }

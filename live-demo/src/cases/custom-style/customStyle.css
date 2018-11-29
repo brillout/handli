@@ -1,16 +1,16 @@
-/*
-.handliModalBackground ~ * {
-  filter: blur(2px);
+body.handliModal >
+  :not(.handliModalBackground) {
+    filter: blur(2px);
 }
 .handliModalBackground {
-  background-color: rgba(255, 255, 255, 0.2) !important;
+  background: rgba(255, 255, 255, 0.2);
 }
 .handliModalContent {
-  border: 1px solid #ebebeb !important;
-  border-radius: 10px !important;
+  border: 2px solid #f0f0f0;
+  border-radius: 10px;
   position: relative;
 }
-.handliModalContent::before {
+.handliIsWarning .handliModalContent::before {
   content: "\26A0";
   font-size: 2em;
   position: absolute;
@@ -19,6 +19,5 @@
   color: #f2f215;
 }
 .handliModalContent {
-  padding-left: 53px!important;
+  padding-left: 53px;
 }
-*/

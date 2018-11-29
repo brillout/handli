@@ -49,19 +49,33 @@ function getServerDownSimulator() {
 
 function getOfflineSimulator() {
   let installed = false;
+  let resolveInternet = null;
+  let alreadyRemoved = null;
   const offlineSimulator = {
     install: () => {
+      resolveInternet = null;
+      alreadyRemoved = null;
+      installed = true;
       handliOptions.checkInternetConnection = async () => {
         return {
           noInternet: true,
-          awaitInternetConnection: () => wait(2.2),
+          awaitInternetConnection: () => {
+            const internetPromise = new Promise(r => resolveInternet=r);
+            if( alreadyRemoved ) {
+              resolveInternet();
+            }
+            return internetPromise;
+          },
         };
       };
-      installed = true;
     },
     remove: () => {
       delete handliOptions.checkInternetConnection;
       installed = false;
+      if( resolveInternet === null ) {
+        alreadyRemoved = true;
+      }
+      resolveInternet();
     },
   };
 

@@ -205,7 +205,7 @@ function getExamples() {
     ],
     options2: [
       [
-        readFileSync(__dirname+'/cases/custom-style/customStyle.js', 'utf-8'),
+        readFileSync(__dirname+'/cases/custom-style/customStyle.css', 'utf-8'),
         require('./cases/custom-style/customStyle.js'),
         'Custom Style',
         <div>
