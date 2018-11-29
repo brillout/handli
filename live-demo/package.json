@@ -1,25 +1,23 @@
 {
   "private": true,
   "scripts": {
-    "build": "cd client && parcel build *.html --public-url /handli/",
-    "build-dev": "cd client && parcel watch *.html",
-    "server": "node ./server/start.js",
-    "install-yarn": "npm install --only=dev --no-save",
+    "dev": "cd src && parcel *.html",
+    "build": "cd src && parcel build *.html --public-url /handli/",
     "setup": "npm run install-yarn && yarn",
     "setup-dev": "npm run install-yarn && (cd .. && yarn && yarn link) && yarn link handli && yarn",
-    "deploy": "npm run build && cd .. && git checkout gh-pages && git reset --hard clean-dist && git reset origin/gh-pages && mv live-demo/client/dist/* . && git add -A && git commit -m 'deploy new live demo' && git push && git checkout master"
+    "install-yarn": "npm install --only=dev --no-save",
+    "deploy": "npm run build && cd .. && git checkout gh-pages && git reset --hard clean-dist && git reset origin/gh-pages && mv live-demo/src/dist/* . && git add -A && git commit -m 'deploy new live demo' && git push && git checkout master"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
-    "express": "^4.16.4",
     "handli": "*",
-    "parcel": "^1.10.3",
     "prismjs": "^1.15.0",
     "react": "16.7.0-alpha.2",
     "react-dom": "16.7.0-alpha.2",
     "react-toastify": "^4.4.3"
   },
   "devDependencies": {
+    "parcel": "^1.10.3",
     "parcel-plugin-static-files-copy": "^1.2.4",
     "yarn": "1.12.3"
   }
