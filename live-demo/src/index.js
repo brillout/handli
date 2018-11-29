@@ -137,7 +137,7 @@ function getExamples() {
         'Success',
         <div>
           When the server replies with a 2xx status code.
-        </div>
+        </div>,
       ],
       [
         readFileSync(__dirname+'/cases/expected_error.js', 'utf-8'),
@@ -145,7 +145,7 @@ function getExamples() {
         'Handled Error',
         <div>
           When you handle the error.
-        </div>
+        </div>,
       ],
     ],
     connection: [
@@ -155,7 +155,7 @@ function getExamples() {
         'Offline',
         <div>
           When the user is not connected to the internet.
-        </div>
+        </div>,
       ],
       [
         readFileSync(__dirname+'/cases/slow.js', 'utf-8'),
@@ -163,7 +163,7 @@ function getExamples() {
         'Slow Internet',
         <div>
           When the user has a slow internet connection.
-        </div>
+        </div>,
       ],
     ],
     bug: [
@@ -173,7 +173,7 @@ function getExamples() {
         'Unhandled Error',
         <div>
          When the server replies with a status code other than 2xx.
-        </div>
+        </div>,
       ],
       [
         readFileSync(__dirname+'/cases/server_down.js', 'utf-8'),
@@ -181,7 +181,7 @@ function getExamples() {
         'Server Down',
         <div>
           When the server isn't replying.
-        </div>
+        </div>,
       ],
     ],
     options1: [
@@ -192,17 +192,26 @@ function getExamples() {
         <div>
           Show debug info.
           Defaults to `true` when URL is `localhost`.
-        </div>
+        </div>,
       ],
-    ],
-    options2: [
       [
         readFileSync(__dirname+'/cases/retryTimer.js', 'utf-8'),
         require('./cases/retryTimer.js'),
         'Retry Timer',
         <div>
           Customize when the request is retried.
-        </div>
+        </div>,
+      ],
+    ],
+    options2: [
+      [
+        readFileSync(__dirname+'/cases/custom-style/customStyle.js', 'utf-8'),
+        require('./cases/custom-style/customStyle.js'),
+        'Custom Style',
+        <div>
+          Customize Handl's modal.
+        </div>,
+        {codeLang: 'css', dontStrip: true}
       ],
     ],
     options3: [
@@ -212,7 +221,7 @@ function getExamples() {
         'Custom UI',
         <div>
           Customize how messages are shown to the user.
-        </div>
+        </div>,
       ],
     ],
   };
@@ -230,7 +239,7 @@ function Examples({examples}) {
   );
 }
 
-function Example({example: [codeSource, codeModule, title, description]}) {
+function Example({example: [codeSource, codeModule, title, description, {codeLang='javascript', dontStrip}={}]}) {
   const textView = (
     <div>
       <h3>{title}</h3>
@@ -242,7 +251,7 @@ function Example({example: [codeSource, codeModule, title, description]}) {
     <div className="cls_example">
       {textView}
       <div className="cls_code_section">
-        {getCodView(codeSource)}
+        {getCodView({codeSource, codeLang, dontStrip})}
         {<ResultView {...{codeModule}}/>}
       </div>
     </div>
@@ -300,19 +309,21 @@ function ResultView({codeModule}) {
   }
 }
 
-function getCodView(codeSource) {
-  codeSource = stripContext(codeSource);
+function getCodView({codeSource, codeLang, dontStrip}) {
+  if( ! dontStrip ) {
+    codeSource = stripContext(codeSource);
+  }
 
   const codeHtml = Prism.highlight(
     codeSource,
-    Prism.languages.javascript,
-    'javascript',
+    Prism.languages[codeLang],
+    codeLang,
   );
 
   return (
     <pre>
       <code
-        className="language-javascript"
+        className={"language-"+codeLang}
         dangerouslySetInnerHTML={{__html: codeHtml}}
       />
     </pre>

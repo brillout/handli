@@ -6,7 +6,7 @@ export {console};
 
 const serverErrorSimulator = {
   install: () => {
-    fetch = () => fetch_original('does-not-exist');
+    fetch = () => fetch_original('does-not-exist.lol');
   },
   remove: () => {
     fetch = fetch_original;

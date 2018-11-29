@@ -1,53 +1,80 @@
 module.exports = showMessages;
 
-function showMessages(html, isWarning) {
-  const modalEl = window.document.createElement('div');
-  const id = '@brillout/fetch-error-handler/modal';
-  modalEl.id = id;
-  Object.assign(modalEl.style, {
-    zIndex: 10000000,
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    height: '100vh',
-    width: '100vw',
-    background: 'rgba(0,0,0,0.7)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  });
+const CSS = `
+.handliModalWrapper > :first-child {
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  z-index: 99999999999999;
+  top: 0;
+  left: 0;
+  background: rgba(0,0,0,0.7);
 
-  const modalBodyEl = window.document.createElement('div');
-  modalEl.appendChild(modalBodyEl);
-  Object.assign(modalBodyEl.style, {
-    padding: '10px 20px',
-    borderRadius: '5px',
-    borderWidth: '0 0 0 10px',
-    borderStyle: 'solid',
-    borderColor: isWarning ? '#fff252' : '#ff6868',
-    background: 'white',
-    display: 'flex',
-  });
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.handliModalWrapper > :first-child > :first-child {
+  padding: 10px 20px;
+  border-radius: 5px;
+  background: white;
+  border-width: 0 0 0 10px;
+  border-style: solid;
+}
+.handliModalWrapper > :first-child > :first-child:not(.handliIsWarning) {
+  border-color: #ff6868;
+}
+.handliModalWrapper > :first-child > :first-child.handliIsWarning {
+  border-color: #fff252;
+}
+`;
+/*
+.handliModalWrapper > :first-child > :first-child::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  border-radius
+  width: 10px;
+  background: red;
+}
+*/
+
+function showMessages(html, isWarning) {
+  addCss();
+  const modalWrapper = window.document.createElement('div');
+  modalWrapper.setAttribute('class', 'handliModalWrapper');
+
+  const modalBackground = window.document.createElement('div');
+  modalBackground.setAttribute('class', 'handliModalBackground');
+  modalWrapper.appendChild(modalBackground);
+
+  const modalContent = window.document.createElement('div');
+  modalContent.setAttribute('class', 'handliModalContent'+(isWarning?' handliIsWarning':''));
+  modalBackground.appendChild(modalContent);
 
   /*
   const modalImageEl = window.document.createElement('div');
-  modalBodyEl.appendChild(modalImageEl);
+  modalContent.appendChild(modalImageEl);
   modalImageEl.innerHTML = "\u26A0";
   Object.assign(modalImageEl.style, {
     fontSize: '3em',
     paddingRight: '20px',
   });
-  */
 
   const modalContentEl = window.document.createElement('div');
-  modalBodyEl.appendChild(modalContentEl);
+  modalContent.appendChild(modalContentEl);
   Object.assign(modalContentEl.style, {
     alignSelf: 'center',
   });
+  */
 
   const overflow_original = document.body.style.overflow;
   document.body.style.overflow = 'hidden';
-  document.body.appendChild(modalEl);
+  prependChild(document.body, modalWrapper);
 
   update(html);
 
@@ -55,9 +82,38 @@ function showMessages(html, isWarning) {
 
   function close() {
     document.body.style.overflow = overflow_original;
-    modalEl.parentElement.removeChild(modalEl);
+    removeElement(modalWrapper);
   }
   function update(html) {
-    modalContentEl.innerHTML = html;
+    modalContent.innerHTML = html;
   }
+}
+
+function removeElement(element) {
+  element.parentElement.removeChild(element);
+}
+
+function prependChild(parent, child) {
+  const {firstChild} = parent;
+  if( ! firstChild ) {
+    parent.appendChild(child);
+  } else {
+    parent.insertBefore(child, firstChild);
+  }
+}
+
+function addCss() {
+  const id = 'handliStyle';
+  if( document.getElementById(id) ) {
+    return;
+  }
+  const css = window.document.createElement("style");
+  Object.assign(css, {
+    id,
+    type: 'text/css',
+    innerHTML: CSS,
+  });
+  //document.head -> https://caniuse.com/#feat=documenthead
+  prependChild(document.head, css);
+//document.head.appendChild(css);
 }
