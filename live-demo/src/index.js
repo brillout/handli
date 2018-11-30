@@ -235,7 +235,7 @@ function getExamples() {
       [
         readFileSync(__dirname+'/cases/custom_slow.js', 'utf-8'),
         require('./cases/custom_slow.js'),
-        'Custom Slow',
+        'Custom Slow Threshold',
         <div>
           Customize when Handli considers the network to be "slow".
         </div>,
