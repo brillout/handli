@@ -26,11 +26,13 @@ to **progressively replace Handli with your own network handling implementation*
 
 [Live Demo](https://brillout.github.com/handli).
 
+#### Contents
+
 - [Usage](#usage)
 - [How it Works](#how-it-works)
 - [FAQ](#faq)
 
-
+<br/>
 
 ### Usage
 
@@ -51,7 +53,7 @@ Then simply wrap your requests with `handli`:
 That's it.
 All network corner cases are now handled by Handli.
 
-
+<br/>
 
 ### How it Works
 
@@ -85,6 +87,8 @@ The [live demo](https://brillout.github.com/handli)
 shows how Handli handles
 network corner cases.
 
+<br/>
+
 ### FAQ
 
 #### Can I customize the UI?
@@ -92,15 +96,21 @@ network corner cases.
 Yes.
 See [Live Demo - Options](https://brillout.github.com/handli#options).
 
+<br/>
+
 #### Can I customize the texts?
 
 Yes.
 See [Live Demo - Options](https://brillout.github.com/handli#options).
 
+<br/>
+
 #### What if a non-2xx server reply is expected and I don't want Handli to treat it as error?
 
 Then handle the error yourself,
 see below.
+
+<br/>
 
 #### How do I handle errors myself?
 
@@ -119,6 +129,8 @@ const response = await fetch(async () => {
 ~~~
 
 See [Live Demo - Expected - Handled Error](https://brillout.github.com/handli#handled-error).
+
+<br/>
 
 #### When is the internet connection considered "slow"?
 
@@ -142,7 +154,7 @@ By default `thresholdSlowInternet` is `500ms` and `thresholdNoInternet` is `900m
 You can configure `thresholdSlowInternet` and `thresholdNoInternet`,
 see [Live Demo - Options](https://brillout.github.com/handli#options).
 
-
+<br/>
 
 #### Does it work with `fetch` only?
 
@@ -156,9 +168,13 @@ More precisely, Handli works as long as:
  - Throws if and only if a the HTTP request didn't get a HTTP response.
    (I.e. if there are connection problems or if the server is down(-ish).)
 
+<br/>
+
 #### Does it work on Node.js?
 
 No. Handli only works in the browser.
+
+<br/>
 
 #### What about Universal / Isomorphic / SSR?
 
@@ -178,6 +194,8 @@ const response = await fetch(url);
 ~~~
 
 Handli does nothing and returns what your request function returns.
+
+<br/>
 
 #### Does it support simultaneous requests?
 
