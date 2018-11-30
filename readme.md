@@ -87,6 +87,8 @@ The [live demo](https://brillout.github.com/handli)
 shows how Handli handles all
 network corner cases.
 
+<br/>
+
 ## FAQ
 
 ### Can I customize the UI?
@@ -149,18 +151,19 @@ see [Live Demo - Options](https://brillout.github.com/handli#options).
 Yes & no: It works with any fetch-like library.
 
 More precisely, Handli works as long as:
- - `response.status` hold the status code of the response.
-   (Where `response` comes from `let response = await aFetchLikeLibrary('https://example.org')`.)
+ - `response.status` holds the status code of the response.
+   (With `response` we mean `let response = await aFetchLikeLibrary('https://example.org')`.)
  - `response.ok` holds `true` or `false` denoting whether the request was a success.
-   (I.e. `assert(response.ok === 200<=response.status && response.status<=299)`.)
- - Throws if and only if a the HTTP request didn't get a HTTP response.
-   (I.e. if there are connection problems or if the server is down(-ish).)
+   (That is `assert(response.ok === 200<=response.status && response.status<=299)`.)
+ - Throws if and only if the HTTP request didn't get an HTTP response.
+   (That is if the user has internet connection problems or if the server is not responsive.)
 
-### Does it work on Node.js?
+### Does it handle errors on Node.js?
 
-No. Handli only works in the browser.
+No.
+Handli only handles the network when run in the browser.
 
-### What about Universal / Isomorphic / SSR?
+### What about Universal/Isomorphic/SSR?
 
 Handli supports code that runs in the browser as well as on Node.js:
 When run in Node.js `handli` is transparent.
