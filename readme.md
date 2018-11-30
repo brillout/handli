@@ -120,6 +120,12 @@ const response = await fetch(async () => {
     return response;
   }
 });
+
+if( response===RATE_LIMIT ) {
+  // Code handling when API rate limit is reached
+} else {
+  assert(200<=response.status && response.status<=299);
+}
 ~~~
 
 See [Live Demo - Expected - Handled Error](https://brillout.github.com/handli#handled-error).
