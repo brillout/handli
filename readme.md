@@ -34,7 +34,7 @@ to **progressively replace Handli with your own network handling implementation*
 
 <br/>
 
-### Usage
+## Usage
 
 ~~~shell
 $ npm install handli
@@ -55,7 +55,7 @@ All network corner cases are now handled by Handli.
 
 <br/>
 
-### How it Works
+## How it Works
 
 The `handli` function never rejects and resolves only until it got a successful response from the server.
 
@@ -75,44 +75,36 @@ try {
 assert(200<=response.status && response.status<=299);
 ~~~
 
-If the server doesn't reply a `2xx` and your code doesn't handle the error,
+If the server doesn't reply a `2xx` (and your code doesn't handle the error),
 then Handli blocks the UI,
 shows a modal letting the user know what's going on,
 and periodically retries the request.
 
-You can **write code as if network issues are non-existent**
+You can write code as if network issues are non-existent
 and rely upon Handli for handling errors.
 
 The [live demo](https://brillout.github.com/handli)
-shows how Handli handles
+shows how Handli handles all
 network corner cases.
 
-<br/>
+## FAQ
 
-### FAQ
-
-#### Can I customize the UI?
+### Can I customize the UI?
 
 Yes.
 See [Live Demo - Options](https://brillout.github.com/handli#options).
 
-<br/>
-
-#### Can I customize the texts?
+### Can I customize the texts?
 
 Yes.
 See [Live Demo - Options](https://brillout.github.com/handli#options).
 
-<br/>
-
-#### What if a non-2xx server reply is expected and I don't want Handli to treat it as error?
+### What if a non-2xx server reply is expected and I don't want Handli to treat it as error?
 
 Then handle the error yourself,
 see below.
 
-<br/>
-
-#### How do I handle errors myself?
+### How do I handle errors myself?
 
 Handle errors within your request function.
 
@@ -130,9 +122,7 @@ const response = await fetch(async () => {
 
 See [Live Demo - Expected - Handled Error](https://brillout.github.com/handli#handled-error).
 
-<br/>
-
-#### When is the internet connection considered "slow"?
+### When is the internet connection considered "slow"?
 
 If your server isn't replying,
 then Handli tests the user's internet connection.
@@ -154,9 +144,7 @@ By default `thresholdSlowInternet` is `500ms` and `thresholdNoInternet` is `900m
 You can configure `thresholdSlowInternet` and `thresholdNoInternet`,
 see [Live Demo - Options](https://brillout.github.com/handli#options).
 
-<br/>
-
-#### Does it work with `fetch` only?
+### Does it work with `fetch` only?
 
 Yes & no: It works with any fetch-like library.
 
@@ -168,15 +156,11 @@ More precisely, Handli works as long as:
  - Throws if and only if a the HTTP request didn't get a HTTP response.
    (I.e. if there are connection problems or if the server is down(-ish).)
 
-<br/>
-
-#### Does it work on Node.js?
+### Does it work on Node.js?
 
 No. Handli only works in the browser.
 
-<br/>
-
-#### What about Universal / Isomorphic / SSR?
+### What about Universal / Isomorphic / SSR?
 
 Handli supports code that runs in the browser as well as on Node.js:
 When run in Node.js `handli` is transparent.
@@ -195,9 +179,7 @@ const response = await fetch(url);
 
 Handli does nothing and returns what your request function returns.
 
-<br/>
-
-#### Does it support simultaneous requests?
+### Does it support simultaneous requests?
 
 Yes.
 Handli blocks the UI until
