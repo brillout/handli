@@ -1,0 +1,17 @@
+<svg width="164" height="34" version="1.1" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="Gradient1">
+<stop offset="10%" stop-color="#ff8e8e"/>
+<stop offset="30%" stop-color="#eb9888"/>
+<stop offset="93%" stop-color="rgba(0, 200, 0, 0.4)"/>
+</linearGradient>
+</defs>
+<circle cx="17" cy="17" r="17" fill="url(#Gradient1)"/>
+<text
+ x="44" y="30"
+ font-size="35"
+ font-weight="300"
+ textLength="113"
+ font-family="Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif"
+>Handli</text>
+</svg>
