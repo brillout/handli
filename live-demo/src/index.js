@@ -191,7 +191,6 @@ function getExamples() {
         'Dev Mode',
         <div>
           Show debug info.
-          Defaults to `true` when URL is `localhost`.
         </div>,
       ],
       [
@@ -209,7 +208,7 @@ function getExamples() {
         require('./cases/custom-style/customStyle.js'),
         'Custom Style',
         <div>
-          Customize Handli's modal.
+          Customize the modal.
         </div>,
         {codeLang: 'css', dontStrip: true}
       ],
@@ -218,7 +217,7 @@ function getExamples() {
         require('./cases/custom_text.js'),
         'Custom Text',
         <div>
-          Customize texts.
+          Customize the texts shown to.
         </div>,
       ],
     ],

@@ -80,7 +80,7 @@ const uiBlocker = {
 };
 
 serverDownSimulator.install();
-setTimeout(serverDownSimulator.remove, 4000);
+setTimeout(serverDownSimulator.remove, 2000);
 
 const response = await handli(
   () => fetch('data.json'),

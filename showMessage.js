@@ -1,10 +1,10 @@
 module.exports = showMessages;
 
 const CSS = `
-body.handliModal {
+body.hasHandliModal {
   overflow: hidden !important;
 }
-.handliModalBackground {
+.handliModal {
   position: fixed;
   height: 100vh;
   width: 100vw;
@@ -49,19 +49,19 @@ function showMessages(html, isWarning) {
   /*
   const modalWrapper = window.document.createElement('div');
   modalWrapper.setAttribute('class', 'handliModalWrapper');
-  modalWrapper.appendChild(modalBackground);
+  modalWrapper.appendChild(handliModal);
   */
 
-  const modalBackground = window.document.createElement('div');
-  modalBackground.setAttribute('class', 'handliModalBackground'+(isWarning?' handliIsWarning':''));
+  const handliModal = window.document.createElement('div');
+  handliModal.setAttribute('class', 'handliModal'+(isWarning?' handliIsWarning':''));
 
-  const modalContent = window.document.createElement('div');
-  modalContent.setAttribute('class', 'handliModalContent');
-  modalBackground.appendChild(modalContent);
+  const handliModalContent = window.document.createElement('div');
+  handliModalContent.setAttribute('class', 'handliModalContent');
+  handliModal.appendChild(handliModalContent);
 
   /*
   const modalImageEl = window.document.createElement('div');
-  modalContent.appendChild(modalImageEl);
+  handliModalContent.appendChild(modalImageEl);
   modalImageEl.innerHTML = "\u26A0";
   Object.assign(modalImageEl.style, {
     fontSize: '3em',
@@ -69,26 +69,26 @@ function showMessages(html, isWarning) {
   });
 
   const modalContentEl = window.document.createElement('div');
-  modalContent.appendChild(modalContentEl);
+  handliModalContent.appendChild(modalContentEl);
   Object.assign(modalContentEl.style, {
     alignSelf: 'center',
   });
   */
 
-  const bodyCls = 'handliModal';
+  const bodyCls = 'hasHandliModal';
   document.body.classList.add(bodyCls);
-  document.body.appendChild(modalBackground);
+  document.body.appendChild(handliModal);
 
   update(html);
 
   return {close, update};
 
   function close() {
-    removeElement(modalBackground);
+    removeElement(handliModal);
     document.body.classList.remove(bodyCls);
   }
   function update(html) {
-    modalContent.innerHTML = html;
+    handliModalContent.innerHTML = html;
   }
 }
 

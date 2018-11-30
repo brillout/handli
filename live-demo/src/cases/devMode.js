@@ -11,9 +11,12 @@ async function run() {
 serverDownSimulator.install();
 setTimeout(serverDownSimulator.remove, 3000);
 
+// Defaults to `true` when URL is `localhost`
+const devMode = true;
+
 const response = await handli(
   () => fetch('data.json'),
-  {devMode: true}
+  {devMode}
 );
 
 

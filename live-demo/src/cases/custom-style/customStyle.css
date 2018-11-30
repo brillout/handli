@@ -1,23 +1,22 @@
-body.handliModal >
-  :not(.handliModalBackground) {
+body.hasHandliModal >
+  :not(.handliModal) {
     filter: blur(2px);
 }
-.handliModalBackground {
+.handliModal {
   background: rgba(255, 255, 255, 0.3);
 }
 .handliModalContent {
   border: 2px solid #f0f0f0;
   border-radius: 10px;
   position: relative;
+  padding-left: 53px;
 }
-.handliIsWarning .handliModalContent::before {
+.handliModal.handliIsWarning
+  .handliModalContent::before {
   content: "\26A0";
   font-size: 2em;
   position: absolute;
   top: 4px;
   left: 11px;
   color: #f2f215;
-}
-.handliModalContent {
-  padding-left: 53px;
 }
