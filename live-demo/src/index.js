@@ -1,7 +1,7 @@
 import handli from 'handli';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
-import './index.css';
+import './style.css';
 import {readFileSync} from 'fs';
 import 'babel-polyfill';
 import React from 'react';
