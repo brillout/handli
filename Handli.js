@@ -9,8 +9,8 @@ function Handli(options_global={}) {
     timeout: null,
     timeoutServer: null,
     timeoutInternet: null,
-    thresholdSlowInternet: 400,
-    thresholdNoInternet: 800,
+    thresholdSlowInternet: 500,
+    thresholdNoInternet: 900,
     retryTimer: seconds => !seconds ? 3 : Math.ceil(seconds*1.5),
   };
 
@@ -92,7 +92,7 @@ function Handli(options_global={}) {
         if( minTimeout===Infinity ) return;
         const checkTimeout = minTimeout - thresholdNoInternet;
         assert.usage(
-          checkTimeout>100,
+          checkTimeout>=100,
           {thresholdNoInternet, timeout, timeoutInternet, timeoutServer},
           "`thresholdNoInternet` should be at least 100ms lower than `timeout`, `timeoutInternet`, and `timeoutServer`"
         );
@@ -200,7 +200,7 @@ function Handli(options_global={}) {
 
     async function handleOverflow() {
       showErrorModal(
-        getMsg('BUG'),
+        getMsg('ERROR'),
         getMsg('RETRY_MANUALLY'),
       );
       stateIsUnfixable = true;
@@ -213,12 +213,12 @@ function Handli(options_global={}) {
       if( noInternet ) {
         return handleOffline(awaitInternetConnection);
       } else {
-        return handleBug();
+        return handleError();
       }
     }
 
-    async function handleBug(response) {
-      let errorMessage = getMsg('BUG');
+    async function handleError(response) {
+      let errorMessage = getMsg('ERROR');
       let devMessage;
       if( getOption('devMode') ) {
         devMessage = await getDevMessage(response);
@@ -284,7 +284,7 @@ function Handli(options_global={}) {
     }
 
     function handleErrorResponse(response) {
-      return handleBug(response);
+      return handleError(response);
     }
 
     var currentModal;
@@ -341,7 +341,7 @@ function Handli(options_global={}) {
       await wait(timeLeft => {
         showErrorModal(
           message,
-          getMsg("RETRYING_IN")(timeLeft),
+          getMsgRetryingIn(timeLeft),
           devMessage,
         );
       });
@@ -415,8 +415,22 @@ function Handli(options_global={}) {
       assert.internal(!required || val, {val, prop, subProp});
       return val;
     }
-    function getMsg(msgCode) {
-      return getOption('messages', {subProp: msgCode, required: true});
+    function getMsgRetryingIn(timeLeft) {
+      const msgFn = getMsg('RETRYING_IN', true);
+      if( ! msgFn instanceof Function ) {
+        return strToHtml(msgFn);
+      }
+      const msg = msgFn(timeLeft);
+      return strToHtml(msg);
+    }
+    function getMsg(msgCode, isFn) {
+      let msg = getOption('messages', {subProp: msgCode, required: true});
+      return isFn ? msg : strToHtml(msg);
+    }
+    function strToHtml(str) {
+      assert.usage(str && str.split, str);
+      const html = str.split('\n').join('<br/>');
+      return html;
     }
     function getInternetTimeout() {
       return getOption('timeoutInternet') || getOption('timeout');

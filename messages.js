@@ -1,5 +1,5 @@
 module.exports = {
-  BUG: "Something unexpected happened.",
+  ERROR: "Something unexpected happened.",
   OFFLINE: "You are offline.",
   OFFLINE_PROBABLY: "You seem to be offline.",
   ONLINE: "You are back online.",

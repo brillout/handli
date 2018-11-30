@@ -3,7 +3,7 @@ body.handliModal >
     filter: blur(2px);
 }
 .handliModalBackground {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.3);
 }
 .handliModalContent {
   border: 2px solid #f0f0f0;
