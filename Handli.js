@@ -20,12 +20,14 @@ function Handli(options_global={}) {
   var stateIsUnfixable;
   async function handli(requestFunction, options_local={}) {
 
-    assert.usage(
-      typeof window !== "undefined" && window.document,
-      "Handli only works in the browser"
+    const isBrowser = typeof window === "undefined" && window.document;
+
+    const skipHandli = (
+      !isBrowser ||
+      getOption('disableHandli')
     );
 
-    if( getOption('disableHandli') ) {
+    if( skipHandli ) {
       return requestFunction();
     };
 
@@ -185,7 +187,11 @@ function Handli(options_global={}) {
       );
     }
     function isFetchLikeResponse(response) {
-      const yes = response instanceof Object && 'ok' in response && 'status' in response;
+      const yes = (
+        response instanceof Object &&
+        [true, false].includes(response.ok) &&
+        'status' in response
+      );
       return yes;
     }
     function isErrorResponse(response) {
