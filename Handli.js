@@ -20,7 +20,7 @@ function Handli(options_global={}) {
   var stateIsUnfixable;
   async function handli(requestFunction, options_local={}) {
 
-    const isBrowser = typeof window === "undefined" && window.document;
+    const isBrowser = typeof window !== "undefined" && window.document;
 
     const skipHandli = (
       !isBrowser ||

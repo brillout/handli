@@ -1,31 +1,11 @@
-import handli_original from 'handli';
-import {Console, wait} from '../utils';
+import {Console, wait, getSlowInternetSimulator} from '../utils';
 
 export {run};
 export {console};
 
 const console = new Console();
 
-const slowInternetSimulator = {
-  install: () => {
-    handliOptions.checkInternetConnection = async () => {
-      const fastestPing = 500;
-      wait(fastestPing/1000);
-      return {
-        noInternet: false,
-        fastestPing,
-      };
-    };
-    fetch = async url => {
-      await wait(3);
-      return window.fetch(url);
-    };
-  },
-};
-
-let fetch;
-const handliOptions = {};
-const handli = (url, opts) => handli_original(url, {...opts, ...handliOptions});
+const {slowInternetSimulator, fetch, handli} = getSlowInternetSimulator();
 
 async function run() {
 slowInternetSimulator.install();

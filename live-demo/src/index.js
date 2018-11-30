@@ -19,16 +19,44 @@ ReactDOM.render(
 function LiveDemo() {
   return (
     <React.Fragment>
-      <h1>
-        <img
-          src="logo.svg"
-          height="34"
-          style={{marginRight: 10, marginBottom: -5}}
-          alt="Handli"
-        />
-      </h1>
+      <Header/>
       <Intro/>
     </React.Fragment>
+  );
+}
+
+function Header() {
+  const githubIcon = (
+    <img
+      src="https://github.com/favicon.ico"
+      height="16"
+      style={{}}
+      style={{verticalAlign: 'middle', marginTop: -3}}
+      alt="github.com/"
+    />
+  );
+  const handliIcon = (
+    <img
+      src="logo.svg"
+      height="16"
+      style={{verticalAlign: 'middle', marginTop: -3}}
+      alt="Handli"
+    />
+  );
+  return (
+    <div style={{width: '100%', textAlign: 'right', paddingRight: 17, paddingTop: 20, marginBottom: 0, boxSizing: 'border-box'}}>
+      <div style={{display: 'inline-block', textAlign: 'left'}}>
+        Demo of{' '}
+        <a
+          href="https://github.com/brillout/handli"
+          style={{textDecoration: 'none', paddingLeft: 3}}
+        >
+          {handliIcon}
+          {' '}
+          ({githubIcon} brillout/handli)
+        </a>
+      </div>
+    </div>
   );
 }
 
@@ -43,7 +71,7 @@ function Intro() {
     </span>
   );
   return (
-    <div>
+    <ColumnsWrapper>
       <Columns>
         <Column title={'Expected'} className='cls_green'>
           <CaseExplanation>
@@ -71,7 +99,7 @@ function Intro() {
           <CaseExplanation>
             When your server is not replying
             or
-            replies an error that is not handled by your code.
+            replies with an error not handled by your code.
           </CaseExplanation>
           <p>
           {handliBehavior}
@@ -88,7 +116,7 @@ function Intro() {
       */}
       <Columns className="cls_gray">
         <Column>
-          <ColumnTitle>Options</ColumnTitle>
+          <ColumnTitle id="options">Options</ColumnTitle>
           <Examples examples={examples.options1}/>
         </Column>
         <Column>
@@ -100,11 +128,14 @@ function Intro() {
           <Examples examples={examples.options3}/>
         </Column>
       </Columns>
-    </div>
+    </ColumnsWrapper>
   );
 }
 function InlineCode({children}) {
   return <pre><code>{children}</code></pre>;
+}
+function ColumnsWrapper({children}) {
+  return <div className={"cls_columns_wrapper"}>{children}</div>;
 }
 function Columns({children, className=''}) {
   return <div className={"cls_columns "+className}>{children}</div>;
@@ -144,8 +175,8 @@ function getExamples() {
         require('./cases/expected_error.js'),
         'Handled Error',
         <div>
-          When you handle the error.
-        </div>,
+          When the server replies with an error handled by your code.
+        </div>
       ],
     ],
     connection: [
@@ -172,7 +203,7 @@ function getExamples() {
         require('./cases/bug.js'),
         'Unhandled Error',
         <div>
-         When the server replies with a status code other than 2xx.
+          When the server replies with an error not handled by your code.
         </div>,
       ],
       [
@@ -199,6 +230,14 @@ function getExamples() {
         'Retry Timer',
         <div>
           Customize when the request is retried.
+        </div>,
+      ],
+      [
+        readFileSync(__dirname+'/cases/custom_slow.js', 'utf-8'),
+        require('./cases/custom_slow.js'),
+        'Custom Slow',
+        <div>
+          Customize when Handli considers the network to be "slow".
         </div>,
       ],
     ],
@@ -247,9 +286,10 @@ function Examples({examples}) {
 }
 
 function Example({example: [codeSource, codeModule, title, description, {codeLang='javascript', dontStrip}={}]}) {
+  const headerId = title.toLowerCase().split(' ').join('-');
   const textView = (
     <div>
-      <h3>{title}</h3>
+      <h3 id={headerId}>{title}</h3>
       {description}
     </div>
   );

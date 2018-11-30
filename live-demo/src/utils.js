@@ -6,6 +6,7 @@ export {wait};
 export {getServerDownSimulator};
 export {getOfflineSimulator};
 export {getServerErrorSimulator};
+export {getSlowInternetSimulator};
 
 async function fetch(url) {
   const response = await window.fetch(url);
@@ -114,3 +115,32 @@ function getServerErrorSimulator() {
 
   return {serverErrorSimulator, fetch};
 }
+
+function getSlowInternetSimulator(fastestPing=500) {
+  let installed;
+  const slowInternetSimulator = {
+    install: () => {
+      handliOptions.checkInternetConnection = async () => {
+        wait(fastestPing/1000);
+        return {
+          noInternet: false,
+          fastestPing,
+        };
+      };
+      installed = true;
+    },
+  };
+
+  const fetch = async url => {
+    if( installed ) {
+      await wait(4);
+    }
+    return window.fetch(url);
+  };
+
+  const handliOptions = {};
+  const handli = (url, opts) => handli_original(url, {...opts, ...handliOptions});
+
+  return {slowInternetSimulator, fetch, handli};
+}
+

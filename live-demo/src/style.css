@@ -1,3 +1,7 @@
+body {
+  margin: 0;
+}
+/*
 body > div {
   display: flex;
   justify-content: center;
@@ -6,6 +10,13 @@ body > div {
 }
 body > div > div {
   margin-bottom: 30px;
+}
+*/
+.cls_columns_wrapper {
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .cls_columns {
   display: flex;
