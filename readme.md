@@ -110,10 +110,14 @@ see below.
 
 Handle errors within your request function.
 
-E.g., if you want to handle an API rate limit:
+For example, if you want to handle an API rate limit:
 ~~~js
+const RATE_LIMIT = Symbol();
+
 const response = await fetch(async () => {
-  const response = await fetch(url);
+  const response = await (
+    fetch('https://api.example.org/project/42')
+  );
   if( response.status===429 ) {
     return RATE_LIMIT;
   } else {
