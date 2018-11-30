@@ -126,7 +126,7 @@ const response = await fetch(async () => {
 });
 
 if( response===RATE_LIMIT ) {
-  // Code handling when API rate limit is reached
+  // Code that handles reached API rate limit
 } else {
   assert(200<=response.status && response.status<=299);
 }
