@@ -105,23 +105,23 @@ function Handli(options_global={}) {
 
   async function resolveFailedRequests() {
     for(request of getRequestsWith('SLOW_RESPONSE')) {
-      await request.retry();
+      await request.retryRequest();
     }
     for(request of getRequestsWith('ERROR_RESPONSE')) {
-      await request.retry();
+      await request.retryRequest();
     }
     for(request of getRequestsWith('NO_RESPONSE')) {
-      await request.retry();
+      await request.retryRequest();
     }
   }
 
   function getRequestsWith(failureState) {
     const STATES = ['SLOW_RESPONSE', 'ERROR_RESPONSE', 'NO_RESPONSE'];
     assert.internal(STATES.includes(failureState));
-    assert.internal(failedRequests.every(req => STATES.includes(req.failureState)));
+    assert.internal(failedRequests.every(req => STATES.includes(req.requestState.failureState)));
     return (
       failedRequests
-      .filter(request => request.failureState===failureState)
+      .filter(request => request.requestState.failureState===failureState)
     );
   }
 
@@ -140,7 +140,7 @@ function Handli(options_global={}) {
 
     const requestState = {};
 
-    await runRequest();
+    await tryRequest();
 
     if( requestState.failureState ) {
       const resolvedFailurePromise = (
@@ -155,10 +155,9 @@ function Handli(options_global={}) {
     return response;
 
     function addFailedRequest() {
-      const {failureState} = requestState;
       const failedRequest = {
-        failureState,
-        retry,
+        requestState,
+        retryRequest,
       };
       failedRequests.push(failedRequest);
 
@@ -167,19 +166,17 @@ function Handli(options_global={}) {
 
       return resolvedFailurePromise;
 
-      async function retry() {
-        await runRequest();
+      async function retryRequest() {
+        if( requestState.failureState ) {
+          await tryRequest();
+        }
 
-        const {failureState, response} = requestState;
-
-        failedRequest.failureState = failureState;
-
-        if( ! failureState ) {
+        if( ! requestState.failureState ) {
           const idx = failedRequests.indexOf(failedRequest);
           assert.internal(idx>=0);
           failedRequests.splice(idx, -1);
 
-          const {status} = response;
+          const {status} = requestState.response;
           assert.internal(200<= status && status<=299);
           resolveFailure(response);
 
@@ -188,45 +185,55 @@ function Handli(options_global={}) {
       }
     }
 
-    async function runRequest() {
+    async function tryRequest() {
       const NO_RESPONSE_YET = Symbol();
       let response = NO_RESPONSE_YET;
-      const responsePromise = requestFunction();
 
+      if( ! requestState.responsePromise ) {
+        requestState.responsePromise = requestFunction();
+      }
+
+      let resolveAttempt;
+      const attemptPromise = new Promise(r => resolveAttempt=r);
+
+      handleResponse();
       handleConnectionStatus();
       handleFlakyInternet();
       handleFlakyServer();
 
-      requestState.responsePromise = responsePromise;
+      return attemptPromise;
 
-      /*
-      const start = new Date();
-      */
-      try {
-        response = await responsePromise;
-      } catch(err) {
-        response = null;
-        console.error(err);
-        await getConnectionStatus();
-        requestState.failureState = 'NO_RESPONSE';
-        return;
-      } finally {
-        requestState.responsePromise = null;
+      async function handleResponse() {
+        /*
+        const start = new Date();
+        */
+        try {
+          response = await requestState.responsePromise;
+        } catch(err) {
+          response = null;
+          console.error(err);
+          await getConnectionStatus();
+          requestState.failureState = 'NO_RESPONSE';
+          resolveAttempt();
+          return;
+        } finally {
+          requestState.responsePromise = null;
+        }
+        /*
+        console.log(response.url, response.ok, response.status, new Date() - start);
+        */
+        assert_response(response);
+        requestState.response = response;
+
+        if( isErrorResponse(response) ) {
+          console.error(response);
+          requestState.failureState = 'ERROR_RESPONSE';
+        } else {
+          requestState.failureState = null;
+        }
+
+        resolveAttempt();
       }
-      /*
-      console.log(response.url, response.ok, response.status, new Date() - start);
-      */
-      assert_response(response);
-      requestState.response = response;
-
-      if( isErrorResponse(response) ) {
-        console.error(response);
-        requestState.failureState = 'ERROR_RESPONSE';
-      }
-
-      requestState.failureState = null;
-
-      return;
 
       function handleConnectionStatus() {
         const timeout = getOption('timeout');
@@ -261,6 +268,7 @@ function Handli(options_global={}) {
           connectionStatusPromise = getOption('checkInternetConnection')(thresholdNoInternet);
         }
         const connectionStatus = await connectionStatusPromise;
+        Object.assign(connectionState, connectionStatus);
         return connectionStatus;
       }
       function handleFlakyInternet() {
@@ -272,17 +280,8 @@ function Handli(options_global={}) {
           const {noInternet, slowInternet, awaitInternetConnection} = await getConnectionInfo();
           if( response!==NO_RESPONSE_YET ) return;
 
-          if( noInternet ) {
-            showWarningModal(
-              getMsg("OFFLINE_PROBABLY"),
-              getMsg('RETRYING_STILL'),
-            )
-          } else if( slowInternet ) {
-            showWarningModal(
-              getMsg('SLOW_INTERNET'),
-              getMsg('RETRYING_STILL'),
-            );
-          }
+          requestState.failureState = 'SLOW_RESPONSE';
+          resolveAttempt();
         }, timeout);
       }
       function handleFlakyServer() {
@@ -296,10 +295,8 @@ function Handli(options_global={}) {
           if( noInternet ) return;
           if( slowInternet ) return;
 
-          showErrorModal(
-            getMsg('SLOW_SERVER'),
-            getMsg('RETRYING_STILL'),
-          );
+          requestState.failureState = 'SLOW_RESPONSE';
+          resolveAttempt();
         }, timeout);
       }
       async function getConnectionInfo() {
@@ -481,7 +478,7 @@ function Handli(options_global={}) {
         devMessage,
       );
 
-      const response = await runRequest();
+      const response = await tryRequest();
       return response;
     }
 
