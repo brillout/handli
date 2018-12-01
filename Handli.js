@@ -350,44 +350,6 @@ function Handli(options_global={}) {
       return !isSuccessCode;
     }
 
-    async function handleNoConnection({noInternet, awaitInternetConnection}) {
-      assert.internal([true, false].includes(noInternet));
-      assert.internal(awaitInternetConnection);
-      if( noInternet ) {
-        return handleOffline(awaitInternetConnection);
-      } else {
-        return handleError();
-      }
-    }
-
-    async function handleError(response) {
-      let errorMessage = getMsg('ERROR');
-      let devMessage;
-      return handlePeriodicRetry(errorMessage, devMessage);
-    }
-
-    async function getResponseHtml(response) {
-      let bodyText;
-      try {
-        bodyText = await response.text();
-      } catch(_) {
-        return null;
-      }
-
-      try {
-        return JSON.stringify(JSON.parse(bodyText), null, 2);
-      } catch(_) {}
-
-      /*
-      const untrustedHtml = encodeURIComponent(bodyText);
-      return '<iframe src="displayUntrustedHtml?untrustedHtml='+untrustedHtml+'"></iframe>';
-      */
-    }
-
-    function handleErrorResponse(response) {
-      return handleError(response);
-    }
-
     var currentModal;
     function showWarningModal(...args) {
       _showModal(true, ...args);
@@ -413,33 +375,6 @@ function Handli(options_global={}) {
     function closeModal() {
       if( currentModal ) currentModal.close();
       currentModal = null;
-    }
-
-    async function handlePeriodicRetry(message, devMessage) {
-      showErrorModal(
-        message,
-        devMessage,
-      );
-
-      await wait(timeLeft => {
-        showErrorModal(
-          message,
-          getMsgRetryingIn(timeLeft),
-          devMessage,
-        );
-      });
-
-      showErrorModal(
-        message,
-        getMsg("RETRYING_NOW"),
-        devMessage,
-      );
-
-      const response = await tryRequest();
-      return response;
-    }
-
-    function getModalMessage(message, statusMessage, devMessage) {
     }
 
     var previousSeconds;
