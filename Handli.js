@@ -92,7 +92,7 @@ function Handli(options_global={}) {
     });
 
     showErrorModal(
-      getMsg('ERROR');
+      getMsg('ERROR'),
       getMsg("RETRYING_NOW"),
     );
   }
@@ -143,10 +143,9 @@ function Handli(options_global={}) {
       return resolvedFailurePromise;
     }
 
-    const {status} = requestState.response;
-    assert.internal(200<= status && status<=299);
-
-    return response;
+    const {returnedValue} = requestState;
+    assert_resolvedValue(returnedValue);
+    return returnedValue;
 
     function addFailedRequest() {
       const failedRequest = {
@@ -156,7 +155,7 @@ function Handli(options_global={}) {
       failedRequests.push(failedRequest);
 
       let resolveFailure;
-      const resolvedFailurePromise = new Promsie(r => resolveFailure = r);
+      const resolvedFailurePromise = new Promise(r => resolveFailure = r);
 
       if( failedRequests.length===1 ) {
         handleFailure();
@@ -174,18 +173,16 @@ function Handli(options_global={}) {
           assert.internal(idx>=0);
           failedRequests.splice(idx, -1);
 
-          const {status} = requestState.response;
-          assert.internal(200<= status && status<=299);
-          resolveFailure(response);
-
-          return;
+          const {returnedValue} = requestState;
+          assert_resolvedValue(returnedValue);
+          resolveFailure(returnedValue);
         }
       }
     }
 
     async function tryRequest() {
       const NO_RESPONSE_YET = Symbol();
-      let response = NO_RESPONSE_YET;
+      let returnedValue = NO_RESPONSE_YET;
 
       if( ! requestState.responsePromise ) {
         requestState.responsePromise = requestFunction();
@@ -206,9 +203,9 @@ function Handli(options_global={}) {
         const start = new Date();
         */
         try {
-          response = await requestState.responsePromise;
+          returnedValue = await requestState.responsePromise;
         } catch(err) {
-          response = null;
+          returnedValue = null;
           console.error(err);
           await getConnectionStatus();
           requestState.failureState = 'NO_RESPONSE';
@@ -218,13 +215,13 @@ function Handli(options_global={}) {
           requestState.responsePromise = null;
         }
         /*
-        console.log(response.url, response.ok, response.status, new Date() - start);
+        console.log(returnedValue.url, returnedValue.ok, returnedValue.status, new Date() - start);
         */
-        assert_response(response);
-        requestState.response = response;
+        assert_returnedValue(returnedValue);
+        requestState.returnedValue = returnedValue;
 
-        if( isErrorResponse(response) ) {
-          console.error(response);
+        if( isErrorResponse(returnedValue) ) {
+          console.error(returnedValue);
           requestState.failureState = 'ERROR_RESPONSE';
         } else {
           requestState.failureState = null;
@@ -273,10 +270,10 @@ function Handli(options_global={}) {
         const timeout = getInternetTimeout();
         if( ! timeout ) return;
         setTimeout(async () => {
-          if( response!==NO_RESPONSE_YET ) return;
+          if( returnedValue!==NO_RESPONSE_YET ) return;
 
           const {noInternet, slowInternet, awaitInternetConnection} = await getConnectionInfo();
-          if( response!==NO_RESPONSE_YET ) return;
+          if( returnedValue!==NO_RESPONSE_YET ) return;
 
           requestState.failureState = 'SLOW_RESPONSE';
           resolveAttempt();
@@ -286,10 +283,10 @@ function Handli(options_global={}) {
         const timeout = getServerTimeout();
         if( ! timeout ) return;
         setTimeout(async () => {
-          if( response!==NO_RESPONSE_YET ) return;
+          if( returnedValue!==NO_RESPONSE_YET ) return;
 
           const {noInternet, slowInternet} = await getConnectionInfo();
-          if( response!==NO_RESPONSE_YET ) return;
+          if( returnedValue!==NO_RESPONSE_YET ) return;
           if( noInternet ) return;
           if( slowInternet ) return;
 
@@ -432,13 +429,22 @@ function Handli(options_global={}) {
 
 
 
-function assert_response(response) {
-  if( !isFetchLikeResponse(response) ) {
-    return;
+function assert_resolvedValue(resolvedValue) {
+  if( isFetchLikeResponse(resolvedValue) ) {
+    const response = resolvedValue;
+    assert_fetchLikeResponse(response);
+    const {status} = response;
+    assert.internal(200<= status && status<=299);
   }
-
+}
+function assert_returnedValue(returnedValue) {
+  if( isFetchLikeResponse(returnedValue) ) {
+    const response = returnedValue;
+    assert_fetchLikeResponse(response);
+  }
+}
+function assert_fetchLikeResponse(response) {
   const isSuccessCode = 200 <= response.status && response.status <= 299;
-
   assert.warning(
     isSuccessCode === response.ok,
     "Unexpected response object. Are you using a fetch-like library?"
@@ -456,12 +462,9 @@ function isErrorResponse(response) {
   if( ! isFetchLikeResponse(response) ) {
     return false;
   }
-
   const isSuccessCode = 200 <= response.status && response.status <= 299;
-
   return !isSuccessCode;
 }
-
 
 
 function antiFlakyUI() {
