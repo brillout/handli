@@ -44,12 +44,10 @@ function Handli(options_global={}) {
 
     handleFailure();
   }
-
   function hasSlowResponse() {
     assert.internal(!(connectionState||{}).slowInternet);
     return getRequestsWith('SLOW_RESPONSE').length>0;
   }
-
   async function handleOffline() {
     const {noLanConnection} = connectionState;
     if( noLanConnection ) {
@@ -73,21 +71,18 @@ function Handli(options_global={}) {
       );
     }
   }
-
   async function handleSlowInternet({awaitInternetConnection}) {
     showWarningModal(
       getMsg("SLOW_INTERNET"),
       getMsg("RETRYING_STILL"),
     );
   }
-
   async function handleSlowServer() {
     showErrorModal(
       getMsg('SLOW_SERVER'),
       getMsg('RETRYING_STILL'),
     );
   }
-
   async function handleBugs() {
     await wait(timeLeft => {
       showErrorModal(
@@ -101,7 +96,6 @@ function Handli(options_global={}) {
       getMsg("RETRYING_NOW"),
     );
   }
-
   async function resolveFailedRequests() {
     for(request of getRequestsWith('SLOW_RESPONSE')) {
       await request.retryRequest();
@@ -113,7 +107,6 @@ function Handli(options_global={}) {
       await request.retryRequest();
     }
   }
-
   function getRequestsWith(failureState) {
     const STATES = ['SLOW_RESPONSE', 'ERROR_RESPONSE', 'NO_RESPONSE'];
     assert.internal(STATES.includes(failureState));
@@ -123,6 +116,8 @@ function Handli(options_global={}) {
       .filter(request => request.requestState.failureState===failureState)
     );
   }
+
+
 
   async function handli(requestFunction, options_local={}) {
 
@@ -162,6 +157,10 @@ function Handli(options_global={}) {
 
       let resolveFailure;
       const resolvedFailurePromise = new Promsie(r => resolveFailure = r);
+
+      if( failedRequests.length===1 ) {
+        handleFailure();
+      }
 
       return resolvedFailurePromise;
 
@@ -320,63 +319,6 @@ function Handli(options_global={}) {
       }
     }
 
-    function assert_response(response) {
-      if( !isFetchLikeResponse(response) ) {
-        return;
-      }
-
-      const isSuccessCode = 200 <= response.status && response.status <= 299;
-
-      assert.warning(
-        isSuccessCode === response.ok,
-        "Unexpected response object. Are you using a fetch-like library?"
-      );
-    }
-    function isFetchLikeResponse(response) {
-      const yes = (
-        response instanceof Object &&
-        [true, false].includes(response.ok) &&
-        'status' in response
-      );
-      return yes;
-    }
-    function isErrorResponse(response) {
-      if( ! isFetchLikeResponse(response) ) {
-        return false;
-      }
-
-      const isSuccessCode = 200 <= response.status && response.status <= 299;
-
-      return !isSuccessCode;
-    }
-
-    var currentModal;
-    function showWarningModal(...args) {
-      _showModal(true, ...args);
-    }
-    function showErrorModal(...args) {
-      _showModal(false, ...args);
-    }
-    function _showModal(isWarning, ...messageHtmls) {
-      const messageHtml = messageHtmls.filter(Boolean).join('<br/>');
-
-      if( currentModal && currentModal.isWarning===isWarning ) {
-        currentModal.update(messageHtml);
-      } else {
-        closeModal();
-        const {update, close} = getOption('showMessage')(messageHtml, isWarning);
-        currentModal = {
-          isWarning,
-          update,
-          close,
-        };
-      }
-    }
-    function closeModal() {
-      if( currentModal ) currentModal.close();
-      currentModal = null;
-    }
-
     var previousSeconds;
     function wait(timeListener) {
       const seconds = getOption('retryTimer')(previousSeconds);
@@ -457,7 +399,70 @@ function Handli(options_global={}) {
       return getOption('timeoutServer') || getOption('timeout');
     }
   }
+
+
+
+  var currentModal;
+  function showWarningModal(...args) {
+    _showModal(true, ...args);
+  }
+  function showErrorModal(...args) {
+    _showModal(false, ...args);
+  }
+  function _showModal(isWarning, ...messageHtmls) {
+    const messageHtml = messageHtmls.filter(Boolean).join('<br/>');
+
+    if( currentModal && currentModal.isWarning===isWarning ) {
+      currentModal.update(messageHtml);
+    } else {
+      closeModal();
+      const {update, close} = getOption('showMessage')(messageHtml, isWarning);
+      currentModal = {
+        isWarning,
+        update,
+        close,
+      };
+    }
+  }
+  function closeModal() {
+    if( currentModal ) currentModal.close();
+    currentModal = null;
+  }
 }
+
+
+
+function assert_response(response) {
+  if( !isFetchLikeResponse(response) ) {
+    return;
+  }
+
+  const isSuccessCode = 200 <= response.status && response.status <= 299;
+
+  assert.warning(
+    isSuccessCode === response.ok,
+    "Unexpected response object. Are you using a fetch-like library?"
+  );
+}
+function isFetchLikeResponse(response) {
+  const yes = (
+    response instanceof Object &&
+    [true, false].includes(response.ok) &&
+    'status' in response
+  );
+  return yes;
+}
+function isErrorResponse(response) {
+  if( ! isFetchLikeResponse(response) ) {
+    return false;
+  }
+
+  const isSuccessCode = 200 <= response.status && response.status <= 299;
+
+  return !isSuccessCode;
+}
+
+
 
 function antiFlakyUI() {
   return sleep(0.5);
@@ -469,4 +474,3 @@ function sleep(seconds) {
   setTimeout(resolve, seconds*1000);
   return p;
 }
-
