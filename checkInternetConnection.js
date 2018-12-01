@@ -9,9 +9,10 @@ async function checkInternetConnection(timeout) {
     "`checkInternetConnection` requires argument `timeout`",
   );
   let noInternet = false;
+  let noLanConnection = hasNoLanConnection();
   let fastestPing;
 
-  if( noLanConnection() ) {
+  if( noLanConnection ) {
     noInternet = true;
   } else {
     fastestPing = await getFastestPing(timeout);
@@ -28,11 +29,12 @@ async function checkInternetConnection(timeout) {
 
   return {
     noInternet,
+    hasNoLanConnection,
     fastestPing,
     awaitInternetConnection,
   }
 }
-function noLanConnection() {
+function hasNoLanConnection() {
   return window.navigator.onLine===false;
 }
 function hasLanConnection() {

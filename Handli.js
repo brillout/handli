@@ -14,13 +14,128 @@ function Handli(options_global={}) {
     retryTimer: seconds => !seconds ? 3 : Math.ceil(seconds*1.5),
   };
 
+  const pendingRequests = [];
+  const failedRequests = [];
+  const connectionState = {};
+
   return handli;
 
-  var pendingRequest;
-  var stateIsUnfixable;
+  async function handleFailure() {
+    if( failedRequests.length===0 ) {
+      closeModal();
+      return;
+    }
+    await Promise.all([
+      antiFlakyUI(),
+      (async () => {
+        if( connectionState && connectionState.noInternet ) {
+          await handleOffline(connectionState);
+        }
+        else if( connectionState && connectionState.slowInternet && hasTimeout_slowInternet(failedRequests) ) {
+          await handleSlowInternet(connectionState);
+        }
+        else if( hasTimeout_slowServer(failedRequests) ) {
+          await handleSlowServer();
+        } else {
+          await handleBugs();
+        }
+      })(),
+    ]);
+    handleFailure();
+  }
+
+  async function handleOffline(connectionState) {
+    const {noLanConnection} = connectionState;
+    if( noLanConnection ) {
+      showWarningModal(
+        getMsg("OFFLINE"),
+        getMsg("RETRYING_WHEN_ONLINE"),
+      );
+    } else {
+      showWarningModal(
+        getMsg("OFFLINE_PROBABLY"),
+        getMsg("RETRYING_STILL"),
+      );
+    }
+
+    await awaitInternetConnection();
+
+    if( noLanConnection ) {
+      showWarningModal(
+        getMsg("ONLINE"),
+        getMsg("RETRYING_NOW")
+      );
+    }
+
+    await resolveFailures();
+  }
+
+  async function handleSlowInternet({awaitInternetConnection}) {
+    showWarningModal(
+      getMsg("SLOW_INTERNET"),
+      getMsg("RETRYING_STILL"),
+    );
+
+    await resolveFailures();
+  }
+
+  async function handleSlowServer() {
+    showErrorModal(
+      getMsg('SLOW_SERVER'),
+      getMsg('RETRYING_STILL'),
+    );
+
+    await resolveFailures();
+  }
+
+  async function handleBugs() {
+    await wait(timeLeft => {
+      showErrorModal(
+        message,
+        getMsgRetryingIn(timeLeft),
+        devMessage,
+      );
+    });
+
+    showErrorModal(
+      getMsg('ERROR');
+      getMsg("RETRYING_NOW"),
+    );
+
+    await resolveFailures();
+  }
+
+  async function resolveFailures() {
+    for(request of getRequestsWith('PENDING_RESPONSE')) {
+      await request.tryRequest();
+    }
+    for(request of getRequestsWith('ERROR_RESPONSE')) {
+      await request.tryRequest();
+    }
+    for(request of getRequestsWith('NO_RESPONSE')) {
+      await request.tryRequest();
+    }
+  }
+
+  function getRequestsWith(state) {
+    const STATES = ['PENDING_RESPONSE', 'ERROR_RESPONSE', 'NO_RESPONSE'];
+    assert.internal(STATES.includes(state));
+    assert.internal(failedRequests.every(req => STATES.includes(req.state)));
+    return (
+      failedRequests
+      .filter(request => request.state===state)
+    );
+  }
+
   async function handli(requestFunction, options_local={}) {
 
     const isBrowser = typeof window !== "undefined" && window.document;
+
+    const requestState = {
+      requestFunction,
+    };
+
+    pendingRequests.push(requestState);
 
     const skipHandli = (
       !isBrowser ||
@@ -31,16 +146,13 @@ function Handli(options_global={}) {
       return requestFunction();
     };
 
-    if( pendingRequest ) {
-      await handleOverflow();
-    }
-
-    pendingRequest = true;
     let response;
     try {
       response = await runRequest();
     } finally {
-      pendingRequest = false;
+      const idx = pendingRequests.indexOf(requestState);
+      assert.internal(idx>=0);
+      pendingRequests.splice(idx, -1);
     }
 
     closeModal();
@@ -204,15 +316,6 @@ function Handli(options_global={}) {
       return !isSuccessCode;
     }
 
-    async function handleOverflow() {
-      showErrorModal(
-        getMsg('ERROR'),
-        getMsg('RETRY_MANUALLY'),
-      );
-      stateIsUnfixable = true;
-      await new Promise(()=>{});
-    }
-
     async function handleNoConnection({noInternet, awaitInternetConnection}) {
       assert.internal([true, false].includes(noInternet));
       assert.internal(awaitInternetConnection);
@@ -301,7 +404,6 @@ function Handli(options_global={}) {
       _showModal(false, ...args);
     }
     function _showModal(isWarning, ...messageHtmls) {
-      if( stateIsUnfixable ) return;
       const messageHtml = messageHtmls.filter(Boolean).join('<br/>');
 
       if( currentModal && currentModal.isWarning===isWarning ) {
@@ -319,23 +421,6 @@ function Handli(options_global={}) {
     function closeModal() {
       if( currentModal ) currentModal.close();
       currentModal = null;
-    }
-
-    async function handleOffline(awaitInternetConnection) {
-      showWarningModal(
-        getMsg("OFFLINE"),
-        getMsg("RETRYING_WHEN_ONLINE"),
-      );
-
-      await awaitInternetConnection();
-
-      showWarningModal(
-        getMsg("ONLINE"),
-        getMsg("RETRYING_NOW"),
-      );
-
-      const response = await runRequest();
-      return response;
     }
 
     async function handlePeriodicRetry(message, devMessage) {
@@ -446,3 +531,15 @@ function Handli(options_global={}) {
     }
   }
 }
+
+function antiFlakyUI() {
+  return sleep(0.5);
+}
+// TODO rename
+function sleep(seconds) {
+  let resolve;
+  const p = new Promise(r => resolve=r);
+  setTimeout(resolve, seconds*1000);
+  return p;
+}
+
