@@ -217,14 +217,6 @@ function getExamples() {
     ],
     options1: [
       [
-        readFileSync(__dirname+'/cases/devMode.js', 'utf-8'),
-        require('./cases/devMode.js'),
-        'Dev Mode',
-        <div>
-          Show debug info.
-        </div>,
-      ],
-      [
         readFileSync(__dirname+'/cases/retryTimer.js', 'utf-8'),
         require('./cases/retryTimer.js'),
         'Retry Timer',

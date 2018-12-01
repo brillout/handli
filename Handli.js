@@ -5,7 +5,6 @@ module.exports = Handli;
 function Handli(options_global={}) {
 
   const options_default = {
-    devMode: typeof window !== "undefined" && window.location && window.location.hostname==='localhost',
     timeout: null,
     timeoutServer: null,
     timeoutInternet: null,
@@ -364,49 +363,7 @@ function Handli(options_global={}) {
     async function handleError(response) {
       let errorMessage = getMsg('ERROR');
       let devMessage;
-      if( getOption('devMode') ) {
-        devMessage = await getDevMessage(response);
-      }
       return handlePeriodicRetry(errorMessage, devMessage);
-    }
-
-    async function getDevMessage(response) {
-      let devMessage = "<br/>-------------------------- debug info --------------------------";
-      devMessage += '<br/><small style="color: #777">(shown only in dev mode, see <a target="_blank" href="https://github.com/brillout/handli">github.com/brillout/handli</a>.)</small><br/><br/>';
-
-      if( response && (response.status || response.statusText) ) {
-        devMessage += (
-          '<span style="color: red">'+
-          [
-            response.status,
-            response.statusText,
-          ].filter(Boolean).join(' ')+
-          '</span>'
-        );
-      }
-
-      if( response && response.url ) {
-        devMessage += ' <a target="_blank" href="'+response.url+'">'+response.url+'</a>';
-      }
-
-      if( response ) {
-        const responseHtml = await getResponseHtml(response);
-        if( responseHtml ) {
-          devMessage += "<br><br>"+responseHtml;
-        }
-      }
-
-      if( ! response ) {
-        devMessage += (
-          '<span style="color: red">'+
-          'Could not connect to server.'+
-          '</span>'+
-          '<br/><br/>'+
-          'Is the server running? Is CORS correctly set up?'
-        );
-      }
-
-      return devMessage;
     }
 
     async function getResponseHtml(response) {
