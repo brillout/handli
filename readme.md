@@ -156,6 +156,20 @@ By default `thresholdSlowInternet` is `500ms` and `thresholdNoInternet` is `900m
 You can configure `thresholdSlowInternet` and `thresholdNoInternet`,
 see [Live Demo - Options](https://brillout.github.com/handli#options).
 
+Note that Handli handles slow connections only if you provide a `timeout` to your requests:
+
+~~~js
+const response = await handli(
+  () => fetch(url),
+  // Handli will show a UI-blocking modal if there is no response after 2 seconds
+  {timeout: 2000}
+);
+~~~
+
+If you don't provide a `timoeut` then
+Handli will indefinitely wait for a response
+without showing the UI-blocking modal.
+
 ### Does it work with `fetch` only?
 
 Yes & no: It works with any fetch-like library.
