@@ -24,7 +24,8 @@ function Handli() {
       return;
     }
 
-    console.log('c', connectionState);
+    assert.internal(noServerTimeout() && noInternetTimeout() || [true, false].includes(connectionState.noInternet));
+
     if( connectionState.noInternet ) {
       await handleOffline(connectionState);
     }
@@ -45,7 +46,7 @@ function Handli() {
     handleFailure();
   }
   function hasSlowResponse() {
-    assert.internal(!(connectionState||{}).slowInternet);
+    assert.internal(!connectionState.slowInternet);
     return getRequestsWith('SLOW_RESPONSE').length>0;
   }
   async function handleOffline() {
@@ -178,6 +179,7 @@ function Handli() {
       let resolveAttempt;
       const attemptPromise = new Promise(r => resolveAttempt=r);
 
+      let connectionStatusPromise;
       handleResponse();
       handleConnectionStatus();
       handleFlakyInternet();
@@ -193,6 +195,32 @@ function Handli() {
         responseReceived = true;
         resolveAttempt();
       }
+      async function requestReponse() {
+        assert.internal(!responsePromise);
+        let returnedValue;
+        try {
+          returnedValue = await requestFunction();
+        } catch(err) {
+          console.error(err);
+          requestState.failureState = 'NO_RESPONSE';
+          responsePromise = null;
+          if( connectionStatusPromise ) {
+            await connectionStatusPromise;
+          }
+          return;
+        }
+
+        assert_returnedValue(returnedValue);
+        if( isErrorResponse(returnedValue) ) {
+          console.error(returnedValue);
+          requestState.failureState = 'ERROR_RESPONSE';
+        } else {
+          requestState.failureState = null;
+          resolveValue(returnedValue);
+        }
+
+        responsePromise = null;
+      }
 
       function handleConnectionStatus() {
         const timeout = getOption('timeout');
@@ -206,8 +234,10 @@ function Handli() {
           '`thresholdSlowInternet` should be lower than `thresholdNoInternet`'
         );
 
-        const minTimeout = Math.min(getInternetTimeout()||Infinity, getServerTimeout()||Infinity);
-        if( minTimeout===Infinity ) return;
+        if( noServerTimeout() && noInternetTimeout() ) {
+          return;
+        }
+        const minTimeout = getMinTimeout();
         const checkTimeout = minTimeout - thresholdNoInternet;
         assert.usage(
           checkTimeout>=100,
@@ -215,8 +245,18 @@ function Handli() {
           "`thresholdNoInternet` should be at least 100ms lower than `timeout`, `timeoutInternet`, and `timeoutServer`"
         );
 
+        let resolveConnectionStatus;
+        connectionStatusPromise = new Promise(r => resolveConnectionStatus=r);
         setTimeout(
-          () => getConnectionInfo(),
+          async () => {
+            Object.assign(
+              connectionState,
+              await getConnectionInfo(),
+            );
+            assert.internal([true, false].includes(connectionState.noInternet));
+            assert.internal([true, false].includes(connectionState.slowInternet));
+            resolveConnectionStatus();
+          },
           checkTimeout
         );
       }
@@ -227,8 +267,12 @@ function Handli() {
         setTimeout(async () => {
           if( responseReceived ) return;
 
-          const {noInternet, slowInternet} = await getConnectionInfo();
+          await connectionStatusPromise;
+          assert.internal([true, false].includes(connectionState.noInternet));
+          assert.internal([true, false].includes(connectionState.slowInternet));
           if( responseReceived ) return;
+
+          const {noInternet, slowInternet} = connectionState;
           if( noInternet ) return;
           if( !slowInternet ) return;
 
@@ -242,7 +286,12 @@ function Handli() {
         setTimeout(async () => {
           if( responseReceived ) return;
 
-          const {noInternet, slowInternet} = await getConnectionInfo();
+          await connectionStatusPromise;
+          assert.internal([true, false].includes(connectionState.noInternet));
+          assert.internal([true, false].includes(connectionState.slowInternet));
+          if( responseReceived ) return;
+
+          const {noInternet, slowInternet} = connectionState;
           if( responseReceived ) return;
           if( noInternet ) return;
           if( slowInternet ) return;
@@ -252,44 +301,19 @@ function Handli() {
         }, timeout);
       }
     }
-    async function requestReponse() {
-      assert.internal(!responsePromise);
-      let returnedValue;
-      try {
-        returnedValue = await requestFunction();
-      } catch(err) {
-        console.error(err);
-        requestState.failureState = 'NO_RESPONSE';
-        responsePromise = null;
-        // TODO
-        await getConnectionInfo();
-        return;
-      }
 
-      assert_returnedValue(returnedValue);
-      if( isErrorResponse(returnedValue) ) {
-        console.error(returnedValue);
-        requestState.failureState = 'ERROR_RESPONSE';
-      } else {
-        requestState.failureState = null;
-        resolveValue(returnedValue);
-      }
-
-      responsePromise = null;
-    }
-
-    // TODO
-    var connectionStatusPromise;
-    async function getConnectionStatus() {
-      if( ! connectionStatusPromise ) {
-        const thresholdNoInternet = getOption('thresholdNoInternet');
-        connectionStatusPromise = getOption('checkInternetConnection')(thresholdNoInternet);
-      }
-      const connectionStatus = await connectionStatusPromise;
-      return connectionStatus;
-    }
+    var checkConnectionPromise;
     async function getConnectionInfo() {
-      const connectionStatus = await getConnectionStatus();
+      if( ! checkConnectionPromise ) {
+        checkConnectionPromise = checkConnection();
+      }
+      const connectionInfo = await checkConnectionPromise;
+      checkConnectionPromise = null;
+      return connectionInfo;
+    }
+    async function checkConnection() {
+      const thresholdNoInternet = getOption('thresholdNoInternet');
+      const connectionStatus = await getOption('checkInternetConnection')(thresholdNoInternet);
       const {noInternet, fastestPing} = connectionStatus;
       assert.internal([true, false].includes(noInternet));
       assert.internal(noInternet===true || fastestPing>=0);
@@ -304,10 +328,8 @@ function Handli() {
 
       const connectionInfo = {
         slowInternet,
-        ...connectionStatus
+        ...connectionStatus,
       };
-
-      Object.assign(connectionState, connectionInfo);
 
       return connectionInfo;
     }
@@ -372,6 +394,15 @@ function Handli() {
   }
   function getServerTimeout() {
     return getOption('timeoutServer') || getOption('timeout');
+  }
+  function getMinTimeout() {
+    return Math.min(getInternetTimeout()||Infinity, getServerTimeout()||Infinity);
+  }
+  function noServerTimeout() {
+    return !getServerTimeout();
+  }
+  function noInternetTimeout() {
+    return !getInternetTimeout();
   }
 
 
