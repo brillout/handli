@@ -1,3 +1,4 @@
+import handli from 'handli';
 import {Console, wait, getOfflineSimulator} from '../../utils';
 import {readFileSync} from 'fs';
 
@@ -5,7 +6,7 @@ export {run};
 export {console};
 
 const console = new Console();
-const {offlineSimulator, handli, fetch} = getOfflineSimulator();
+const {offlineSimulator, fetch} = getOfflineSimulator();
 
 const customCss = readFileSync(__dirname+'/customStyle.css', 'utf-8');
 

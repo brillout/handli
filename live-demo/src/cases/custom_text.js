@@ -14,7 +14,7 @@ setTimeout(serverErrorSimulator.remove, 2000);
 
 // The list of messages can be found at
 // require('handli/messages.js');
-const messages = {
+handli.messages = {
   ERROR: (
     'An unexpected error occured, sorry.\n\n'+
     'We have been notified and we are \n'+
@@ -24,8 +24,7 @@ const messages = {
 };
 
 const response = await handli(
-  () => fetch('data.json'),
-  {messages}
+  () => fetch('data.json')
 );
 
 console.log(

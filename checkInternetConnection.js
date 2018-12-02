@@ -29,7 +29,7 @@ async function checkInternetConnection(timeout) {
 
   return {
     noInternet,
-    hasNoLanConnection,
+    noLanConnection,
     fastestPing,
     awaitInternetConnection,
   }

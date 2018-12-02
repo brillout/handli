@@ -3,11 +3,15 @@ const showMessage = require('./showMessage');
 const messages = require('./messages');
 const checkInternetConnection = require('./checkInternetConnection');
 
-module.exports = new Handli({
+const handli = new Handli();
+
+Object.assign(handli, {
   showMessage,
   checkInternetConnection,
   messages,
 });
+
+module.exports = handli;
 
 /*
 function showMessage(...args) {

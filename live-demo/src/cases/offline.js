@@ -1,3 +1,4 @@
+import handli from 'handli';
 import {Console, wait, getOfflineSimulator} from '../utils';
 
 export {run};
@@ -5,7 +6,7 @@ export {console};
 
 const console = new Console();
 
-const {offlineSimulator, handli, fetch} = getOfflineSimulator();
+const {offlineSimulator, fetch} = getOfflineSimulator();
 
 async function run() {
 offlineSimulator.install();

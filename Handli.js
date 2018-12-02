@@ -2,16 +2,15 @@ const assert = require('reassert');
 
 module.exports = Handli;
 
-function Handli(options_global={}) {
-
-  const options_default = {
+function Handli() {
+  Object.assign(handli, {
     timeout: null,
     timeoutServer: null,
     timeoutInternet: null,
     thresholdSlowInternet: 500,
     thresholdNoInternet: 900,
     retryTimer: seconds => !seconds ? 3 : Math.ceil(seconds*1.5),
-  };
+  });
 
   const failedRequests = [];
   const connectionState = {};
@@ -62,7 +61,7 @@ function Handli(options_global={}) {
       );
     }
 
-    await awaitInternetConnection();
+    await connectionState.awaitInternetConnection();
 
     if( noLanConnection ) {
       showWarningModal(
@@ -71,7 +70,7 @@ function Handli(options_global={}) {
       );
     }
   }
-  async function handleSlowInternet({awaitInternetConnection}) {
+  async function handleSlowInternet() {
     showWarningModal(
       getMsg("SLOW_INTERNET"),
       getMsg("RETRYING_STILL"),
@@ -86,7 +85,7 @@ function Handli(options_global={}) {
   async function handleBugs() {
     await wait(timeLeft => {
       showErrorModal(
-        message,
+        getMsg('ERROR'),
         getMsgRetryingIn(timeLeft),
       );
     });
@@ -110,7 +109,7 @@ function Handli(options_global={}) {
   function getRequestsWith(failureState) {
     const STATES = ['SLOW_RESPONSE', 'ERROR_RESPONSE', 'NO_RESPONSE'];
     assert.internal(STATES.includes(failureState));
-    assert.internal(failedRequests.every(req => STATES.includes(req.requestState.failureState)));
+    assert.internal(failedRequests.every(req => STATES.includes(req.requestState.failureState)), failedRequests);
     return (
       failedRequests
       .filter(request => request.requestState.failureState===failureState)
@@ -119,8 +118,7 @@ function Handli(options_global={}) {
 
 
 
-  async function handli(requestFunction, options_local={}) {
-
+  async function handli(requestFunction) {
     const isBrowser = typeof window !== "undefined" && window.document;
 
     const skipHandli = (
@@ -134,18 +132,16 @@ function Handli(options_global={}) {
 
     const requestState = {};
 
+    let resolveValue;
+    const resolvedValuePromise = new Promise(r => resolveValue = r);
+
     await tryRequest();
 
     if( requestState.failureState ) {
-      const resolvedFailurePromise = (
-        addFailedRequest()
-      );
-      return resolvedFailurePromise;
+      addFailedRequest();
     }
 
-    const {returnedValue} = requestState;
-    assert_resolvedValue(returnedValue);
-    return returnedValue;
+    return resolvedValuePromise;
 
     function addFailedRequest() {
       const failedRequest = {
@@ -154,39 +150,30 @@ function Handli(options_global={}) {
       };
       failedRequests.push(failedRequest);
 
-      let resolveFailure;
-      const resolvedFailurePromise = new Promise(r => resolveFailure = r);
+      const resolveValue_ = resolveValue;
+      resolveValue = resolvedValue => {
+        const idx = failedRequests.indexOf(failedRequest);
+        assert.internal(idx>=0);
+        failedRequests.splice(idx, 1);
+
+        resolveValue_(resolvedValue);
+      };
 
       if( failedRequests.length===1 ) {
         handleFailure();
       }
+    }
 
-      return resolvedFailurePromise;
-
-      async function retryRequest() {
-        if( requestState.failureState ) {
-          await tryRequest();
-        }
-
-        if( ! requestState.failureState ) {
-          const idx = failedRequests.indexOf(failedRequest);
-          assert.internal(idx>=0);
-          failedRequests.splice(idx, -1);
-
-          const {returnedValue} = requestState;
-          assert_resolvedValue(returnedValue);
-          resolveFailure(returnedValue);
-        }
+    async function retryRequest() {
+      if( requestState.failureState ) {
+        await tryRequest();
       }
     }
 
+    let responsePromise;
     async function tryRequest() {
       const NO_RESPONSE_YET = Symbol();
       let returnedValue = NO_RESPONSE_YET;
-
-      if( ! requestState.responsePromise ) {
-        requestState.responsePromise = requestFunction();
-      }
 
       let resolveAttempt;
       const attemptPromise = new Promise(r => resolveAttempt=r);
@@ -199,32 +186,29 @@ function Handli(options_global={}) {
       return attemptPromise;
 
       async function handleResponse() {
-        /*
-        const start = new Date();
-        */
+        if( ! responsePromise ) {
+          responsePromise = requestFunction();
+        }
         try {
-          returnedValue = await requestState.responsePromise;
+          returnedValue = await responsePromise;
         } catch(err) {
-          returnedValue = null;
           console.error(err);
-          await getConnectionStatus();
+          returnedValue = null;
           requestState.failureState = 'NO_RESPONSE';
+          await getConnectionStatus();
           resolveAttempt();
           return;
         } finally {
-          requestState.responsePromise = null;
+          responsePromise = null;
         }
-        /*
-        console.log(returnedValue.url, returnedValue.ok, returnedValue.status, new Date() - start);
-        */
-        assert_returnedValue(returnedValue);
-        requestState.returnedValue = returnedValue;
 
+        assert_returnedValue(returnedValue);
         if( isErrorResponse(returnedValue) ) {
           console.error(returnedValue);
           requestState.failureState = 'ERROR_RESPONSE';
         } else {
           requestState.failureState = null;
+          resolveValue(returnedValue);
         }
 
         resolveAttempt();
@@ -272,8 +256,10 @@ function Handli(options_global={}) {
         setTimeout(async () => {
           if( returnedValue!==NO_RESPONSE_YET ) return;
 
-          const {noInternet, slowInternet, awaitInternetConnection} = await getConnectionInfo();
+          const {noInternet, slowInternet} = await getConnectionInfo();
           if( returnedValue!==NO_RESPONSE_YET ) return;
+          if( noInternet ) return;
+          if( !slowInternet ) return;
 
           requestState.failureState = 'SLOW_RESPONSE';
           resolveAttempt();
@@ -315,86 +301,67 @@ function Handli(options_global={}) {
         };
       }
     }
+  }
 
-    var previousSeconds;
-    function wait(timeListener) {
-      const seconds = getOption('retryTimer')(previousSeconds);
-      assert.usage(
-        seconds>0 && (previousSeconds===undefined || seconds>=previousSeconds),
-        "Wrong `retryTimer`",
-      );
-      let secondsLeft = previousSeconds = seconds;
-      const callListener = () => {
-        if( secondsLeft===0 ) {
-          resolve();
-          return;
-        }
-        timeListener(secondsLeft);
-        --secondsLeft;
-        window.setTimeout(callListener, 1000);
-      };
-      let resolve;
-      const promise = new Promise(resolver => resolve=resolver);
-      callListener();
-      return promise;
-    }
 
-    function getOption(prop, {required, subProp}={}) {
-      assert.usage(options_global instanceof Object);
-      assert.usage(options_local instanceof Object);
 
-      const val = (() => {
-        if( prop in options_local ) {
-          if( subProp ) {
-            if( subProp in options_local[prop] ) {
-              return options_local[prop][subProp];
-            }
-          } else {
-            return options_local[prop];
-          }
-        }
-        if( prop in options_global ) {
-          if( subProp ) {
-            if( subProp in options_global[prop] ) {
-              return options_global[prop][subProp];
-            }
-          } else {
-            return options_global[prop];
-          }
-        }
-        if( subProp ) {
-          return options_default[prop] && options_default[prop][subProp];
-        } else {
-          return options_default[prop];
-        }
-      })();
-
-      assert.internal(!required || val, {val, prop, subProp});
-      return val;
-    }
-    function getMsgRetryingIn(timeLeft) {
-      const msgFn = getMsg('RETRYING_IN', true);
-      if( ! msgFn instanceof Function ) {
-        return strToHtml(msgFn);
+  var previousSeconds;
+  function wait(timeListener) {
+    const seconds = getOption('retryTimer')(previousSeconds);
+    assert.usage(
+      seconds>0 && (previousSeconds===undefined || seconds>=previousSeconds),
+      "Wrong `retryTimer`",
+    );
+    let secondsLeft = previousSeconds = seconds;
+    const callListener = () => {
+      if( secondsLeft===0 ) {
+        resolve();
+        return;
       }
-      const msg = msgFn(timeLeft);
-      return strToHtml(msg);
+      timeListener(secondsLeft);
+      --secondsLeft;
+      window.setTimeout(callListener, 1000);
+    };
+    let resolve;
+    const promise = new Promise(resolver => resolve=resolver);
+    callListener();
+    return promise;
+  }
+
+
+
+  function getOption(prop, {required, subProp}={}) {
+    let val = handli[prop];
+    if( subProp ) {
+      val = val && val[subProp];
     }
-    function getMsg(msgCode, isFn) {
-      let msg = getOption('messages', {subProp: msgCode, required: true});
-      return isFn ? msg : strToHtml(msg);
+
+    assert.internal(!required || val, {val, prop, subProp});
+
+    return val;
+  }
+  function getMsgRetryingIn(timeLeft) {
+    const msgFn = getMsg('RETRYING_IN', true);
+    if( ! msgFn instanceof Function ) {
+      return strToHtml(msgFn);
     }
-    function strToHtml(str) {
-      assert.usage(str && str.split, str);
-      const html = str.split('\n').join('<br/>');
-      return html;
-    }
-    function getInternetTimeout() {
-      return getOption('timeoutInternet') || getOption('timeout');
-    }
-    function getServerTimeout() {
-      return getOption('timeoutServer') || getOption('timeout');
-    }
+    const msg = msgFn(timeLeft);
+    return strToHtml(msg);
+  }
+  function getMsg(msgCode, isFn) {
+    let msg = getOption('messages', {subProp: msgCode, required: true});
+    return isFn ? msg : strToHtml(msg);
+  }
+  function strToHtml(str) {
+    assert.usage(str && str.split, str);
+    const html = str.split('\n').join('<br/>');
+    return html;
+  }
+  function getInternetTimeout() {
+    return getOption('timeoutInternet') || getOption('timeout');
+  }
+  function getServerTimeout() {
+    return getOption('timeoutServer') || getOption('timeout');
   }
 
 

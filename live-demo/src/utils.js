@@ -1,4 +1,4 @@
-import handli_original from 'handli';
+import handli from 'handli';
 
 export {fetch};
 export {Console};
@@ -52,32 +52,28 @@ function getServerDownSimulator() {
 function getOfflineSimulator() {
   let installed = false;
   let resolveInternet = null;
-  let alreadyRemoved = null;
   const offlineSimulator = {
     install: () => {
-      resolveInternet = null;
-      alreadyRemoved = null;
       installed = true;
-      handliOptions.checkInternetConnection = async () => {
+      handli.checkInternetConnection = async () => {
         return {
           noInternet: true,
+          noLanConnection: true,
           awaitInternetConnection: () => {
-            const internetPromise = new Promise(r => resolveInternet=r);
-            if( alreadyRemoved ) {
-              resolveInternet();
+            if( !installed ) {
+              return;
             }
-            return internetPromise;
+            return new Promise(r => resolveInternet=r);
           },
         };
       };
     },
     remove: () => {
-      delete handliOptions.checkInternetConnection;
+      delete handli.checkInternetConnection;
       installed = false;
-      if( resolveInternet === null ) {
-        alreadyRemoved = true;
+      if( resolveInternet ) {
+        resolveInternet();
       }
-      resolveInternet();
     },
   };
 
@@ -89,10 +85,7 @@ function getOfflineSimulator() {
     }
   };
 
-  const handliOptions = {};
-  const handli = (url, opts) => handli_original(url, {...opts, ...handliOptions});
-
-  return {offlineSimulator, handli, fetch};
+  return {offlineSimulator, fetch};
 }
 
 function getServerErrorSimulator() {
@@ -120,7 +113,7 @@ function getSlowInternetSimulator(fastestPing=500) {
   let installed;
   const slowInternetSimulator = {
     install: () => {
-      handliOptions.checkInternetConnection = async () => {
+      handli.checkInternetConnection = async () => {
         wait(fastestPing/1000);
         return {
           noInternet: false,
@@ -138,9 +131,6 @@ function getSlowInternetSimulator(fastestPing=500) {
     return window.fetch(url);
   };
 
-  const handliOptions = {};
-  const handli = (url, opts) => handli_original(url, {...opts, ...handliOptions});
-
-  return {slowInternetSimulator, fetch, handli};
+  return {slowInternetSimulator, fetch};
 }
 

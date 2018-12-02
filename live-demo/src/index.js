@@ -8,9 +8,6 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
-//setTimeout(() => require('./success'), 2000);
-//const response = handli(() => Fetch('/does-not-exist'));
-
 ReactDOM.render(
   <LiveDemo/>,
   document.body.appendChild(document.createElement('div'))
@@ -343,7 +340,9 @@ function ResultView({codeModule}) {
   async function onRun() {
     setHistory(null);
     codeModule.console.history.length = 0;
+    const optionsBefore = Object.assign({}, handli);
     await codeModule.run();
+    Object.assign(handli, optionsBefore);
     setHistory(codeModule.console.history);
   }
 }

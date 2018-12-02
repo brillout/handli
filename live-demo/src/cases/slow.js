@@ -1,3 +1,4 @@
+import handli from 'handli';
 import {Console, wait, getSlowInternetSimulator} from '../utils';
 
 export {run};
@@ -5,16 +6,17 @@ export {console};
 
 const console = new Console();
 
-const {slowInternetSimulator, fetch, handli} = getSlowInternetSimulator();
+const {slowInternetSimulator, fetch} = getSlowInternetSimulator();
 
 async function run() {
 slowInternetSimulator.install();
 
+// If you provide a timeout then
+// Handli handles slow connections.
+handli.timeout = 1000; // Timeout of 1 second
+
 const response = await handli(
-  () => fetch('data.json'),
-  // If you provide a timeout then
-  // Handli handles slow connections.
-  {timeout: 1000} // Timeout of 1 second
+  () => fetch('data.json')
 );
 
 console.log(

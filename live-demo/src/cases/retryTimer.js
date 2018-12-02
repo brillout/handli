@@ -11,13 +11,12 @@ async function run() {
 serverDownSimulator.install();
 setTimeout(serverDownSimulator.remove, 5000);
 
-const retryTimer = (
+handli.retryTimer = (
   seconds => seconds ? seconds+1 : 1
 );
 
 const response = await handli(
-  () => fetch('data.json'),
-  {retryTimer}
+  () => fetch('data.json')
 );
 
 
