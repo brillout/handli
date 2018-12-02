@@ -13,7 +13,7 @@ function Handli() {
   });
 
   const failedRequests = [];
-  var checkConnectionPromise;
+  let checkConnectionPromise = null;
   let connectionState = null;
 
   return handli;
@@ -215,6 +215,8 @@ function Handli() {
           responsePromise = null;
           if( connectionStatusPromise ) {
             await connectionStatusPromise;
+          } else {
+            await setConnectionState();
           }
           return;
         }
@@ -232,7 +234,9 @@ function Handli() {
       }
 
       function handleConnectionStatus() {
-        connectionState = null;
+        if( checkConnectionPromise===null ) {
+          connectionState = null;
+        }
 
         const timeout = getOption('timeout');
         const timeoutServer = getOption('timeoutServer');
@@ -260,15 +264,17 @@ function Handli() {
         connectionStatusPromise = new Promise(r => resolveConnectionStatus=r);
         setTimeout(
           async () => {
-            connectionState = await getConnectionInfo();
-            assert.internal([true, false].includes(connectionState.noInternet));
-            assert.internal([true, false].includes(connectionState.slowInternet));
+            await setConnectionState();
             resolveConnectionStatus();
           },
           checkTimeout
         );
       }
-      // TODO
+      async function setConnectionState() {
+        connectionState = await getConnectionInfo();
+        assert.internal([true, false].includes(connectionState.noInternet));
+        assert.internal([true, false].includes(connectionState.slowInternet));
+      }
       function handleFlakyInternet() {
         const timeout = getInternetTimeout();
         if( ! timeout ) return;
@@ -311,8 +317,9 @@ function Handli() {
     }
 
     async function getConnectionInfo() {
-      if( ! checkConnectionPromise ) {
+      if( checkConnectionPromise===null ) {
         checkConnectionPromise = checkConnection();
+        assert.internal(checkConnection!==null);
       }
       const connectionInfo = await checkConnectionPromise;
       checkConnectionPromise = null;
