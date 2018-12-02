@@ -47,7 +47,7 @@ function toast(msg) {
 }
 
 async function run() {
-const showMessage = msg => {
+handli.showMessage = msg => {
   uiBlocker.enable();
   const toaster = toast(msg);
   return {
@@ -83,8 +83,7 @@ serverDownSimulator.install();
 setTimeout(serverDownSimulator.remove, 2000);
 
 const response = await handli(
-  () => fetch('data.json'),
-  {showMessage}
+  () => fetch('data.json')
 );
 
 

@@ -12,9 +12,9 @@ async function run() {
 slowInternetSimulator.install();
 
 // Generously increaase the timeout.
-// (Note that the values are not tested against
+// Note that the values are not tested against
 // your server but against low-latency and
-// highly-available servers such a google.com)
+// highly-available servers such a google.com
 handli.timeout = 3000;
 handli.thresholdSlowInternet = 1000;
 handli.thresholdNoInternet = 2000;
