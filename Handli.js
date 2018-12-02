@@ -216,7 +216,7 @@ function Handli() {
         );
 
         setTimeout(
-          () => getConnectionStatus(),
+          () => getConnectionInfo(),
           checkTimeout
         );
       }
@@ -251,26 +251,6 @@ function Handli() {
           resolveAttempt();
         }, timeout);
       }
-      async function getConnectionInfo() {
-        assert.internal(connectionStatusPromise);
-        const connectionStatus = await getConnectionStatus();
-        const {noInternet, fastestPing} = connectionStatus;
-        assert.internal([true, false].includes(noInternet));
-        assert.internal(noInternet===true || fastestPing>=0);
-
-        const thresholdSlowInternet = getOption('thresholdSlowInternet');
-        assert.usage(
-          thresholdSlowInternet>0,
-          {thresholdSlowInternet},
-          "`thresholdSlowInternet` is missing"
-        );
-        const slowInternet = !noInternet && fastestPing >= thresholdSlowInternet;
-
-        return {
-          noInternet,
-          slowInternet,
-        };
-      }
     }
     async function requestReponse() {
       assert.internal(!responsePromise);
@@ -282,7 +262,7 @@ function Handli() {
         requestState.failureState = 'NO_RESPONSE';
         responsePromise = null;
         // TODO
-        await getConnectionStatus();
+        await getConnectionInfo();
         return;
       }
 
@@ -298,6 +278,7 @@ function Handli() {
       responsePromise = null;
     }
 
+    // TODO
     var connectionStatusPromise;
     async function getConnectionStatus() {
       if( ! connectionStatusPromise ) {
@@ -305,8 +286,30 @@ function Handli() {
         connectionStatusPromise = getOption('checkInternetConnection')(thresholdNoInternet);
       }
       const connectionStatus = await connectionStatusPromise;
-      Object.assign(connectionState, connectionStatus);
       return connectionStatus;
+    }
+    async function getConnectionInfo() {
+      const connectionStatus = await getConnectionStatus();
+      const {noInternet, fastestPing} = connectionStatus;
+      assert.internal([true, false].includes(noInternet));
+      assert.internal(noInternet===true || fastestPing>=0);
+
+      const thresholdSlowInternet = getOption('thresholdSlowInternet');
+      assert.usage(
+        thresholdSlowInternet>0,
+        {thresholdSlowInternet},
+        "`thresholdSlowInternet` is missing"
+      );
+      const slowInternet = !noInternet && fastestPing >= thresholdSlowInternet;
+
+      const connectionInfo = {
+        slowInternet,
+        ...connectionStatus
+      };
+
+      Object.assign(connectionState, connectionInfo);
+
+      return connectionInfo;
     }
   }
 
