@@ -22,6 +22,7 @@ function Handli() {
     if( failedRequests.length===0 ) {
       closeModal();
       previousSeconds = undefined;
+      removeConnectionState();
       return;
     }
 
@@ -125,6 +126,9 @@ function Handli() {
       failedRequests
       .filter(request => request.requestState.failureState===failureState)
     );
+  }
+  function removeConnectionState() {
+    connectionState = null;
   }
 
 
@@ -234,10 +238,11 @@ function Handli() {
       }
 
       function handleConnectionStatus() {
+        /*
         if( checkConnectionPromise===null ) {
-          connectionState = null;
+          removeConnectionState();
         }
-
+        */
         const timeout = getOption('timeout');
         const timeoutServer = getOption('timeoutServer');
         const timeoutInternet = getOption('timeoutInternet');
