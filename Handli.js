@@ -24,6 +24,7 @@ function Handli() {
       return;
     }
 
+    console.log('c', connectionState);
     if( connectionState.noInternet ) {
       await handleOffline(connectionState);
     }
@@ -170,10 +171,9 @@ function Handli() {
       }
     }
 
-    let responsePromise;
+    var responsePromise;
     async function tryRequest() {
-      const NO_RESPONSE_YET = Symbol();
-      let returnedValue = NO_RESPONSE_YET;
+      let responseReceived;
 
       let resolveAttempt;
       const attemptPromise = new Promise(r => resolveAttempt=r);
@@ -187,30 +187,10 @@ function Handli() {
 
       async function handleResponse() {
         if( ! responsePromise ) {
-          responsePromise = requestFunction();
+          responsePromise = requestReponse();
         }
-        try {
-          returnedValue = await responsePromise;
-        } catch(err) {
-          console.error(err);
-          returnedValue = null;
-          requestState.failureState = 'NO_RESPONSE';
-          await getConnectionStatus();
-          resolveAttempt();
-          return;
-        } finally {
-          responsePromise = null;
-        }
-
-        assert_returnedValue(returnedValue);
-        if( isErrorResponse(returnedValue) ) {
-          console.error(returnedValue);
-          requestState.failureState = 'ERROR_RESPONSE';
-        } else {
-          requestState.failureState = null;
-          resolveValue(returnedValue);
-        }
-
+        await responsePromise;
+        responseReceived = true;
         resolveAttempt();
       }
 
@@ -240,24 +220,15 @@ function Handli() {
           checkTimeout
         );
       }
-      var connectionStatusPromise;
-      async function getConnectionStatus() {
-        if( ! connectionStatusPromise ) {
-          const thresholdNoInternet = getOption('thresholdNoInternet');
-          connectionStatusPromise = getOption('checkInternetConnection')(thresholdNoInternet);
-        }
-        const connectionStatus = await connectionStatusPromise;
-        Object.assign(connectionState, connectionStatus);
-        return connectionStatus;
-      }
+      // TODO
       function handleFlakyInternet() {
         const timeout = getInternetTimeout();
         if( ! timeout ) return;
         setTimeout(async () => {
-          if( returnedValue!==NO_RESPONSE_YET ) return;
+          if( responseReceived ) return;
 
           const {noInternet, slowInternet} = await getConnectionInfo();
-          if( returnedValue!==NO_RESPONSE_YET ) return;
+          if( responseReceived ) return;
           if( noInternet ) return;
           if( !slowInternet ) return;
 
@@ -269,10 +240,10 @@ function Handli() {
         const timeout = getServerTimeout();
         if( ! timeout ) return;
         setTimeout(async () => {
-          if( returnedValue!==NO_RESPONSE_YET ) return;
+          if( responseReceived ) return;
 
           const {noInternet, slowInternet} = await getConnectionInfo();
-          if( returnedValue!==NO_RESPONSE_YET ) return;
+          if( responseReceived ) return;
           if( noInternet ) return;
           if( slowInternet ) return;
 
@@ -300,6 +271,42 @@ function Handli() {
           slowInternet,
         };
       }
+    }
+    async function requestReponse() {
+      assert.internal(!responsePromise);
+      let returnedValue;
+      try {
+        returnedValue = await requestFunction();
+      } catch(err) {
+        console.error(err);
+        requestState.failureState = 'NO_RESPONSE';
+        responsePromise = null;
+        // TODO
+        await getConnectionStatus();
+        return;
+      }
+
+      assert_returnedValue(returnedValue);
+      if( isErrorResponse(returnedValue) ) {
+        console.error(returnedValue);
+        requestState.failureState = 'ERROR_RESPONSE';
+      } else {
+        requestState.failureState = null;
+        resolveValue(returnedValue);
+      }
+
+      responsePromise = null;
+    }
+
+    var connectionStatusPromise;
+    async function getConnectionStatus() {
+      if( ! connectionStatusPromise ) {
+        const thresholdNoInternet = getOption('thresholdNoInternet');
+        connectionStatusPromise = getOption('checkInternetConnection')(thresholdNoInternet);
+      }
+      const connectionStatus = await connectionStatusPromise;
+      Object.assign(connectionState, connectionStatus);
+      return connectionStatus;
     }
   }
 
