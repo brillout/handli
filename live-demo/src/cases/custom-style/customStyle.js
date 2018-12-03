@@ -34,7 +34,6 @@ let resp;
 try {
   resp = await handli(() => fetch('data.json'));
 } finally {
-  await wait(0.6)
   removeCss();
 }
 

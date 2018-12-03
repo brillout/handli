@@ -28,6 +28,7 @@ function Handli() {
     }
 
     const connectionState = connectionStateManager.getConnectionState();
+ // console.log('c', connectionState, failedRequests.length);
 
     if( connectionState!== null && connectionState.noInternet===true ) {
       await handleOffline(connectionState);

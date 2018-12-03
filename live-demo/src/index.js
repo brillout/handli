@@ -340,11 +340,16 @@ function ResultView({codeModule}) {
   async function onRun() {
     setHistory(null);
     codeModule.console.history.length = 0;
-    const optionsBefore = Object.assign({}, handli);
     await codeModule.run();
-    Object.assign(handli, optionsBefore);
+    revertOptions();
     setHistory(codeModule.console.history);
   }
+}
+
+const optionsPristine = {...handli};
+function revertOptions() {
+  Object.assign(handli, optionsPristine);
+  for(let key in handli) if(!(key in optionsPristine)) delete handli[key];
 }
 
 function getCodView({codeSource, codeLang, dontStrip}) {

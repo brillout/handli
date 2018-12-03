@@ -58,8 +58,8 @@ function ConnectionStateManager(getCheckOptions) {
         [true, false].includes(connectionState.noInternet) &&
         [true, false].includes(connectionState.noLanConnection) &&
         [true, false].includes(connectionState.slowInternet) &&
-        connectionState.fastestPing>=0 &&
-        connectionState.awaitInternetConnection.constructor===Function
+        (connectionState.noInternet === true || connectionState.fastestPing>=0) &&
+        connectionState.awaitInternetConnection instanceof Function
       ),
       {connectionState}
     );
