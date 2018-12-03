@@ -204,11 +204,11 @@ function getExamples() {
         </div>,
       ],
       [
-        readFileSync(__dirname+'/cases/server_down.js', 'utf-8'),
-        require('./cases/server_down.js'),
-        'Server Down',
+        readFileSync(__dirname+'/cases/server_slow.js', 'utf-8'),
+        require('./cases/server_slow.js'),
+        'Unresponsive Server',
         <div>
-          When the server isn't replying.
+          When the server is down or taking a long time to reply.
         </div>,
       ],
     ],

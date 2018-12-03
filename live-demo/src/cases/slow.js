@@ -12,8 +12,8 @@ async function run() {
 slowInternetSimulator.install();
 
 // If you provide a timeout then
-// Handli handles slow connections.
-handli.timeout = 1000; // Timeout of 1 second
+// Handli handles a slow internet.
+handli.timeoutInternet = 1000;
 
 const response = await handli(
   () => fetch('data.json')

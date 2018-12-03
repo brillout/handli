@@ -6,6 +6,7 @@ export {Console};
 export {wait};
 export {getServerDownSimulator};
 export {getOfflineSimulator};
+export {getSlowServerSimulator};
 export {getServerErrorSimulator};
 export {getSlowInternetSimulator};
 
@@ -110,6 +111,23 @@ function getServerErrorSimulator() {
   return {serverErrorSimulator, fetch};
 }
 
+function getSlowServerSimulator() {
+  let installed;
+  const slowServerSimulator = {
+    install: () => {
+      installed = true;
+    },
+  };
+
+  const fetch = async url => {
+    if( installed ) {
+      await wait(4);
+    }
+    return window.fetch(url);
+  };
+
+  return {slowServerSimulator, fetch};
+}
 function getSlowInternetSimulator(fastestPing=500) {
   let installed;
   const slowInternetSimulator = {
