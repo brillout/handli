@@ -159,20 +159,25 @@ see [Live Demo - Options](https://brillout.github.com/handli#options).
 Note that Handli handles slow connections only if you provide a `timeout` to your requests:
 
 ~~~js
+// Handli will show a UI-blocking modal if there is no response after 2 seconds
+handli.timeout = 2000;
+
 const response = await handli(
   () => fetch(url),
-  // Handli will show a UI-blocking modal if there is no response after 2 seconds
-  {timeout: 2000}
 );
 ~~~
 
-If you don't provide a `timoeut` then
+If you don't provide a `timeout` then
 Handli will indefinitely wait for a response
 without showing the UI-blocking modal.
 
+Alternatively to `timeout`, you can provide `timeoutInternet` and/or `timeoutServer`:
+Handli will show the UI-blocking modal if the server doesn't reply after `timeoutServer` milliseconds, and
+Handli will show the modal if the user as a slow internet connection and a request didn't get a response after `timeoutInternet` milliseconds.
+
 ### Does it work with `fetch` only?
 
-Yes & no: It works with any fetch-like library.
+Handli works with any fetch-like library.
 
 More precisely, Handli works as long as:
  - `response.status` holds the status code of the response.
@@ -189,8 +194,9 @@ Handli only handles the network when run in the browser.
 
 ### What about Universal/Isomorphic/SSR?
 
-Handli supports code that runs in the browser as well as on Node.js:
-When run in Node.js `handli` is transparent.
+Handli supports code that runs in the browser as well as on Node.js.
+
+When run in Node.js `handli` is transparent: Handli does nothing and returns what your request function returns.
 
 That is, on Node.js, the following
 
@@ -204,7 +210,6 @@ is equivalent to
 const response = await fetch(url);
 ~~~
 
-Handli does nothing and returns what your request function returns.
 
 ### Does it support simultaneous requests?
 
