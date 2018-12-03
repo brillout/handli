@@ -11,7 +11,7 @@ const {slowInternetSimulator, fetch} = getSlowInternetSimulator(1100);
 async function run() {
 slowInternetSimulator.install();
 
-// Generously increaase the timeout.
+// Generously increase the timeout.
 // Note that the values are not tested against
 // your server but against low-latency and
 // highly-available servers such a google.com
