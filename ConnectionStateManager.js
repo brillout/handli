@@ -1,3 +1,5 @@
+const assert = require('reassert');
+
 module.exports = ConnectionStateManager;
 
 function ConnectionStateManager(getCheckOptions) {
@@ -49,15 +51,17 @@ function ConnectionStateManager(getCheckOptions) {
       ...conn,
     }
   }
-}
 
-function assert_connectionState() {
-  assert.internal(
-    connectionState===null || (
-      [true, false].includes(connectionState.noInternet) &&
-      [true, false].includes(connectionState.noLanConnection) &&
-      [true, false].includes(connectionState.slowInternet) &&
-      connectionState.awaitInternetConnection.constructor===Function
-    )
-  );
+  function assert_connectionState() {
+    assert.internal(
+      connectionState===null || (
+        [true, false].includes(connectionState.noInternet) &&
+        [true, false].includes(connectionState.noLanConnection) &&
+        [true, false].includes(connectionState.slowInternet) &&
+        connectionState.fastestPing>=0 &&
+        connectionState.awaitInternetConnection.constructor===Function
+      ),
+      {connectionState}
+    );
+  }
 }

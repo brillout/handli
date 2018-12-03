@@ -1,4 +1,4 @@
-const ConnectionStateManager = require('ConnectionStateManager');
+const ConnectionStateManager = require('./ConnectionStateManager');
 const assert = require('reassert');
 
 module.exports = Handli;
@@ -14,7 +14,6 @@ function Handli() {
   });
 
   const failedRequests = [];
-  let connectionState = null;
 
   const connectionStateManager = getConnectionStateManager();
 
@@ -54,10 +53,9 @@ function Handli() {
     handleFailure();
   }
   function hasSlowResponse() {
-    assert.internal(connectionState===null || connectionState.slowInternet===false);
     return getRequestsWith('SLOW_RESPONSE').length>0;
   }
-  async function handleOffline() {
+  async function handleOffline(connectionState) {
     assert.internal(connectionState.noInternet===true);
     const {noLanConnection} = connectionState;
     if( noLanConnection ) {

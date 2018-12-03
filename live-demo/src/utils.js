@@ -1,4 +1,5 @@
 import handli from 'handli';
+import assert from 'assert';
 
 export {fetch};
 export {Console};
@@ -117,7 +118,9 @@ function getSlowInternetSimulator(fastestPing=500) {
         wait(fastestPing/1000);
         return {
           noInternet: false,
+          noLanConnection: false,
           fastestPing,
+          awaitInternetConnection: () => assert.internal(false),
         };
       };
       installed = true;
