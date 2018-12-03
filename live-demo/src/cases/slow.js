@@ -13,7 +13,7 @@ slowInternetSimulator.install();
 
 // If you provide a timeout then
 // Handli handles a slow internet.
-handli.timeoutInternet = 1000;
+handli.timeoutInternet = 1500;
 
 const response = await handli(
   () => fetch('data.json')
