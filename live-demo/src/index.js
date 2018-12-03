@@ -346,7 +346,7 @@ function ResultView({codeModule}) {
   }
 }
 
-const optionsPristine = {...handli};
+const optionsPristine = {...handli, messages: {...handli.messages}};
 function revertOptions() {
   Object.assign(handli, optionsPristine);
   for(let key in handli) if(!(key in optionsPristine)) delete handli[key];
