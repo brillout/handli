@@ -48,35 +48,13 @@ function toast(msg) {
 
 async function run() {
 handli.showMessage = msg => {
-  uiBlocker.enable();
   const toaster = toast(msg);
   return {
     update: msg => toaster.update(msg),
     close: () => {
-      uiBlocker.disable();
       toaster.close();
     }
   };
-};
-
-// Because our toaster doesn't block the UI,
-// we need to disable the "Run" buttons.
-// Blocking the UI makes sure that the
-// user doesn't trigger a second request.
-const buttons = [
-  ...document.querySelectorAll('button')
-];
-const uiBlocker = {
-  enable: () => {
-    buttons.forEach(button => {
-      button.disabled = true;
-    });
-  },
-  disable: () => {
-    buttons.forEach(button => {
-      button.disabled = false;
-    });
-  }
 };
 
 serverDownSimulator.install();
