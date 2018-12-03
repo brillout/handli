@@ -1,15 +1,15 @@
 <br/>
 <p align="center">
 <a href="/../../#readme">
-<img src="https://github.com/brillout/handli/raw/master/logo.svg?sanitize=true" height="34" alt="Handli"/>
+<img src="https://github.com/brillout/handli/raw/master/logo.svg?sanitize=true" height="40" alt="Handli"/>
 </a>
 </p>
 <br/>
 <br/>
 
-Handli is a small JavaScript library that **handles network corner cases** for you.
+JavaScript library that **handles network corner cases**.
 
-It aims to bring sensible defaults to questions like:
+Handli aims to bring sensible defaults to questions like:
 When the user goes offline, what should happen with the UI?
 
 ~~~js
@@ -17,9 +17,9 @@ When the user goes offline, what should happen with the UI?
 const response = await handli(() => fetch(url));
 ~~~
 
-Handli is designed to be fully customizable
+It is fully customizable
 and progressively removable.
-Allowing you to
+This allows you to
 **quickly ship a prototype without worrying about network corner cases**
 and, as your prototype grows into a large application,
 to **progressively replace Handli with your own network handling implementation**.
@@ -57,9 +57,9 @@ All network corner cases are now handled by Handli.
 
 ## How it Works
 
-The `handli` function never rejects and resolves only until it got a successful response from the server.
+The `handli` function never rejects and resolves only when it gets a successful response from the server.
 
-In other words:
+That is:
 
 ~~~js
 import handli from 'handli';
@@ -75,17 +75,16 @@ try {
 assert(200<=response.status && response.status<=299);
 ~~~
 
-If the server doesn't reply a `2xx` (and your code doesn't handle the error),
+If the server doesn't reply a `2xx`,
 then Handli blocks the UI,
 shows a modal letting the user know what's going on,
 and periodically retries the request.
 
-You can write code as if network issues are non-existent
+So, you can write code as if network issues are non-existent
 and rely upon Handli for handling errors.
 
-The [live demo](https://brillout.github.com/handli)
-shows how Handli handles all
-network corner cases.
+You can also handle errors yourself
+and Handli will skip these handled errors.
 
 <br/>
 
@@ -94,12 +93,16 @@ network corner cases.
 ### Can I customize the UI?
 
 Yes.
-See [Live Demo - Options](https://brillout.github.com/handli#options).
+See
+[Live Demo - Custom Style](https://brillout.github.com/handli#custom-style)
+and
+[Live Demo - Custom UI](https://brillout.github.com/handli#custom-ui)
+.
 
 ### Can I customize the texts?
 
 Yes.
-See [Live Demo - Options](https://brillout.github.com/handli#options).
+See [Live Demo - Custom Text](https://brillout.github.com/handli#custom-text).
 
 ### What if a non-2xx server reply is expected and I don't want Handli to treat it as error?
 
@@ -132,29 +135,26 @@ if( response===RATE_LIMIT ) {
 }
 ~~~
 
-See [Live Demo - Expected - Handled Error](https://brillout.github.com/handli#handled-error).
+See [Live Demo - Handled Error](https://brillout.github.com/handli#handled-error).
 
 ### When is the internet connection considered "slow"?
 
 If your server isn't replying,
 then Handli tests the user's internet connection.
-To do so, Handli pings serveral
-partitioned, high available, and low latency servers
-(Google,
+To do so, Handli pings
+Google,
 Facebook,
 Cloudflare, and
-Amazon.)
+Amazon.
 
 If the fastest ping is higher than `thresholdSlowInternet` then
 Handli will consider the connection as "slow".
 
 If none of the server is replying after `thresholdNoInternet` then Handli
-will abort and consider the user offline.
+will consider the user offline.
 
-By default `thresholdSlowInternet` is `500ms` and `thresholdNoInternet` is `900m`.
-
-You can configure `thresholdSlowInternet` and `thresholdNoInternet`,
-see [Live Demo - Options](https://brillout.github.com/handli#options).
+By default `thresholdSlowInternet` is `500` milliseconds and `thresholdNoInternet` is `900` milliseconds.
+The [Live Demo - Custom Slow Threshold](https://brillout.github.com/handli#custom-slow-threshold) shows how to change these defaults.
 
 Note that Handli handles slow connections only if you provide a `timeout` to your requests:
 
@@ -184,7 +184,7 @@ More precisely, Handli works as long as:
    (With `response` we mean `let response = await aFetchLikeLibrary('https://example.org')`.)
  - `response.ok` holds `true` or `false` denoting whether the request was a success.
    (That is `assert(response.ok === 200<=response.status && response.status<=299)`.)
- - Throws if and only if the HTTP request didn't get an HTTP response.
+ - Throws if and only if the request didn't get a response.
    (That is if the user has internet connection problems or if the server is not responsive.)
 
 ### Does it handle errors on Node.js?
@@ -194,9 +194,10 @@ Handli only handles the network when run in the browser.
 
 ### What about Universal/Isomorphic/SSR?
 
-Handli supports code that runs in the browser as well as on Node.js.
+Handli supports code that are run in the browser and on Node.js.
 
-When run in Node.js `handli` is transparent: Handli does nothing and returns what your request function returns.
+When run in Node.js, `handli` is transparent:
+It does nothing and returns what your request function returns.
 
 That is, on Node.js, the following
 
@@ -216,4 +217,4 @@ const response = await fetch(url);
 Yes.
 Handli blocks the UI until
 all requests get a successful response
-(or an error handled by your code).
+(or a handled error.)

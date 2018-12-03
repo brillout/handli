@@ -26,34 +26,44 @@ function Header() {
   const githubIcon = (
     <img
       src="https://github.com/favicon.ico"
-      height="16"
-      style={{}}
-      style={{verticalAlign: 'middle', marginTop: -3}}
+      height="22"
+      style={{
+        verticalAlign: 'middle',
+        marginTop: -4,
+        marginRight: 1,
+      }}
       alt="github.com/"
     />
   );
   const handliIcon = (
     <img
       src="logo.svg"
-      height="16"
+      height="40"
       style={{verticalAlign: 'middle', marginTop: -3}}
       alt="Handli"
     />
   );
   return (
-    <div style={{width: '100%', textAlign: 'right', paddingRight: 17, paddingTop: 20, marginBottom: 0, boxSizing: 'border-box'}}>
-      <div style={{display: 'inline-block', textAlign: 'left'}}>
-        Demo of{' '}
-        <a
-          href="https://github.com/brillout/handli"
-          style={{textDecoration: 'none', paddingLeft: 3}}
-        >
-          {handliIcon}
-          {' '}
-          ({githubIcon} brillout/handli)
-        </a>
-      </div>
-    </div>
+    <h1 style={{
+      width: '100%',
+      textAlign: 'center',
+      paddingTop: 50,
+      marginBottom: 10,
+      fontSize: '1.1em',
+      boxSizing: 'border-box',
+      fontWeight: 'normal',
+    }}>
+      <a
+        href="https://github.com/brillout/handli"
+        style={{textDecoration: 'none', paddingLeft: 3}}
+      >
+        {handliIcon}
+        <br/>
+        <div style={{paddingTop: 11}}>
+        {githubIcon} brillout/handli
+        </div>
+      </a>
+    </h1>
   );
 }
 
