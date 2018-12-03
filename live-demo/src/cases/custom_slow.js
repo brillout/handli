@@ -11,11 +11,15 @@ const {slowInternetSimulator, fetch} = getSlowInternetSimulator(1100);
 async function run() {
 slowInternetSimulator.install();
 
-// Generously increase the timeout.
-// Note that the values are not tested against
+// Set a generous request timeout.
+// (When setting `timeout` Handli will
+// handle a slow internet as well as a
+// slow server.)
+handli.timeout = 3000;
+
+// The thresholds are not tested against
 // your server but against low-latency and
 // highly-available servers such a google.com
-handli.timeout = 3000;
 handli.thresholdSlowInternet = 1000;
 handli.thresholdNoInternet = 2000;
 
