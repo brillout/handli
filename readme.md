@@ -166,10 +166,10 @@ Handli indefinitely waits for a response
 without showing the UI-blocking modal.
 
 Alternatively to `timeout`, you can provide `timeoutInternet` and/or `timeoutServer`:
- - If the user as a slow internet connection and
+ - If the user's internet connection is slow and
    if a request doesn't get a response after `timeoutInternet`,
    then Handli shows the UI-blocking modal.
- - If the user doesn't have a slow internet connection and
+ - If the user's internet connection isn't slow and
    if a request doesn't get a response after `timeoutServer`,
    then Handli shows the UI-blocking modal.
 
