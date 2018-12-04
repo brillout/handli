@@ -10,6 +10,8 @@ export {getSlowServerSimulator};
 export {getServerErrorSimulator};
 export {getSlowInternetSimulator};
 
+const NON_EXISTING_SERVER = 'https://does-not-exist.example.org/foo';
+
 async function fetch(url) {
   const response = await window.fetch(url);
   return await response.text();
@@ -36,7 +38,7 @@ function wait(seconds) {
 function getServerDownSimulator() {
   const fetch = url => {
     if( installed ) {
-      return window.fetch('http://does-not-exist.example.org/foo');
+      return window.fetch(NON_EXISTING_SERVER);
     } else {
       return window.fetch(url);
     }
@@ -81,7 +83,7 @@ function getOfflineSimulator() {
 
   const fetch = url => {
     if( installed ) {
-      return window.fetch('http://does-not-exist.example.org/foo');
+      return window.fetch(NON_EXISTING_SERVER);
     } else {
       return window.fetch(url);
     }
