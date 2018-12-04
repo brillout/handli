@@ -173,4 +173,5 @@ html {
 
 pre {
   overflow: auto;
+  padding-right: 4px!important;
 }

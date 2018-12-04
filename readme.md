@@ -7,22 +7,17 @@
 <br/>
 <br/>
 
-JavaScript library that **handles network corner cases**.
+JavaScript library that handles network corner cases.
 
 Handli aims to bring sensible defaults to questions like:
 When the user goes offline, what should happen with the UI?
 
-~~~js
-// Usage is simple
-const response = await handli(() => fetch(url));
-~~~
-
-It is fully customizable
-and progressively removable.
-This allows you to
-**quickly ship a prototype without worrying about network corner cases**
-and, as your prototype grows into a large application,
-to **progressively replace Handli with your own network handling implementation**.
+It handles all corner cases.
+It is customizable and
+progressively removable.
+So you can quickly ship a prototype and,
+as your prototype grows into a large application,
+progressively replace Handli with your own network handling.
 
 [Live Demo](https://brillout.github.com/handli).
 
@@ -58,7 +53,6 @@ All network corner cases are now handled by Handli.
 ## How it Works
 
 The `handli` function never rejects and resolves only when it gets a successful response from the server.
-
 That is:
 
 ~~~js
@@ -80,7 +74,7 @@ then Handli blocks the UI,
 shows a modal letting the user know what's going on,
 and periodically retries the request.
 
-So, you can write code as if network issues are non-existent
+You can write code as if network issues are non-existent
 and rely upon Handli for handling errors.
 
 You can also handle errors yourself
@@ -137,9 +131,9 @@ if( response===RATE_LIMIT ) {
 
 See [Live Demo - Handled Error](https://brillout.github.com/handli#handled-error).
 
-### When is the internet connection considered "slow"?
+### When is the user's internet connection considered slow?
 
-If your server isn't replying,
+If a request isn't getting a response,
 then Handli tests the user's internet connection.
 To do so, Handli pings
 Google,
@@ -148,10 +142,10 @@ Cloudflare, and
 Amazon.
 
 If the fastest ping is higher than `thresholdSlowInternet` then
-Handli will consider the connection as "slow".
+Handli considers the connection as slow.
 
-If none of the server is replying after `thresholdNoInternet` then Handli
-will consider the user offline.
+If none of the ping request get a response after `thresholdNoInternet` then Handli
+considers the user offline.
 
 By default `thresholdSlowInternet` is `500` milliseconds and `thresholdNoInternet` is `900` milliseconds.
 The [Live Demo - Custom Slow Threshold](https://brillout.github.com/handli#custom-slow-threshold) shows how to change these defaults.
@@ -168,14 +162,24 @@ const response = await handli(
 ~~~
 
 If you don't provide a `timeout` then
-Handli will indefinitely wait for a response
+Handli indefinitely waits for a response
 without showing the UI-blocking modal.
 
 Alternatively to `timeout`, you can provide `timeoutInternet` and/or `timeoutServer`:
-Handli will show the UI-blocking modal if the server doesn't reply after `timeoutServer` milliseconds, and
-Handli will show the modal if the user as a slow internet connection and a request didn't get a response after `timeoutInternet` milliseconds.
+ - If the user as a slow internet connection and
+   if a request doesn't get a response after `timeoutInternet`,
+   then Handli shows the UI-blocking modal.
+ - If the user doesn't have a slow internet connection and
+   if a request doesn't get a response after `timeoutServer`,
+   then Handli shows the UI-blocking modal.
 
-### Does it work with `fetch` only?
+See
+[Live Demo - Slow Internet](https://brillout.github.com/handli#slow-internet)
+and
+[Live Demo - Unresponsive Server](https://brillout.github.com/handli#unresponsive-server)
+.
+
+### Does it work only with `fetch`?
 
 Handli works with any fetch-like library.
 
@@ -190,7 +194,7 @@ More precisely, Handli works as long as:
 ### Does it handle errors on Node.js?
 
 No.
-Handli only handles the network when run in the browser.
+Handli handles the network only in the browser.
 
 ### What about Universal/Isomorphic/SSR?
 
@@ -199,7 +203,7 @@ Handli supports code that are run in the browser and on Node.js.
 When run in Node.js, `handli` is transparent:
 It does nothing and returns what your request function returns.
 
-That is, on Node.js, the following
+On Node.js, the following
 
 ~~~js
 const response = await handli(() => fetch(url));

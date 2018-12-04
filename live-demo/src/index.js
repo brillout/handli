@@ -26,11 +26,11 @@ function Header() {
   const githubIcon = (
     <img
       src="https://github.com/favicon.ico"
-      height="22"
+      height="18"
       style={{
         verticalAlign: 'middle',
         marginTop: -4,
-        marginRight: 1,
+        marginRight: -1,
       }}
       alt="github.com/"
     />
@@ -49,7 +49,7 @@ function Header() {
       textAlign: 'center',
       paddingTop: 50,
       marginBottom: 10,
-      fontSize: '1.1em',
+      fontSize: '1.05em',
       boxSizing: 'border-box',
       fontWeight: 'normal',
     }}>
