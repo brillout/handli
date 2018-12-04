@@ -12,12 +12,10 @@ JavaScript library that handles network corner cases.
 Handli aims to bring sensible defaults to questions like:
 When the user goes offline, what should happen with the UI?
 
-It handles all corner cases.
 It is customizable and
-progressively removable.
-So you can quickly ship a prototype and,
-as your prototype grows into a large application,
-progressively replace Handli with your own network handling.
+progressively removable
+so that you can quickly ship a prototype and later
+progressively replace Handli with your own handling.
 
 [Live Demo](https://brillout.github.com/handli).
 
@@ -90,8 +88,7 @@ Yes.
 See
 [Live Demo - Custom Style](https://brillout.github.com/handli#custom-style)
 and
-[Live Demo - Custom UI](https://brillout.github.com/handli#custom-ui)
-.
+[Live Demo - Custom UI](https://brillout.github.com/handli#custom-ui).
 
 ### Can I customize the texts?
 
@@ -144,13 +141,13 @@ Amazon.
 If the fastest ping is higher than `thresholdSlowInternet` then
 Handli considers the connection as slow.
 
-If none of the ping request get a response after `thresholdNoInternet` then Handli
+If none of the ping requests get a response after `thresholdNoInternet` then Handli
 considers the user offline.
 
 By default `thresholdSlowInternet` is `500` milliseconds and `thresholdNoInternet` is `900` milliseconds.
 The [Live Demo - Custom Slow Threshold](https://brillout.github.com/handli#custom-slow-threshold) shows how to change these defaults.
 
-Note that Handli handles slow connections only if you provide a `timeout` to your requests:
+Note that Handli handles slow connections only if you provide a `timeout`:
 
 ~~~js
 // Handli will show a UI-blocking modal if there is no response after 2 seconds
@@ -176,14 +173,12 @@ Alternatively to `timeout`, you can provide `timeoutInternet` and/or `timeoutSer
 See
 [Live Demo - Slow Internet](https://brillout.github.com/handli#slow-internet)
 and
-[Live Demo - Unresponsive Server](https://brillout.github.com/handli#unresponsive-server)
-.
+[Live Demo - Unresponsive Server](https://brillout.github.com/handli#unresponsive-server).
 
-### Does it work only with `fetch`?
+### Does it only work with `fetch`?
 
 Handli works with any fetch-like library.
-
-More precisely, Handli works as long as:
+That is, Handli works as long as:
  - `response.status` holds the status code of the response.
    (With `response` we mean `let response = await aFetchLikeLibrary('https://example.org')`.)
  - `response.ok` holds `true` or `false` denoting whether the request was a success.
