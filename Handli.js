@@ -106,13 +106,13 @@ function Handli() {
     );
   }
   async function resolveFailedRequests() {
-    for(request of getRequestsWith('SLOW_RESPONSE')) {
+    for(let request of getRequestsWith('SLOW_RESPONSE')) {
       await request.retryRequest();
     }
-    for(request of getRequestsWith('ERROR_RESPONSE')) {
+    for(let request of getRequestsWith('ERROR_RESPONSE')) {
       await request.retryRequest();
     }
-    for(request of getRequestsWith('NO_RESPONSE')) {
+    for(let request of getRequestsWith('NO_RESPONSE')) {
       await request.retryRequest();
     }
   }
