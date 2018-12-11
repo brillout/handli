@@ -1,3 +1,4 @@
+const assert = require('reassert');
 const Handli = require('./Handli');
 const showMessage = require('./showMessage');
 const messages = require('./messages');
@@ -12,6 +13,17 @@ Object.assign(handli, {
 });
 
 module.exports = handli;
+
+if( typeof window !== "undefined" ) {
+  if( 'handli' in window ) {
+    assert.warning(
+      false,
+      "We didn't `window.handli = new Handli()` because `window.handli` is already defined"
+    );
+  } else {
+    window.handli = handli;
+  }
+}
 
 /*
 function showMessage(...args) {
