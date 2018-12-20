@@ -19,8 +19,7 @@ and later
 progressively replace Handli with your own error handling.
 
 [Live Demo](https://brillout.github.com/handli)
-
-&nbsp;
+<br/>
 
 #### Contents
 
@@ -28,7 +27,7 @@ progressively replace Handli with your own error handling.
 - [How it Works](#how-it-works)
 - [FAQ](#faq)
 
-&nbsp;
+<br/>
 
 ## Usage
 
