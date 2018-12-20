@@ -7,15 +7,16 @@
 <br/>
 <br/>
 
-JavaScript library that handles network corner cases.
+JavaScript library that handles network errors.
 
 Handli aims to bring sensible defaults to questions like:
 When the user goes offline, what should happen with the UI?
 
 It is customizable and
-progressively removable
-so that you can quickly ship a prototype and later
-progressively replace Handli with your own handling.
+progressively removable.
+So that you can quickly ship a prototype wihtout worrying about network errors,
+and later
+progressively replace Handli with your own error handling.
 
 [Live Demo](https://brillout.github.com/handli).
 
@@ -36,15 +37,13 @@ $ npm install handli
 import handli from 'handli';
 ~~~
 
-Then simply wrap your requests with `handli`:
-
 ~~~diff
 -const response = await fetch(url);
 +const response = await handli(() => fetch(url));
 ~~~
 
 That's it.
-All network corner cases are now handled by Handli.
+All network errors are now handled by Handli.
 
 <br/>
 
@@ -76,7 +75,7 @@ You can write code as if network issues are non-existent
 and rely upon Handli for handling errors.
 
 You can also handle errors yourself
-and Handli will skip these handled errors.
+and Handli will skip these.
 
 <br/>
 
@@ -120,7 +119,7 @@ const response = await fetch(async () => {
 });
 
 if( response===RATE_LIMIT ) {
-  // Code that handles reached API rate limit
+  // Code handling the case when API rate limit is reached
 } else {
   assert(200<=response.status && response.status<=299);
 }
@@ -163,10 +162,10 @@ Handli indefinitely waits for a response
 without showing the UI-blocking modal.
 
 Alternatively to `timeout`, you can provide `timeoutInternet` and/or `timeoutServer`:
- - If the user's internet connection is slow and
+ - If the user's internet connection **is slow** and
    if a request doesn't get a response after `timeoutInternet`,
    then Handli shows the UI-blocking modal.
- - If the user's internet connection isn't slow and
+ - If the user's internet connection **isn't slow** and
    if a request doesn't get a response after `timeoutServer`,
    then Handli shows the UI-blocking modal.
 
@@ -175,7 +174,7 @@ See
 and
 [Live Demo - Unresponsive Server](https://brillout.github.com/handli#unresponsive-server).
 
-### Does it only work with `fetch`?
+### Does it work only with `fetch`?
 
 Handli works with any fetch-like library.
 That is, Handli works as long as:
@@ -183,7 +182,7 @@ That is, Handli works as long as:
    (With `response` we mean `let response = await aFetchLikeLibrary('https://example.org')`.)
  - `response.ok` holds `true` or `false` denoting whether the request was a success.
    (That is `assert(response.ok === 200<=response.status && response.status<=299)`.)
- - Throws if and only if the request didn't get a response.
+ - Throws an error if and only if the request didn't get a response.
    (That is if the user has internet connection problems or if the server is not responsive.)
 
 ### Does it handle errors on Node.js?
@@ -193,7 +192,7 @@ Handli handles the network only in the browser.
 
 ### What about Universal/Isomorphic/SSR?
 
-Handli supports code that are run in the browser and on Node.js.
+Handli supports code that are meant to be run in the browser as well as on Node.js.
 
 When run in Node.js, `handli` is transparent:
 It does nothing and returns what your request function returns.
@@ -216,4 +215,4 @@ const response = await fetch(url);
 Yes.
 Handli blocks the UI until
 all requests get a successful response
-(or a handled error.)
+(or an error that is handled by you.)
