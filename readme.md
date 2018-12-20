@@ -21,12 +21,13 @@ progressively replace Handli with your own error handling.
 [Live Demo](https://brillout.github.com/handli)
 <br/><br/>
 
+
+
 #### Contents
 
 - [Usage](#usage)
 - [How it Works](#how-it-works)
 - [FAQ](#faq)
-<br/>
 
 ## Usage
 
