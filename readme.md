@@ -26,7 +26,7 @@ progressively replace Handli with your own error handling.
 - [Usage](#usage)
 - [How it Works](#how-it-works)
 - [FAQ](#faq)
-<br/><br/>
+<br/>
 
 ## Usage
 
