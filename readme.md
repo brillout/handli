@@ -18,15 +18,15 @@ So that you can quickly ship a prototype wihtout worrying about network errors,
 and later
 progressively replace Handli with your own error handling.
 
-[Live Demo](https://brillout.github.com/handli).
+[**Live Demo**](https://brillout.github.com/handli).
+
+<br/>
 
 #### Contents
 
 - [Usage](#usage)
 - [How it Works](#how-it-works)
 - [FAQ](#faq)
-
-<br/>
 
 ## Usage
 
