@@ -13,7 +13,7 @@ When the user goes offline, what should happen with the UI?
 
 It is customizable and
 progressively removable.
-So that you can quickly ship a prototype wihtout worrying about network errors,
+So that you can quickly ship a prototype wihtout worrying about network issues,
 and later
 progressively replace Handli with your own error handling.
 
@@ -43,7 +43,7 @@ import handli from 'handli';
 ~~~
 
 That's it.
-All network errors are now handled by Handli.
+All network issues are now handled by Handli.
 
 <br/>
 
