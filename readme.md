@@ -1,11 +1,8 @@
-<br/>
 <p align="center">
 <a href="/../../#readme">
-<img src="https://github.com/brillout/handli/raw/master/logo.svg?sanitize=true" height="40" alt="Handli"/>
+<img src="https://github.com/brillout/handli/raw/master/logo.svg?sanitize=true" height="50" alt="Handli"/>
 </a>
 </p>
-<br/>
-<br/>
 
 JavaScript library that handles network errors.
 
