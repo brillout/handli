@@ -8,7 +8,7 @@
 
 JavaScript library to handle network errors.
 
-Handli aims to bring sensible defaults to questions like:
+It aims to bring sensible defaults to questions like:
 When the user goes offline, what should happen with the user interface?
 
 It is customizable and
