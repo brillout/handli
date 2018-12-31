@@ -6,16 +6,13 @@
 </p>
 <br/>
 
-JavaScript library that handles network errors.
+JavaScript library to handle network errors.
 
 Handli aims to bring sensible defaults to questions like:
-When the user goes offline, what should happen with the UI?
+When the user goes offline, what should happen with the user interface?
 
 It is customizable and
 progressively removable.
-So that you can quickly ship a prototype wihtout worrying about network issues,
-and later
-progressively replace Handli with your own error handling.
 
 [Live Demo](https://brillout.github.com/handli)
 <br/><br/>
@@ -80,6 +77,17 @@ and Handli will skip these.
 <br/>
 
 ## FAQ
+
+- [Can I customize the UI?](#can-i-customize-the-ui)
+- [Can I customize the texts?](#can-i-customize-the-texts)
+- [What if a non-2xx server reply is expected and I don't want Handli to treat it as error?](#what-if-a-non-2xx-server-reply-is-expected-and-i-dont-want-handli-to-treat-it-as-error)
+- [How do I handle errors myself?](#how-do-i-handle-errors-myself)
+- [When is the user's internet connection considered slow?](#when-is-the-users-internet-connection-considered-slow)
+- [Does it work only with `fetch`?](#does-it-work-only-with-fetch)
+- [Does it handle errors on Node.js?](#does-it-handle-errors-on-nodejs)
+- [What about Universal/Isomorphic/SSR?](#what-about-universalisomorphicssr)
+- [Does it support simultaneous requests?](#does-it-support-simultaneous-requests)
+- [How do I progressively remove Handli?](#how-do-i-progressively-remove-handli)
 
 ### Can I customize the UI?
 
@@ -215,4 +223,17 @@ const response = await fetch(url);
 Yes.
 Handli blocks the UI until
 all requests get a successful response
-(or an error that is handled by you.)
+(or an error that is handled by you).
+
+
+### How do I progressively remove Handli?
+
+[Handle errors yourself](#how-do-i-handle-errors-myself)
+at more and more places
+until you can remove your dependency on the `handli` package.
+
+This can be useful strategy
+to quickly ship a prototype wihtout worrying about network issues at first,
+and later,
+as your prototype grows into a large application,
+progressively replace Handli with your own error handling.
