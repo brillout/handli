@@ -12,7 +12,7 @@ Handli brings sensible defaults to following questions.
 - What should happen with the user interface when the server replies a `500 - Internal Server Error`?
 - What should happen when the user is offline?
 - What should happen when the user has a flaky internet connection?
-- What should happen when the server is overloaded and is not responsive?
+- What should happen when the server is overloaded and not responsive?
 - Etc.
 
 You can write code as if network issues are non-existent and rely upon Handli for gracefully handling errors.
