@@ -19,6 +19,6 @@
   "devDependencies": {
     "parcel": "^1.10.3",
     "parcel-plugin-static-files-copy": "^1.2.4",
-    "yarn": "1.12.3"
+    "yarn": "1.17.3"
   }
 }
