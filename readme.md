@@ -15,7 +15,7 @@ Handli brings sensible defaults to following questions.
 - What should happen when the server is overloaded and not responsive?
 - Etc.
 
-You can write code as if network issues are non-existent and rely upon Handli for gracefully handling errors.
+You can write code as if network issues are non-existent and rely upon Handli for handling network errors.
 
 It is [customizable](#usage-faq) and [progressively removable](#how-do-i-progressively-remove-handli).
 
@@ -73,7 +73,7 @@ shows a modal letting the user know what's going on,
 and periodically retries the request.
 The `handli` function "hangs"
 until the server returns a `2xx`.
-(That is the promise returned by `handli` hangs: it doesn't resolve nor reject.)
+(That is, the promise returned by `handli` hangs: it doesn't resolve nor reject.)
 
 The `handli` function resolves only once it gets a `2xx`.
 
