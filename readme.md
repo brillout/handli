@@ -6,13 +6,18 @@
 </p>
 <br/>
 
-JavaScript library to handle network errors.
+JavaScript library to automatically and gracefully handle network errors.
 
-It aims to bring sensible defaults to questions like:
-When the user goes offline, what should happen with the user interface?
+Handli brings sensible defaults to following questions.
+- What should happen with the user interface when the server replies a `500 - Internal Server Error`?
+- What should happen when the user is offline?
+- What should happen when the user has a flaky internet connection?
+- What should happen when the server is overloaded and is not responsive?
+- Etc.
 
-It is customizable and
-progressively removable.
+You can write code as if network issues are non-existent and rely upon Handli for gracefully handling errors.
+
+It is [customizable](#usage-faq) and [progressively removable](#how-do-i-progressively-remove-handli).
 
 [Live Demo](https://brillout.github.com/handli)
 <br/><br/>
@@ -23,7 +28,7 @@ progressively removable.
 
 - [Usage](#usage)
 - [How it Works](#how-it-works)
-- [FAQ](#faq)
+- [Usage FAQ](#usage-faq)
 
 ## Usage
 
@@ -40,21 +45,20 @@ import handli from 'handli';
 ~~~
 
 That's it.
-All network issues are now handled by Handli.
+Network issues are now automatically handled by Handli.
 
 <br/>
 
 ## How it Works
 
-The `handli` function never rejects and resolves only when it gets a successful response from the server.
-That is:
+The `handli` function never rejects.
 
 ~~~js
 import handli from 'handli';
 
 let response;
 try {
-  response = await handli(() => fetch('https://example.org'));
+  response = await handli(() => fetch('https://example.org/api/getData'));
 } catch(_) {
   // `handli` never rejects
   assert(false);
@@ -67,16 +71,51 @@ If the server doesn't reply a `2xx`,
 then Handli blocks the UI,
 shows a modal letting the user know what's going on,
 and periodically retries the request.
+The `handli` function "hangs"
+until the server returns a `2xx`.
+(That is the promise returned by `handli` hangs: it doesn't resolve nor reject.)
 
-You can write code as if network issues are non-existent
-and rely upon Handli for handling errors.
+The `handli` function resolves only once it gets a `2xx`.
 
-You can also handle errors yourself
-and Handli will skip these.
+If the server never replies a `2xx` then `handli` hangs indefinitely.
+~~~js
+import handli from 'handli';
+
+// Trying to retrieve a resource that doesn't exist.
+await handli(() => fetch('https://example.org/api/i-do-not-exist'));
+
+// The server never replies a `2xx` and `handli` never
+// resolves. Nothing here will ever be executed.
+console.log("You will never see me");
+~~~
+
+You can handle errors yourself in your request function.
+For example, you may want to handle validation errors:
+~~~js
+import handli from 'handli';
+
+const response = await handli(async () => {
+  const response = await fetch('https://example.org/api/createTodo');
+  if( response.status===400 ){
+    const {validationError} = await response.json();
+    return {validationError};
+  }
+  return response;
+});
+
+if( response.validationError ){
+  // Handle validation error
+  // ...
+} else {
+  assert(200<=response.status && response.status<=299);
+  // ...
+}
+~~~
+
 
 <br/>
 
-## FAQ
+## Usage FAQ
 
 - [Can I customize the UI?](#can-i-customize-the-ui)
 - [Can I customize the texts?](#can-i-customize-the-texts)
@@ -109,27 +148,54 @@ see below.
 
 ### How do I handle errors myself?
 
-Handle errors within your request function.
+You can handle errors yourself in your request function.
 
-For example, if you want to handle an API rate limit:
+Examples.
+
 ~~~js
+import handli from 'handli';
+
 const RATE_LIMIT = Symbol();
 
-const response = await fetch(async () => {
-  const response = await (
-    fetch('https://api.example.org/project/42')
-  );
+// We handle the API rate limit.
+
+const response = await handli(async () => {
+  const response = await fetch('https://example.org/api/project/42');
   if( response.status===429 ) {
     return RATE_LIMIT;
-  } else {
-    return response;
   }
+  return response;
 });
 
 if( response===RATE_LIMIT ) {
   // Code handling the case when API rate limit is reached
+  // ...
 } else {
   assert(200<=response.status && response.status<=299);
+  // ...
+}
+~~~
+
+~~~js
+import handli from 'handli';
+
+// We handle validation errors.
+
+const response = await handli(async () => {
+  const response = await fetch('https://example.org/api/createTodo');
+  if( response.status===400 ){
+    const {validationError} = await response.json();
+    return {validationError};
+  }
+  return response;
+});
+
+if( response.validationError ){
+  // Handle validation error
+  // ...
+} else {
+  assert(200<=response.status && response.status<=299);
+  // ...
 }
 ~~~
 

@@ -14,7 +14,7 @@ const err = await handli(async () => {
       fetch('https://doesnt-exist.example.org')
     );
   } catch(err) {
-    return "This error is handled!";
+    return "This error is custom handled!";
   }
 });
 
