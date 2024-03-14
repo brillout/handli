@@ -9,8 +9,7 @@
     "prismjs": "^1.15.0",
     "react": "16.7.0-alpha.2",
     "react-dom": "16.7.0-alpha.2",
-    "react-toastify": "^4.4.3",
-    "reassert": "^1.1.19"
+    "react-toastify": "^4.4.3"
   },
   "devDependencies": {
     "vite": "^5.1.6"

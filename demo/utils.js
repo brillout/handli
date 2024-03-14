@@ -1,6 +1,6 @@
 import handli from 'handli'
-import assert from 'reassert'
 
+export { assert }
 export { fetch }
 export { Console }
 export { wait }
@@ -11,6 +11,11 @@ export { getServerErrorSimulator }
 export { getSlowInternetSimulator }
 
 const NON_EXISTING_SERVER = 'https://does-not-exist.example.org/foo'
+
+function assert(condition) {
+  if (condition) return
+  throw new Error('Internal demo error.')
+}
 
 async function fetch(url) {
   const response = await window.fetch(url)
@@ -144,7 +149,7 @@ function getSlowInternetSimulator(fastestPing = 500) {
           noInternet: false,
           noLanConnection: false,
           fastestPing,
-          awaitInternetConnection: () => assert.internal(false),
+          awaitInternetConnection: () => assert(false),
         }
       }
       installed = true

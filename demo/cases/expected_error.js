@@ -1,6 +1,5 @@
 import handli from 'handli'
 import { Console } from '../utils'
-import assert from 'reassert'
 
 export { run }
 export { console }
