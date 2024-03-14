@@ -204,7 +204,7 @@ async function getExamples() {
     ],
     options2: [
       [
-        (await import('./cases/custom-style/customStyle.js?raw')).default,
+        (await import('./cases/custom-style/customStyle.css?raw')).default,
         await import('./cases/custom-style/customStyle.js'),
         'Custom Style',
         <div>Customize the modal.</div>,
