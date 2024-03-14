@@ -44,20 +44,25 @@ function toast(msg) {
 }
 
 async function run() {
-  handli.showMessage = (msg) => {
-    const toaster = toast(msg)
-    return {
-      update: (msg) => toaster.update(msg),
-      close: () => {
-        toaster.close()
-      },
-    }
+handli.showMessage = (msg) => {
+  const toaster = toast(msg)
+  return {
+    update: (msg) => toaster.update(msg),
+    close: () => {
+      toaster.close()
+    },
   }
+}
 
-  serverDownSimulator.install()
-  setTimeout(serverDownSimulator.remove, 2000)
+serverDownSimulator.install()
+setTimeout(serverDownSimulator.remove, 2000)
 
-  const response = await handli(() => fetch('data.json'))
+const response = await handli(
+  () => fetch('data.json')
+)
 
-  console.log('+++ Response +++', await response.text())
+console.log(
+  '+++ Response +++',
+  await response.text()
+)
 }

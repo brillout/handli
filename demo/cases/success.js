@@ -7,7 +7,12 @@ export { console }
 const console = new Console()
 
 async function run() {
-  const response = await handli(() => fetch('data.json'))
+const response = await handli(
+  () => fetch('data.json')
+)
 
-  console.log('+++ Response +++', await response.text())
+console.log(
+  '+++ Response +++',
+  await response.text()
+)
 }

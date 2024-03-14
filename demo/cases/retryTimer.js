@@ -8,12 +8,18 @@ const { serverDownSimulator, fetch } = getServerDownSimulator()
 const console = new Console()
 
 async function run() {
-  serverDownSimulator.install()
-  setTimeout(serverDownSimulator.remove, 5000)
+serverDownSimulator.install()
+setTimeout(serverDownSimulator.remove, 5000)
 
-  handli.retryTimer = (seconds) => (seconds ? seconds + 1 : 1)
+handli.retryTimer =
+  (seconds) => seconds ? seconds + 1 : 1
 
-  const response = await handli(() => fetch('data.json'))
+const response = await handli(
+  () => fetch('data.json')
+)
 
-  console.log('+++ Response +++', await response.text())
+console.log(
+  '+++ Response +++',
+  await response.text()
+)
 }
