@@ -7,7 +7,7 @@ export { console }
 const console = new Console()
 const { offlineSimulator, fetch } = getOfflineSimulator()
 
-const customCss = await import('./customStyle.css?raw')
+const customCss = (await import('./customStyle.css?raw')).default
 
 const id = 'custom_style'
 const addCss = () => {
