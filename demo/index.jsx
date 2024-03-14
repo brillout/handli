@@ -36,7 +36,7 @@ function Header() {
     />
   )
   const handliIcon = (
-    <img src="./logo.svg" height="40" style={{ verticalAlign: 'middle', marginTop: -3 }} alt="Handli" />
+    <img src="/logo.svg" height="40" style={{ verticalAlign: 'middle', marginTop: -3 }} alt="Handli" />
   )
   return (
     <h1
