@@ -45,6 +45,10 @@ importers:
       reassert:
         specifier: ^1.1.19
         version: 1.1.21
+    devDependencies:
+      typescript:
+        specifier: ^5.4.2
+        version: 5.4.2
 
 packages:
 
@@ -694,6 +698,12 @@ packages:
     dependencies:
       ansi-regex: 3.0.1
     dev: false
+
+  /typescript@5.4.2:
+    resolution: {integrity: sha512-+2/g0Fds1ERlP6JsakQQDXjZdZMM+rqpamFZJEKh4kwTIn3iDkgKtby0CeNd5ATNZ4Ry1ax15TMx0W2V+miizQ==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+    dev: true
 
   /vite@5.1.6:
     resolution: {integrity: sha512-yYIAZs9nVfRJ/AiOLCA91zzhjsHUgMjB+EigzFb6W2XTLO8JixBCKCjvhKZaye+NKYHCrkv3Oh50dH9EdLU2RA==}

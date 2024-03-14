@@ -1,5 +1,6 @@
 export default ConnectionStateManager
 
+// @ts-ignore
 import assert from 'reassert'
 
 function ConnectionStateManager(getCheckOptions) {

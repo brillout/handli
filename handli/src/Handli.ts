@@ -1,6 +1,7 @@
 export default Handli
 
 import ConnectionStateManager from './ConnectionStateManager'
+// @ts-ignore
 import assert from 'reassert'
 
 function Handli() {
@@ -33,6 +34,7 @@ function Handli() {
     if (connectionState !== null && connectionState.noInternet === true) {
       await handleOffline(connectionState)
     } else if (connectionState !== null && connectionState.slowInternet === true) {
+      // @ts-ignore
       await handleSlowInternet(connectionState)
     } else if (hasSlowResponse()) {
       await handleSlowServer()
@@ -112,7 +114,7 @@ function Handli() {
       return requestFunction()
     }
 
-    const requestState = {}
+    const requestState: any = {}
 
     let resolveValue
     const resolvedValuePromise = new Promise((r) => (resolveValue = r))
@@ -272,7 +274,7 @@ function Handli() {
     return promise
   }
 
-  function getOption(prop, { required, subProp } = {}) {
+  function getOption(prop, { required, subProp }: any = {}) {
     let val = handli[prop]
     if (subProp) {
       val = val && val[subProp]
@@ -284,13 +286,14 @@ function Handli() {
   }
   function getMsgRetryingIn(timeLeft) {
     const msgFn = getMsg('RETRYING_IN', true)
+    // @ts-ignore
     if ((!msgFn) instanceof Function) {
       return strToHtml(msgFn)
     }
     const msg = msgFn(timeLeft)
     return strToHtml(msg)
   }
-  function getMsg(msgCode, isFn) {
+  function getMsg(msgCode: any, isFn?: any) {
     let msg = getOption('messages', { subProp: msgCode, required: true })
     return isFn ? msg : strToHtml(msg)
   }
@@ -365,6 +368,7 @@ function Handli() {
   }
 
   function getConnectionStateManager() {
+    // @ts-ignore
     return new ConnectionStateManager(getCheckOptions)
 
     function getCheckOptions() {

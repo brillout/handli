@@ -1,5 +1,6 @@
 export default checkInternetConnection
 
+// @ts-ignore
 import assert from 'reassert'
 
 async function checkInternetConnection(timeout) {
@@ -57,8 +58,8 @@ async function awaitLanConnection() {
 
   await promise
 }
-async function getFastestPing(timeout) {
-  const fastestPing = await PromiseRaceSuccess([
+async function getFastestPing(timeout?: any) {
+  const fastestPing: any = await PromiseRaceSuccess([
     pingImage('https://www.google.com/favicon.ico', timeout),
     pingImage('https://www.facebook.com/favicon.ico', timeout),
     pingImage('https://www.cloudflare.com/favicon.ico', timeout),
@@ -94,9 +95,10 @@ function PromiseRaceSuccess(promises) {
 function pingImage(imgUrl, timeout) {
   assert.internal(imgUrl)
   let resolve
-  const pingPromise = new Promise((r) => (resolve = r))
-  const img = document.createElement('img')
+  const pingPromise: any = new Promise((r) => (resolve = r))
+  const img: any = document.createElement('img')
 
+  // @ts-ignore
   img.onload = () => resolve(new Date() - start)
   img.onerror = () => resolve(null)
   if (timeout) setTimeout(() => resolve(null), timeout)

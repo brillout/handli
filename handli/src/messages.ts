@@ -8,5 +8,5 @@ export default {
   RETRYING_STILL: 'Still trying...',
   RETRYING_WHEN_ONLINE: 'Connect to the internet to proceed.',
   RETRYING_NOW: 'Retrying...',
-  RETRYING_IN: (seconds) => 'Retrying in ' + seconds + ' second' + (seconds === 1 ? '' : 's') + '.',
+  RETRYING_IN: (seconds: number) => 'Retrying in ' + seconds + ' second' + (seconds === 1 ? '' : 's') + '.',
 }
