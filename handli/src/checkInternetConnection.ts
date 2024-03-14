@@ -1,10 +1,9 @@
 export default checkInternetConnection
 
-// @ts-ignore
-import assert from 'reassert'
+import { assert, assertUsage } from './utils/assert'
 
-async function checkInternetConnection(timeout) {
-  assert.usage(timeout, { timeout }, '`checkInternetConnection` requires argument `timeout`')
+async function checkInternetConnection(timeout: number) {
+  assertUsage(timeout, '`checkInternetConnection` requires argument `timeout`')
   let noInternet = false
   let noLanConnection = hasNoLanConnection()
   let fastestPing
@@ -13,7 +12,7 @@ async function checkInternetConnection(timeout) {
     noInternet = true
   } else {
     fastestPing = await getFastestPing(timeout)
-    assert.internal(fastestPing === null || fastestPing >= 0)
+    assert(fastestPing === null || fastestPing >= 0)
     if (fastestPing === null) {
       noInternet = true
     }
@@ -69,7 +68,7 @@ async function getFastestPing(timeout?: any) {
     pingImage('https://www.microsoft.com/favicon.ico', timeout),
     */
   ])
-  assert.internal(fastestPing === null || fastestPing >= 0)
+  assert(fastestPing === null || fastestPing >= 0)
   return fastestPing
 }
 function PromiseRaceSuccess(promises) {
@@ -82,7 +81,7 @@ function PromiseRaceSuccess(promises) {
       /*
       console.log(rtt, pingPromise.imgUrl);
       */
-      assert.internal(rtt === null || rtt >= 0)
+      assert(rtt === null || rtt >= 0)
       if (rtt) {
         resolve(rtt)
       }
@@ -93,7 +92,7 @@ function PromiseRaceSuccess(promises) {
   return racePromise
 }
 function pingImage(imgUrl, timeout) {
-  assert.internal(imgUrl)
+  assert(imgUrl)
   let resolve
   const pingPromise: any = new Promise((r) => (resolve = r))
   const img: any = document.createElement('img')
@@ -114,7 +113,7 @@ function pingImage(imgUrl, timeout) {
 async function awaitPing() {
   while (true) {
     const fastestPing = await getFastestPing()
-    assert.internal(fastestPing === null || fastestPing >= 0)
+    assert(fastestPing === null || fastestPing >= 0)
     if (fastestPing !== null) return
     await wait(0.5)
   }

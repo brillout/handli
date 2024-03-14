@@ -2,6 +2,7 @@
   "name": "handli",
   "description": "Library that handles network errors",
   "version": "0.0.2",
+  "dependencies": {},
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsc --watch",
@@ -10,9 +11,6 @@
   "files": [
     "dist/"
   ],
-  "dependencies": {
-    "reassert": "^1.1.19"
-  },
   "devDependencies": {
     "typescript": "^5.4.2"
   }

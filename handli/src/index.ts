@@ -1,9 +1,8 @@
-// @ts-ignore
-import assert from 'reassert'
 import Handli from './Handli'
 import showMessage from './showMessage'
 import messages from './messages'
 import checkInternetConnection from './checkInternetConnection'
+import { assertWarning } from './utils/assert'
 
 // @ts-ignore
 const handli = new Handli()
@@ -18,7 +17,9 @@ export default handli
 
 if (typeof window !== 'undefined') {
   if ('handli' in window) {
-    assert.warning(false, "We didn't `window.handli = new Handli()` because `window.handli` is already defined")
+    assertWarning(false, "We didn't `window.handli = new Handli()` because `window.handli` is already defined", {
+      onlyOnce: true,
+    })
   } else {
     // @ts-ignore
     window.handli = handli

@@ -19,7 +19,7 @@ importers:
     dependencies:
       handli:
         specifier: 0.0.2
-        version: link:../src
+        version: link:../handli
       prismjs:
         specifier: ^1.15.0
         version: 1.29.0
@@ -40,11 +40,7 @@ importers:
         specifier: ^5.1.6
         version: 5.1.6
 
-  src:
-    dependencies:
-      reassert:
-        specifier: ^1.1.19
-        version: 1.1.21
+  handli:
     devDependencies:
       typescript:
         specifier: ^5.4.2

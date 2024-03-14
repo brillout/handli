@@ -1,7 +1,6 @@
-export default ConnectionStateManager
+import { assert, assertUsage } from './utils/assert'
 
-// @ts-ignore
-import assert from 'reassert'
+export default ConnectionStateManager
 
 function ConnectionStateManager(getCheckOptions) {
   let connectionState = null
@@ -33,10 +32,10 @@ function ConnectionStateManager(getCheckOptions) {
 
     const conn = await checkInternetConnection(thresholdNoInternet)
     const { noInternet, fastestPing } = conn
-    assert.internal([true, false].includes(noInternet))
-    assert.internal(noInternet === true || fastestPing >= 0)
+    assert([true, false].includes(noInternet))
+    assert(noInternet === true || fastestPing >= 0)
 
-    assert.usage(thresholdSlowInternet > 0, { thresholdSlowInternet }, '`thresholdSlowInternet` is missing')
+    assertUsage(thresholdSlowInternet > 0, '`thresholdSlowInternet` is missing')
     const slowInternet = !noInternet && fastestPing >= thresholdSlowInternet
 
     connectionState = {
@@ -46,7 +45,7 @@ function ConnectionStateManager(getCheckOptions) {
   }
 
   function assert_connectionState() {
-    assert.internal(
+    assert(
       connectionState === null ||
         ([true, false].includes(connectionState.noInternet) &&
           [true, false].includes(connectionState.noLanConnection) &&

@@ -1,8 +1,7 @@
 export default Handli
 
 import ConnectionStateManager from './ConnectionStateManager'
-// @ts-ignore
-import assert from 'reassert'
+import { assert, assertUsage, assertWarning } from './utils/assert'
 
 function Handli() {
   Object.assign(handli, {
@@ -57,7 +56,7 @@ function Handli() {
     return getRequestsWith('SLOW_RESPONSE').length > 0
   }
   async function handleOffline(connectionState) {
-    assert.internal(connectionState.noInternet === true)
+    assert(connectionState.noInternet === true)
     const { noLanConnection } = connectionState
     if (noLanConnection) {
       showWarningModal(getMsg('OFFLINE'), getMsg('RETRYING_WHEN_ONLINE'))
@@ -97,8 +96,8 @@ function Handli() {
   }
   function getRequestsWith(failureState) {
     const STATES = ['SLOW_RESPONSE', 'ERROR_RESPONSE', 'NO_RESPONSE']
-    assert.internal(STATES.includes(failureState))
-    assert.internal(
+    assert(STATES.includes(failureState))
+    assert(
       failedRequests.every((req) => STATES.includes(req.requestState.failureState)),
       failedRequests,
     )
@@ -137,7 +136,7 @@ function Handli() {
       const resolveValue_ = resolveValue
       resolveValue = (resolvedValue) => {
         const idx = failedRequests.indexOf(failedRequest)
-        assert.internal(idx >= 0)
+        assert(idx >= 0)
         failedRequests.splice(idx, 1)
 
         resolveValue_(resolvedValue)
@@ -179,7 +178,7 @@ function Handli() {
         resolveAttempt()
       }
       async function requestReponse() {
-        assert.internal(!responsePromise)
+        assert(!responsePromise)
         let returnedValue
         try {
           returnedValue = await requestFunction()
@@ -248,8 +247,8 @@ function Handli() {
       const connectionState = connectionStateManager.getConnectionState()
 
       const { noInternet, slowInternet } = connectionState
-      assert.internal([true, false].includes(noInternet))
-      assert.internal([true, false].includes(slowInternet))
+      assert([true, false].includes(noInternet))
+      assert([true, false].includes(slowInternet))
       return { noInternet, slowInternet }
     }
   }
@@ -257,7 +256,7 @@ function Handli() {
   var previousSeconds
   function wait(timeListener) {
     const seconds = getOption('retryTimer')(previousSeconds)
-    assert.usage(seconds > 0 && (previousSeconds === undefined || seconds >= previousSeconds), 'Wrong `retryTimer`')
+    assertUsage(seconds > 0 && (previousSeconds === undefined || seconds >= previousSeconds), 'Wrong `retryTimer`')
     let secondsLeft = (previousSeconds = seconds)
     const callListener = () => {
       if (secondsLeft === 0) {
@@ -280,7 +279,7 @@ function Handli() {
       val = val && val[subProp]
     }
 
-    assert.internal(!required || val, { val, prop, subProp })
+    assert(!required || val, { val, prop, subProp })
 
     return val
   }
@@ -297,7 +296,7 @@ function Handli() {
     return isFn ? msg : strToHtml(msg)
   }
   function strToHtml(str) {
-    assert.usage(str && str.split, str)
+    assertUsage(str && str.split, str)
     const html = str.split('\n').join('<br/>')
     return html
   }
@@ -314,9 +313,8 @@ function Handli() {
     const thresholdNoInternet = getOption('thresholdNoInternet')
     const thresholdSlowInternet = getOption('thresholdSlowInternet')
 
-    assert.usage(
+    assertUsage(
       thresholdSlowInternet < thresholdNoInternet,
-      { thresholdSlowInternet, thresholdNoInternet },
       '`thresholdSlowInternet` should be lower than `thresholdNoInternet`',
     )
 
@@ -325,9 +323,8 @@ function Handli() {
       return null
     }
     const checkTimeout = minTimeout - thresholdNoInternet
-    assert.usage(
+    assertUsage(
       checkTimeout >= 100,
-      { thresholdNoInternet, timeout, timeoutInternet, timeoutServer },
       '`thresholdNoInternet` should be lower than `timeout`, `timeoutInternet`, and `timeoutServer`',
     )
     return checkTimeout
@@ -388,7 +385,7 @@ function assert_resolvedValue(resolvedValue) {
     const response = resolvedValue
     assert_fetchLikeResponse(response)
     const { status } = response
-    assert.internal(200 <= status && status <= 299)
+    assert(200 <= status && status <= 299)
   }
 }
 function assert_returnedValue(returnedValue) {
@@ -399,7 +396,9 @@ function assert_returnedValue(returnedValue) {
 }
 function assert_fetchLikeResponse(response) {
   const isSuccessCode = 200 <= response.status && response.status <= 299
-  assert.warning(isSuccessCode === response.ok, 'Unexpected response object. Are you using a fetch-like library?')
+  assertWarning(isSuccessCode === response.ok, 'Unexpected response object. Are you using a fetch-like library?', {
+    onlyOnce: true,
+  })
 }
 function isFetchLikeResponse(response) {
   const yes = response instanceof Object && [true, false].includes(response.ok) && 'status' in response
