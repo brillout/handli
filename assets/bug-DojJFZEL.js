@@ -1,0 +1,1 @@
+import{h as e}from"./index-DhR5Ilpt.js";import{C as t,b as s}from"./utils-CfZPH9p_.js";const n=new t,{serverErrorSimulator:o,fetch:a}=s();async function m(){o.install(),setTimeout(o.remove,2e3);const r=await e(()=>a("data.json"));n.log("+++ Response +++",await r.text())}export{n as console,m as run};

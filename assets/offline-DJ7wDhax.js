@@ -1,1 +1,0 @@
-import{h as e}from"./index-Cy5mR0wh.js";import{C as n,g as s}from"./utils-Ctt9uj-h.js";const a=new n,{offlineSimulator:o,fetch:i}=s();async function f(){o.install(),setTimeout(o.remove,2e3);const t=await e(()=>i("data.json"));a.log("+++ Response +++",await t.text())}export{a as console,f as run};

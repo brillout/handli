@@ -1,1 +1,0 @@
-import{h as t}from"./index-Cy5mR0wh.js";import{C as n,a as e}from"./utils-Ctt9uj-h.js";const s=new n,{slowInternetSimulator:a,fetch:r}=e(1100);async function c(){a.install(),t.timeout=3e3,t.thresholdSlowInternet=1e3,t.thresholdNoInternet=2e3;const o=await t(()=>r("data.json"));s.log("+++ Response +++",await o.text())}export{s as console,c as run};
