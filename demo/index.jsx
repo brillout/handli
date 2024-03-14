@@ -2,10 +2,11 @@ import handli from 'handli'
 import Prism from 'prismjs'
 import 'prismjs/themes/prism.css'
 import './style.css'
-import { readFileSync } from 'fs'
 import React from 'react'
 import { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
+
+const examples = await getExamples()
 
 ReactDOM.render(<LiveDemo />, document.body.appendChild(document.createElement('div')))
 
@@ -54,7 +55,6 @@ function Header() {
 }
 
 function Intro() {
-  const examples = getExamples()
   const handliBehavior = (
     <span>
       Handli blocks the UI, blocks the code (it doesn't resolve nor rejects the promise), and shows an error message to
@@ -142,83 +142,83 @@ function CaseExplanation({ children }) {
   )
 }
 
-function getExamples() {
+async function getExamples() {
   const examples = {
     expected: [
       [
-        readFileSync(__dirname + '/cases/success.js', 'utf-8'),
-        require('./cases/success'),
+        (await import('./cases/success?raw')).default,
+        await import('./cases/success'),
         'Success',
         <div>When the server replies with a 2xx status code.</div>,
       ],
       [
-        readFileSync(__dirname + '/cases/expected_error.js', 'utf-8'),
-        require('./cases/expected_error.js'),
+        (await import('./cases/expected_error.js?raw')).default,
+        await import('./cases/expected_error.js'),
         'Handled Error',
         <div>When the server replies with an error handled by your code.</div>,
       ],
     ],
     connection: [
       [
-        readFileSync(__dirname + '/cases/offline.js', 'utf-8'),
-        require('./cases/offline.js'),
+        (await import('./cases/offline.js?raw')).default,
+        await import('./cases/offline.js'),
         'Offline',
         <div>When the user is not connected to the internet.</div>,
       ],
       [
-        readFileSync(__dirname + '/cases/slow.js', 'utf-8'),
-        require('./cases/slow.js'),
+        (await import('./cases/slow.js?raw')).default,
+        await import('./cases/slow.js'),
         'Slow Internet',
         <div>When the user has a slow internet connection.</div>,
       ],
     ],
     bug: [
       [
-        readFileSync(__dirname + '/cases/bug.js', 'utf-8'),
-        require('./cases/bug.js'),
+        (await import('./cases/bug.js?raw')).default,
+        await import('./cases/bug.js'),
         'Unhandled Error',
         <div>When the server replies with an error not handled by your code.</div>,
       ],
       [
-        readFileSync(__dirname + '/cases/server_slow.js', 'utf-8'),
-        require('./cases/server_slow.js'),
+        (await import('./cases/server_slow.js?raw')).default,
+        await import('./cases/server_slow.js'),
         'Unresponsive Server',
         <div>When the server is down or taking a long time to reply.</div>,
       ],
     ],
     options1: [
       [
-        readFileSync(__dirname + '/cases/retryTimer.js', 'utf-8'),
-        require('./cases/retryTimer.js'),
+        (await import('./cases/retryTimer.js?raw')).default,
+        await import('./cases/retryTimer.js'),
         'Retry Timer',
         <div>Customize when the request is retried.</div>,
       ],
       [
-        readFileSync(__dirname + '/cases/custom_slow.js', 'utf-8'),
-        require('./cases/custom_slow.js'),
+        (await import('./cases/custom_slow.js?raw')).default,
+        await import('./cases/custom_slow.js'),
         'Custom Slow Threshold',
         <div>Customize when Handli considers the network to be "slow".</div>,
       ],
     ],
     options2: [
       [
-        readFileSync(__dirname + '/cases/custom-style/customStyle.css', 'utf-8'),
-        require('./cases/custom-style/customStyle.js'),
+        (await import('./cases/custom-style/customStyle.js?raw')).default,
+        await import('./cases/custom-style/customStyle.js'),
         'Custom Style',
         <div>Customize the modal.</div>,
         { codeLang: 'css', dontStrip: true },
       ],
       [
-        readFileSync(__dirname + '/cases/custom_text.js', 'utf-8'),
-        require('./cases/custom_text.js'),
+        (await import('./cases/custom_text.js?raw')).default,
+        await import('./cases/custom_text.js'),
         'Custom Text',
         <div>Customize the texts shown to.</div>,
       ],
     ],
     options3: [
       [
-        readFileSync(__dirname + '/cases/custom-ui/customUi.js', 'utf-8'),
-        require('./cases/custom-ui/customUi.js'),
+        (await import('./cases/custom-ui/customUi.jsx?raw')).default,
+        await import('./cases/custom-ui/customUi.jsx'),
         'Custom UI',
         <div>Customize how messages are shown to the user.</div>,
       ],
@@ -341,12 +341,4 @@ function stripContext(codeSource) {
   const codeSourceLines = codeSource.split('\n')
   const runFnLine = codeSourceLines.findIndex((line) => line.includes('function run'))
   return codeSourceLines.slice(runFnLine + 1, -2).join('\n')
-}
-
-if (module.hot) {
-  module.hot.accept(function () {
-    setTimeout(() => {
-      location.reload()
-    }, 1000)
-  })
 }
