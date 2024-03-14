@@ -1,9 +1,7 @@
 {
-  "private": true,
   "scripts": {
     "dev": "vite --port 3000",
-    "build": "cd src && parcel build *.html --public-url /handli/",
-    "deploy": "pnpm run build && cd .. && git checkout gh-pages && git reset --hard clean-dist && git reset origin/gh-pages && mv live-demo/src/dist/* . && git add -A && git commit -m 'deploy new live demo' && git push && git checkout main"
+    "build": "vite build"
   },
   "dependencies": {
     "handli": "0.0.2",

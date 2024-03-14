@@ -1,5 +1,8 @@
 {
   "scripts": {
+    "========= Demo": "",
+    "dev": "cd demo/ && pnpm run dev",
+    "build": "cd demo/ && pnpm run build",
     "========= Formatting": "",
     "format": "pnpm run format:biome",
     "format:prettier": "git ls-files | egrep '\\.(json|js|jsx|css|ts|tsx|vue|mjs|cjs)$' | grep --invert-match package.json | xargs pnpm exec prettier --write",
