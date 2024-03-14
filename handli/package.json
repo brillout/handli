@@ -6,12 +6,16 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsc --watch",
-    "build": "rm -rf dist/ && tsc"
+    "build": "rm -rf dist/ && tsc",
+    "// === Release ===": "",
+    "release": "release-me patch",
+    "release:commit": "release-me commit"
   },
   "files": [
     "dist/"
   ],
   "devDependencies": {
+    "@brillout/release-me": "^0.1.14",
     "typescript": "^5.4.2"
   }
 }
