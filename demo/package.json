@@ -1,12 +1,11 @@
 {
   "private": true,
   "scripts": {
-    "dev": "cd src && parcel *.html",
+    "dev": "vite --port 3000",
     "build": "cd src && parcel build *.html --public-url /handli/",
     "deploy": "pnpm run build && cd .. && git checkout gh-pages && git reset --hard clean-dist && git reset origin/gh-pages && mv live-demo/src/dist/* . && git add -A && git commit -m 'deploy new live demo' && git push && git checkout main"
   },
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
     "handli": "0.0.2",
     "prismjs": "^1.15.0",
     "react": "16.7.0-alpha.2",
@@ -14,7 +13,6 @@
     "react-toastify": "^4.4.3"
   },
   "devDependencies": {
-    "parcel": "^1.10.3",
-    "parcel-plugin-static-files-copy": "^1.2.4"
+    "vite": "^5.1.6"
   }
 }
