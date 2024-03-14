@@ -19,7 +19,7 @@ You can write code as if network issues are non-existent and rely upon Handli fo
 
 It is [customizable](#usage-faq) and [progressively removable](#how-do-i-progressively-remove-handli).
 
-[Live Demo](https://brillout.github.com/handli)
+[Live Demo](https://brillout.github.io/handli)
 <br/><br/>
 
 
@@ -132,14 +132,14 @@ if( response.validationError ){
 
 Yes.
 See
-[Live Demo - Custom Style](https://brillout.github.com/handli#custom-style)
+[Live Demo - Custom Style](https://brillout.github.io/handli#custom-style)
 and
-[Live Demo - Custom UI](https://brillout.github.com/handli#custom-ui).
+[Live Demo - Custom UI](https://brillout.github.io/handli#custom-ui).
 
 ### Can I customize the texts?
 
 Yes.
-See [Live Demo - Custom Text](https://brillout.github.com/handli#custom-text).
+See [Live Demo - Custom Text](https://brillout.github.io/handli#custom-text).
 
 ### What if a non-2xx server reply is expected and I don't want Handli to treat it as error?
 
@@ -199,7 +199,7 @@ if( response.validationError ){
 }
 ~~~
 
-See [Live Demo - Handled Error](https://brillout.github.com/handli#handled-error).
+See [Live Demo - Handled Error](https://brillout.github.io/handli#handled-error).
 
 ### When is the user's internet connection considered slow?
 
@@ -218,7 +218,7 @@ If none of the ping requests get a response after `thresholdNoInternet` then Han
 considers the user offline.
 
 By default `thresholdSlowInternet` is `500` milliseconds and `thresholdNoInternet` is `900` milliseconds.
-The [Live Demo - Custom Slow Threshold](https://brillout.github.com/handli#custom-slow-threshold) shows how to change these defaults.
+The [Live Demo - Custom Slow Threshold](https://brillout.github.io/handli#custom-slow-threshold) shows how to change these defaults.
 
 Note that Handli handles slow connections only if you provide a `timeout`:
 
@@ -244,9 +244,9 @@ Alternatively to `timeout`, you can provide `timeoutInternet` and/or `timeoutSer
    then Handli shows the UI-blocking modal.
 
 See
-[Live Demo - Slow Internet](https://brillout.github.com/handli#slow-internet)
+[Live Demo - Slow Internet](https://brillout.github.io/handli#slow-internet)
 and
-[Live Demo - Unresponsive Server](https://brillout.github.com/handli#unresponsive-server).
+[Live Demo - Unresponsive Server](https://brillout.github.io/handli#unresponsive-server).
 
 ### Does it work only with `fetch`?
 
