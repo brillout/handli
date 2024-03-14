@@ -6,20 +6,36 @@
 </p>
 <br/>
 
-JavaScript library to automatically and gracefully handle network errors.
+JavaScript library to automatically handle network issues.
 
-Handli brings sensible defaults to following questions.
-- What should happen with the user interface when the server replies a `500 - Internal Server Error`?
-- What should happen when the user is offline?
+Handli brings sensible defaults to questions like:
 - What should happen when the user has a flaky internet connection?
+- What should happen when the user is offline?
 - What should happen when the server is overloaded and not responsive?
-- Etc.
+- What should happen when the server replies `500 - Internal Server Error`?
+- ...
 
-You can write code as if network issues are non-existent and rely upon Handli for handling network errors.
+With Handli, you can forget about network issues and let Handli handle these cases.
 
-It is [customizable](#usage-faq) and [progressively removable](#how-do-i-progressively-remove-handli).
+If you have specific needs, you can (progressively) customize and override Handli's behavior.
 
-[Live Demo](https://brillout.github.io/handli)
+Handli covers all (edge) cases using sensible defaults, all you have to do is wrap your fetch requests:
+
+~~~js
+// ❌ TODO: handle network issues.
+const response = await fetch(url)
+~~~
+~~~js
+// ✅ Network issues are hanlded by Handli.
+const response = await handli(() => fetch(url))
+~~~
+
+
+Taht's it: all network issues are now gracefully handled.
+
+Handli is [fully customizable](#usage-faq) and [progressively removable](#how-do-i-progressively-remove-handli).
+
+[**Live Demo**](https://brillout.github.io/handli)
 <br/><br/>
 
 
