@@ -108,7 +108,7 @@ function getServerErrorSimulator() {
   }
   const fetch = (url) => {
     if (installed) {
-      return window.fetch('does-not-exist.lol')
+      return window.fetch('does-not-exist-path')
     } else {
       return window.fetch(url)
     }
