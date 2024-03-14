@@ -1,7 +1,7 @@
 <br/>
 <p align="center">
 <a href="/../../#readme">
-<img src="https://github.com/brillout/handli/raw/master/logo.svg?sanitize=true" height="45" alt="Handli"/>
+<img src="https://github.com/brillout/handli/raw/main/logo.svg?sanitize=true" height="45" alt="Handli"/>
 </a>
 </p>
 <br/>

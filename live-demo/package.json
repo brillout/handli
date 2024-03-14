@@ -6,7 +6,7 @@
     "setup": "npm run install-yarn && yarn",
     "setup-dev": "npm run install-yarn && (cd .. && yarn && yarn link) && yarn link handli && yarn",
     "install-yarn": "npm install --only=dev --no-save",
-    "deploy": "npm run build && cd .. && git checkout gh-pages && git reset --hard clean-dist && git reset origin/gh-pages && mv live-demo/src/dist/* . && git add -A && git commit -m 'deploy new live demo' && git push && git checkout master"
+    "deploy": "npm run build && cd .. && git checkout gh-pages && git reset --hard clean-dist && git reset origin/gh-pages && mv live-demo/src/dist/* . && git add -A && git commit -m 'deploy new live demo' && git push && git checkout main"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
