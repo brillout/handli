@@ -1,50 +1,42 @@
-const assert = require('reassert');
+const assert = require('reassert')
 
-module.exports = ConnectionStateManager;
+module.exports = ConnectionStateManager
 
 function ConnectionStateManager(getCheckOptions) {
-  let connectionState = null;
-  let connectionStatePromise = null;
+  let connectionState = null
+  let connectionStatePromise = null
 
   return {
     deprecateState,
     getConnectionState,
     checkNowIfMissing,
-  };
+  }
 
   function getConnectionState() {
-    assert_connectionState();
-    return connectionState;
+    assert_connectionState()
+    return connectionState
   }
   function deprecateState() {
-    connectionState = null;
-    connectionStatePromise = null;
+    connectionState = null
+    connectionStatePromise = null
   }
   async function checkNowIfMissing() {
-    if( ! connectionStatePromise ) {
-      connectionStatePromise = checkConnection();
+    if (!connectionStatePromise) {
+      connectionStatePromise = checkConnection()
     }
-    await connectionStatePromise;
+    await connectionStatePromise
   }
 
   async function checkConnection() {
-    const {
-      checkInternetConnection,
-      thresholdNoInternet,
-      thresholdSlowInternet,
-    } = getCheckOptions();
+    const { checkInternetConnection, thresholdNoInternet, thresholdSlowInternet } = getCheckOptions()
 
-    const conn = await checkInternetConnection(thresholdNoInternet);
-    const {noInternet, fastestPing} = conn;
-    assert.internal([true, false].includes(noInternet));
-    assert.internal(noInternet===true || fastestPing>=0);
+    const conn = await checkInternetConnection(thresholdNoInternet)
+    const { noInternet, fastestPing } = conn
+    assert.internal([true, false].includes(noInternet))
+    assert.internal(noInternet === true || fastestPing >= 0)
 
-    assert.usage(
-      thresholdSlowInternet>0,
-      {thresholdSlowInternet},
-      "`thresholdSlowInternet` is missing"
-    );
-    const slowInternet = !noInternet && fastestPing >= thresholdSlowInternet;
+    assert.usage(thresholdSlowInternet > 0, { thresholdSlowInternet }, '`thresholdSlowInternet` is missing')
+    const slowInternet = !noInternet && fastestPing >= thresholdSlowInternet
 
     connectionState = {
       slowInternet,
@@ -54,14 +46,13 @@ function ConnectionStateManager(getCheckOptions) {
 
   function assert_connectionState() {
     assert.internal(
-      connectionState===null || (
-        [true, false].includes(connectionState.noInternet) &&
-        [true, false].includes(connectionState.noLanConnection) &&
-        [true, false].includes(connectionState.slowInternet) &&
-        (connectionState.noInternet === true || connectionState.fastestPing>=0) &&
-        connectionState.awaitInternetConnection instanceof Function
-      ),
-      {connectionState}
-    );
+      connectionState === null ||
+        ([true, false].includes(connectionState.noInternet) &&
+          [true, false].includes(connectionState.noLanConnection) &&
+          [true, false].includes(connectionState.slowInternet) &&
+          (connectionState.noInternet === true || connectionState.fastestPing >= 0) &&
+          connectionState.awaitInternetConnection instanceof Function),
+      { connectionState },
+    )
   }
 }

@@ -1,18 +1,13 @@
-import handli from 'handli';
-import {Console} from '../utils';
+import handli from 'handli'
+import { Console } from '../utils'
 
-export {run};
-export {console};
+export { run }
+export { console }
 
-const console = new Console();
+const console = new Console()
 
 async function run() {
-const response = await handli(
-  () => fetch('data.json')
-);
+  const response = await handli(() => fetch('data.json'))
 
-console.log(
-  "+++ Response +++",
-  await response.text()
-);
+  console.log('+++ Response +++', await response.text())
 }

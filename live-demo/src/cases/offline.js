@@ -1,23 +1,18 @@
-import handli from 'handli';
-import {Console, wait, getOfflineSimulator} from '../utils';
+import handli from 'handli'
+import { Console, wait, getOfflineSimulator } from '../utils'
 
-export {run};
-export {console};
+export { run }
+export { console }
 
-const console = new Console();
+const console = new Console()
 
-const {offlineSimulator, fetch} = getOfflineSimulator();
+const { offlineSimulator, fetch } = getOfflineSimulator()
 
 async function run() {
-offlineSimulator.install();
-setTimeout(offlineSimulator.remove, 2000);
+  offlineSimulator.install()
+  setTimeout(offlineSimulator.remove, 2000)
 
-const response = await handli(
-  () => fetch('data.json')
-);
+  const response = await handli(() => fetch('data.json'))
 
-console.log(
-  "+++ Response +++",
-  await response.text()
-);
+  console.log('+++ Response +++', await response.text())
 }

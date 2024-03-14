@@ -1,159 +1,162 @@
-import handli from 'handli';
-import assert from 'assert';
+import handli from 'handli'
+import assert from 'assert'
 
-export {fetch};
-export {Console};
-export {wait};
-export {getServerDownSimulator};
-export {getOfflineSimulator};
-export {getSlowServerSimulator};
-export {getServerErrorSimulator};
-export {getSlowInternetSimulator};
+export { fetch }
+export { Console }
+export { wait }
+export { getServerDownSimulator }
+export { getOfflineSimulator }
+export { getSlowServerSimulator }
+export { getServerErrorSimulator }
+export { getSlowInternetSimulator }
 
-const NON_EXISTING_SERVER = 'https://does-not-exist.example.org/foo';
+const NON_EXISTING_SERVER = 'https://does-not-exist.example.org/foo'
 
 async function fetch(url) {
-  const response = await window.fetch(url);
-  return await response.text();
+  const response = await window.fetch(url)
+  return await response.text()
 }
 
 function Console() {
-  const history = [];
+  const history = []
 
-  return {history, log};
+  return { history, log }
 
   function log(...args) {
-    window.console.log(...args);
-    history.push(args.join('\n'));
+    window.console.log(...args)
+    history.push(args.join('\n'))
   }
 }
 
 function wait(seconds) {
-  let resolve;
-  const p = new Promise(r => resolve=r);
-  setTimeout(resolve, seconds*1000);
-  return p;
+  let resolve
+  const p = new Promise((r) => (resolve = r))
+  setTimeout(resolve, seconds * 1000)
+  return p
 }
 
 function getServerDownSimulator() {
-  const fetch = url => {
-    if( installed ) {
-      return window.fetch(NON_EXISTING_SERVER);
+  const fetch = (url) => {
+    if (installed) {
+      return window.fetch(NON_EXISTING_SERVER)
     } else {
-      return window.fetch(url);
+      return window.fetch(url)
     }
-  };
+  }
 
-  let installed = false;
+  let installed = false
   const serverDownSimulator = {
-    install: () => {installed = true},
-    remove: () => {installed = false},
-  };
+    install: () => {
+      installed = true
+    },
+    remove: () => {
+      installed = false
+    },
+  }
 
-  return {serverDownSimulator, fetch};
+  return { serverDownSimulator, fetch }
 }
 
 function getOfflineSimulator() {
-  let installed = false;
-  let resolveInternet = null;
+  let installed = false
+  let resolveInternet = null
   const offlineSimulator = {
     install: () => {
-      installed = true;
+      installed = true
       handli.checkInternetConnection = async () => {
         return {
           noInternet: true,
           noLanConnection: true,
           awaitInternetConnection: () => {
-            if( !installed ) {
-              return;
+            if (!installed) {
+              return
             }
-            return new Promise(r => resolveInternet=r);
+            return new Promise((r) => (resolveInternet = r))
           },
-        };
-      };
-    },
-    remove: () => {
-      delete handli.checkInternetConnection;
-      installed = false;
-      if( resolveInternet ) {
-        resolveInternet();
+        }
       }
     },
-  };
+    remove: () => {
+      delete handli.checkInternetConnection
+      installed = false
+      if (resolveInternet) {
+        resolveInternet()
+      }
+    },
+  }
 
-  const fetch = url => {
-    if( installed ) {
-      return window.fetch(NON_EXISTING_SERVER);
+  const fetch = (url) => {
+    if (installed) {
+      return window.fetch(NON_EXISTING_SERVER)
     } else {
-      return window.fetch(url);
+      return window.fetch(url)
     }
-  };
+  }
 
-  return {offlineSimulator, fetch};
+  return { offlineSimulator, fetch }
 }
 
 function getServerErrorSimulator() {
-  let installed;
+  let installed
   const serverErrorSimulator = {
     install: () => {
-      installed = true;
+      installed = true
     },
     remove: () => {
-      installed = false;
+      installed = false
     },
-  };
-  const fetch = url => {
-    if( installed ) {
-      return window.fetch('does-not-exist.lol');
+  }
+  const fetch = (url) => {
+    if (installed) {
+      return window.fetch('does-not-exist.lol')
     } else {
-      return window.fetch(url);
+      return window.fetch(url)
     }
-  };
+  }
 
-  return {serverErrorSimulator, fetch};
+  return { serverErrorSimulator, fetch }
 }
 
 function getSlowServerSimulator() {
-  let installed;
+  let installed
   const slowServerSimulator = {
     install: () => {
-      installed = true;
+      installed = true
     },
-  };
+  }
 
-  const fetch = async url => {
-    if( installed ) {
-      await wait(4);
+  const fetch = async (url) => {
+    if (installed) {
+      await wait(4)
     }
-    return window.fetch(url);
-  };
+    return window.fetch(url)
+  }
 
-  return {slowServerSimulator, fetch};
+  return { slowServerSimulator, fetch }
 }
-function getSlowInternetSimulator(fastestPing=500) {
-  let installed;
+function getSlowInternetSimulator(fastestPing = 500) {
+  let installed
   const slowInternetSimulator = {
     install: () => {
       handli.checkInternetConnection = async () => {
-        wait(fastestPing/1000);
+        wait(fastestPing / 1000)
         return {
           noInternet: false,
           noLanConnection: false,
           fastestPing,
           awaitInternetConnection: () => assert.internal(false),
-        };
-      };
-      installed = true;
+        }
+      }
+      installed = true
     },
-  };
+  }
 
-  const fetch = async url => {
-    if( installed ) {
-      await wait(4);
+  const fetch = async (url) => {
+    if (installed) {
+      await wait(4)
     }
-    return window.fetch(url);
-  };
+    return window.fetch(url)
+  }
 
-  return {slowInternetSimulator, fetch};
+  return { slowInternetSimulator, fetch }
 }
-

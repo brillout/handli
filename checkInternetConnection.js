@@ -1,24 +1,20 @@
-const assert = require('reassert');
+const assert = require('reassert')
 
-module.exports = checkInternetConnection;
+module.exports = checkInternetConnection
 
 async function checkInternetConnection(timeout) {
-  assert.usage(
-    timeout,
-    {timeout},
-    "`checkInternetConnection` requires argument `timeout`",
-  );
-  let noInternet = false;
-  let noLanConnection = hasNoLanConnection();
-  let fastestPing;
+  assert.usage(timeout, { timeout }, '`checkInternetConnection` requires argument `timeout`')
+  let noInternet = false
+  let noLanConnection = hasNoLanConnection()
+  let fastestPing
 
-  if( noLanConnection ) {
-    noInternet = true;
+  if (noLanConnection) {
+    noInternet = true
   } else {
-    fastestPing = await getFastestPing(timeout);
-    assert.internal(fastestPing===null || fastestPing>=0);
-    if( fastestPing===null ) {
-      noInternet = true;
+    fastestPing = await getFastestPing(timeout)
+    assert.internal(fastestPing === null || fastestPing >= 0)
+    if (fastestPing === null) {
+      noInternet = true
     }
   }
 
@@ -35,31 +31,31 @@ async function checkInternetConnection(timeout) {
   }
 }
 function hasNoLanConnection() {
-  return window.navigator.onLine===false;
+  return window.navigator.onLine === false
 }
 function hasLanConnection() {
-  return window.navigator.onLine===true;
+  return window.navigator.onLine === true
 }
 function noLanConnectionInfo() {
-  return ![true, false].includes(window.navigator.onLine);
+  return ![true, false].includes(window.navigator.onLine)
 }
 async function awaitInternetConnection() {
-  await awaitLanConnection();
-  await awaitPing();
+  await awaitLanConnection()
+  await awaitPing()
 }
 async function awaitLanConnection() {
-  if( hasLanConnection() ) {
-    return;
+  if (hasLanConnection()) {
+    return
   }
-  if( noLanConnectionInfo() ) {
-    return;
+  if (noLanConnectionInfo()) {
+    return
   }
 
-  let resolve;
-  const promise = new Promise(r => resolve=r);
-  window.addEventListener('online', resolve);
+  let resolve
+  const promise = new Promise((r) => (resolve = r))
+  window.addEventListener('online', resolve)
 
-  await promise;
+  await promise
 }
 async function getFastestPing(timeout) {
   const fastestPing = await PromiseRaceSuccess([
@@ -71,61 +67,59 @@ async function getFastestPing(timeout) {
     pingImage('https://www.apple.com/favicon.ico', timeout),
     pingImage('https://www.microsoft.com/favicon.ico', timeout),
     */
-  ]);
-  assert.internal(fastestPing===null || fastestPing>=0);
-  return fastestPing;
+  ])
+  assert.internal(fastestPing === null || fastestPing >= 0)
+  return fastestPing
 }
 function PromiseRaceSuccess(promises) {
   // Promise.race doesn't ignore rejected promises
-  let resolve;
-  const racePromise = new Promise(r => resolve=r);
+  let resolve
+  const racePromise = new Promise((r) => (resolve = r))
   Promise.all(
-    promises
-    .map(async pingPromise => {
-      const rtt = await pingPromise;
+    promises.map(async (pingPromise) => {
+      const rtt = await pingPromise
       /*
       console.log(rtt, pingPromise.imgUrl);
       */
-      assert.internal(rtt===null || rtt>=0);
-      if( rtt ) {
-        resolve(rtt);
+      assert.internal(rtt === null || rtt >= 0)
+      if (rtt) {
+        resolve(rtt)
       }
-    })
-  )
-  .then(() => {
-    resolve(null);
-  });
-  return racePromise;
+    }),
+  ).then(() => {
+    resolve(null)
+  })
+  return racePromise
 }
 function pingImage(imgUrl, timeout) {
-  assert.internal(imgUrl);
-  let resolve;
-  const pingPromise = new Promise(r => resolve=r);
-  const img = document.createElement('img');
+  assert.internal(imgUrl)
+  let resolve
+  const pingPromise = new Promise((r) => (resolve = r))
+  const img = document.createElement('img')
 
-  img.onload = () => resolve(new Date() - start);
-  img.onerror = () => resolve(null);
-  if( timeout ) setTimeout(() => resolve(null), timeout);
+  img.onload = () => resolve(new Date() - start)
+  img.onerror = () => resolve(null)
+  if (timeout) setTimeout(() => resolve(null), timeout)
 
-  const start = new Date().getTime();
-  const src = imgUrl + '?_=' + start;
-  img.src = src;
+  const start = new Date().getTime()
+  const src = imgUrl + '?_=' + start
+  img.src = src
 
-  pingPromise.imgUrl = src;
+  pingPromise.imgUrl = src
 
-  return pingPromise;
+  return pingPromise
 }
 async function awaitPing() {
-  while(true) {
-    const fastestPing = await getFastestPing();
-    assert.internal(fastestPing===null || fastestPing>=0);
-    if( fastestPing !== null ) return;
-    await wait(0.5);
+  while (true) {
+    const fastestPing = await getFastestPing()
+    assert.internal(fastestPing === null || fastestPing >= 0)
+    if (fastestPing !== null) return
+    await wait(0.5)
   }
 }
 function wait(seconds) {
-  let resolve;
-  const p = new Promise(r => resolve=r);
-  setTimeout(resolve, seconds*1000);
-  return p;
+  let resolve
+  const p = new Promise((r) => (resolve = r))
+  setTimeout(resolve, seconds * 1000)
+  return p
 }

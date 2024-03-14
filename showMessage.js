@@ -1,4 +1,4 @@
-module.exports = showMessages;
+module.exports = showMessages
 
 const CSS = `
 body.hasHandliModal {
@@ -28,7 +28,7 @@ body.hasHandliModal {
 .handliIsWarning > * {
   border-color: #fff252;
 }
-`;
+`
 /*
 .handliModalWrapper > :first-child > :first-child::before {
   content: "";
@@ -45,19 +45,19 @@ body.hasHandliModal {
 */
 
 function showMessages(html, isWarning) {
-  addCss();
+  addCss()
   /*
   const modalWrapper = window.document.createElement('div');
   modalWrapper.setAttribute('class', 'handliModalWrapper');
   modalWrapper.appendChild(handliModal);
   */
 
-  const handliModal = window.document.createElement('div');
-  handliModal.setAttribute('class', 'handliModal'+(isWarning?' handliIsWarning':''));
+  const handliModal = window.document.createElement('div')
+  handliModal.setAttribute('class', 'handliModal' + (isWarning ? ' handliIsWarning' : ''))
 
-  const handliModalContent = window.document.createElement('div');
-  handliModalContent.setAttribute('class', 'handliModalContent');
-  handliModal.appendChild(handliModalContent);
+  const handliModalContent = window.document.createElement('div')
+  handliModalContent.setAttribute('class', 'handliModalContent')
+  handliModal.appendChild(handliModalContent)
 
   /*
   const modalImageEl = window.document.createElement('div');
@@ -75,47 +75,47 @@ function showMessages(html, isWarning) {
   });
   */
 
-  const bodyCls = 'hasHandliModal';
-  document.body.classList.add(bodyCls);
-  document.body.appendChild(handliModal);
+  const bodyCls = 'hasHandliModal'
+  document.body.classList.add(bodyCls)
+  document.body.appendChild(handliModal)
 
-  update(html);
+  update(html)
 
-  return {close, update};
+  return { close, update }
 
   function close() {
-    removeElement(handliModal);
-    document.body.classList.remove(bodyCls);
+    removeElement(handliModal)
+    document.body.classList.remove(bodyCls)
   }
   function update(html) {
-    handliModalContent.innerHTML = html;
+    handliModalContent.innerHTML = html
   }
 }
 
 function removeElement(element) {
-  element.parentElement.removeChild(element);
+  element.parentElement.removeChild(element)
 }
 
 function prependChild(parent, child) {
-  const {firstChild} = parent;
-  if( ! firstChild ) {
-    parent.appendChild(child);
+  const { firstChild } = parent
+  if (!firstChild) {
+    parent.appendChild(child)
   } else {
-    parent.insertBefore(child, firstChild);
+    parent.insertBefore(child, firstChild)
   }
 }
 
 function addCss() {
-  const id = 'handliStyle';
-  if( document.getElementById(id) ) {
-    return;
+  const id = 'handliStyle'
+  if (document.getElementById(id)) {
+    return
   }
-  const css = window.document.createElement("style");
+  const css = window.document.createElement('style')
   Object.assign(css, {
     id,
     type: 'text/css',
     innerHTML: CSS,
-  });
+  })
   //document.head -> https://caniuse.com/#feat=documenthead
-  prependChild(document.head, css);
+  prependChild(document.head, css)
 }
