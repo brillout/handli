@@ -1,3 +1,6 @@
 export default {
-  appType: 'mpa'
+  appType: 'mpa',
+  build: {
+    target: 'esnext',
+  },
 }
