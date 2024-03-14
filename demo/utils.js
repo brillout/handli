@@ -1,5 +1,5 @@
 import handli from 'handli'
-import assert from 'assert'
+import assert from 'reassert'
 
 export { fetch }
 export { Console }
