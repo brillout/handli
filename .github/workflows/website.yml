@@ -19,6 +19,9 @@ jobs:
       - name: Install
         run: pnpm install
 
+      - name: Set environemnt variable $BASE_URL
+        run: echo "BASE_URL=/handli/" >> $GITHUB_ENV
+
       - name: Build
         run: pnpm build
 
