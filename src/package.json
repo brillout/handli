@@ -1,0 +1,8 @@
+{
+  "name": "handli",
+  "description": "Library that handles network errors",
+  "version": "0.0.2",
+  "dependencies": {
+    "reassert": "^1.1.19"
+  }
+}
