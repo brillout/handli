@@ -286,8 +286,7 @@ function Handli() {
   }
   function getMsgRetryingIn(timeLeft) {
     const msgFn = getMsg('RETRYING_IN', true)
-    // @ts-ignore
-    if ((!msgFn) instanceof Function) {
+    if (!(msgFn instanceof Function)) {
       return strToHtml(msgFn)
     }
     const msg = msgFn(timeLeft)
