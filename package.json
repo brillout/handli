@@ -4,5 +4,19 @@
   "version": "0.0.2",
   "dependencies": {
     "reassert": "^1.1.19"
+  },
+  "scripts": {
+    "========= Formatting": "",
+    "format": "pnpm run format:biome",
+    "format:prettier": "git ls-files | egrep '\\.(json|js|jsx|css|ts|tsx|vue|mjs|cjs)$' | grep --invert-match package.json | xargs pnpm exec prettier --write",
+    "format:biome": "biome format --write .",
+    "format:check": "biome format . || (echo 'Fix formatting by running `$ pnpm run -w format`.' && exit 1)",
+    "========= Only allow pnpm; forbid yarn & npm": "",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "packageManager": "pnpm@8.15.1",
+  "devDependencies": {
+    "@biomejs/biome": "1.5.3",
+    "prettier": "3.2.5"
   }
 }
