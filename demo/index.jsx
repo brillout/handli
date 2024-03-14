@@ -6,15 +6,18 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 
-const examples = await getExamples()
+main()
 
-ReactDOM.render(<LiveDemo />, document.body.appendChild(document.createElement('div')))
+async function main() {
+  const examples = await getExamples()
+  ReactDOM.render(<LiveDemo examples={examples} />, document.body.appendChild(document.createElement('div')))
+}
 
-function LiveDemo() {
+function LiveDemo({ examples }) {
   return (
     <React.Fragment>
       <Header />
-      <Intro />
+      <Intro examples={examples} />
     </React.Fragment>
   )
 }
@@ -56,7 +59,7 @@ function Header() {
   )
 }
 
-function Intro() {
+function Intro({ examples }) {
   const handliBehavior = (
     <span>
       Handli blocks the UI, blocks the code (it doesn't resolve nor rejects the promise), and shows an error message to

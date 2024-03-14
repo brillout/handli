@@ -7,10 +7,10 @@ export { console }
 const console = new Console()
 const { offlineSimulator, fetch } = getOfflineSimulator()
 
-const customCss = (await import('./customStyle.css?raw')).default
-
 const id = 'custom_style'
-const addCss = () => {
+const addCss = async () => {
+  const customCss = (await import('./customStyle.css?raw')).default
+
   const styleEl = window.document.createElement('style')
   Object.assign(styleEl, {
     id,
@@ -28,7 +28,7 @@ async function run() {
   offlineSimulator.install()
   setTimeout(offlineSimulator.remove, 2000)
 
-  addCss()
+  await addCss()
   let resp
   try {
     resp = await handli(() => fetch('data.json'))
