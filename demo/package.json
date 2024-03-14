@@ -1,7 +1,8 @@
 {
   "scripts": {
     "dev": "vite --port 3000",
-    "build": "vite build"
+    "build": "vite build",
+    "preview": "vite build && vite preview"
   },
   "dependencies": {
     "handli": "0.0.2",
