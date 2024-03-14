@@ -331,7 +331,7 @@ function getCodView({ codeSource, codeLang, dontStrip }) {
   const codeHtml = Prism.highlight(codeSource, Prism.languages[codeLang], codeLang)
 
   return (
-    <pre>
+    <pre className={'language-' + codeLang}>
       <code className={'language-' + codeLang} dangerouslySetInnerHTML={{ __html: codeHtml }} />
     </pre>
   )
