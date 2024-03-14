@@ -1,6 +1,6 @@
-const assert = require('reassert')
+export default checkInternetConnection
 
-module.exports = checkInternetConnection
+import assert from 'reassert'
 
 async function checkInternetConnection(timeout) {
   assert.usage(timeout, { timeout }, '`checkInternetConnection` requires argument `timeout`')

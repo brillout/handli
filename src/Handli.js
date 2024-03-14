@@ -1,7 +1,7 @@
-const ConnectionStateManager = require('./ConnectionStateManager')
-const assert = require('reassert')
+export default Handli
 
-module.exports = Handli
+import ConnectionStateManager from './ConnectionStateManager'
+import assert from 'reassert'
 
 function Handli() {
   Object.assign(handli, {

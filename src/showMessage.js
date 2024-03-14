@@ -1,4 +1,4 @@
-module.exports = showMessages
+export default showMessages
 
 const CSS = `
 body.hasHandliModal {

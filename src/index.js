@@ -1,8 +1,8 @@
-const assert = require('reassert')
-const Handli = require('./Handli')
-const showMessage = require('./showMessage')
-const messages = require('./messages')
-const checkInternetConnection = require('./checkInternetConnection')
+import assert from 'reassert'
+import Handli from './Handli'
+import showMessage from './showMessage'
+import messages from './messages'
+import checkInternetConnection from './checkInternetConnection'
 
 const handli = new Handli()
 
@@ -12,7 +12,7 @@ Object.assign(handli, {
   messages,
 })
 
-module.exports = handli
+export default handli
 
 if (typeof window !== 'undefined') {
   if ('handli' in window) {

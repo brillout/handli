@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   ERROR: 'Something unexpected happened.',
   OFFLINE: 'You are offline.',
   OFFLINE_PROBABLY: 'You seem to be offline.',

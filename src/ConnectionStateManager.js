@@ -1,6 +1,6 @@
-const assert = require('reassert')
+export default ConnectionStateManager
 
-module.exports = ConnectionStateManager
+import assert from 'reassert'
 
 function ConnectionStateManager(getCheckOptions) {
   let connectionState = null
