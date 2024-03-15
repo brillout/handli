@@ -4,7 +4,7 @@ import { Console } from '../utils'
 export { run }
 export { console }
 
-const console = new Console()
+const console = Console()
 
 async function run() {
 const response = await handli(

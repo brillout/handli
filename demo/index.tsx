@@ -153,11 +153,11 @@ function CaseExplanation({ children }) {
 }
 
 async function loadExamples() {
-  const examples = {
+  const examples: Record<string, ExampleType> = {
     expected: [
       [
-        import('./cases/success?raw'),
-        import('./cases/success'),
+        (await import('./cases/success?raw')).default,
+        await import('./cases/success'),
         'Success',
         <div>When the server replies with a 2xx status code.</div>,
       ],
