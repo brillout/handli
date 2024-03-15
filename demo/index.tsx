@@ -9,7 +9,7 @@ import ReactDOM from 'react-dom'
 main()
 
 async function main() {
-  const examples = await getExamples()
+  const examples = await loadExamples()
   ReactDOM.render(<LiveDemo examples={examples} />, document.body.appendChild(document.createElement('div')))
 }
 
@@ -152,83 +152,83 @@ function CaseExplanation({ children }) {
   )
 }
 
-async function getExamples() {
+async function loadExamples() {
   const examples = {
     expected: [
       [
-        (await import('./cases/success?raw')).default,
-        await import('./cases/success'),
+        (import('./cases/success?raw')),
+        import('./cases/success'),
         'Success',
         <div>When the server replies with a 2xx status code.</div>,
       ],
       [
-        (await import('./cases/expected_error.js?raw')).default,
-        await import('./cases/expected_error.js'),
+        (import('./cases/expected_error.js?raw')),
+        import('./cases/expected_error.js'),
         'Handled Error',
         <div>When the server replies with an error handled by your code.</div>,
       ],
     ],
     connection: [
       [
-        (await import('./cases/offline.js?raw')).default,
-        await import('./cases/offline.js'),
+        (import('./cases/offline.js?raw')),
+        import('./cases/offline.js'),
         'Offline',
         <div>When the user is not connected to the internet.</div>,
       ],
       [
-        (await import('./cases/slow.js?raw')).default,
-        await import('./cases/slow.js'),
+        (import('./cases/slow.js?raw')),
+        import('./cases/slow.js'),
         'Slow Internet',
         <div>When the user has a slow internet connection.</div>,
       ],
     ],
     bug: [
       [
-        (await import('./cases/bug.js?raw')).default,
-        await import('./cases/bug.js'),
+        (import('./cases/bug.js?raw')),
+        import('./cases/bug.js'),
         'Unhandled Error',
         <div>When the server replies with an error not handled by your code.</div>,
       ],
       [
-        (await import('./cases/server_slow.js?raw')).default,
-        await import('./cases/server_slow.js'),
+        (import('./cases/server_slow.js?raw')),
+        import('./cases/server_slow.js'),
         'Unresponsive Server',
         <div>When the server is down or taking a long time to reply.</div>,
       ],
     ],
     options1: [
       [
-        (await import('./cases/retryTimer.js?raw')).default,
-        await import('./cases/retryTimer.js'),
+        (import('./cases/retryTimer.js?raw')),
+        import('./cases/retryTimer.js'),
         'Retry Timer',
         <div>Customize when the request is retried.</div>,
       ],
       [
-        (await import('./cases/custom_slow.js?raw')).default,
-        await import('./cases/custom_slow.js'),
+        (import('./cases/custom_slow.js?raw')),
+        import('./cases/custom_slow.js'),
         'Custom Slow Threshold',
         <div>Customize when Handli considers the network to be "slow".</div>,
       ],
     ],
     options2: [
       [
-        (await import('./cases/custom-style/customStyle.css?raw')).default,
-        await import('./cases/custom-style/customStyle.js'),
+        (import('./cases/custom-style/customStyle.css?raw')),
+        import('./cases/custom-style/customStyle.js'),
         'Custom Style',
         <div>Customize the modal.</div>,
         { codeLang: 'css', dontStrip: true },
       ],
       [
-        (await import('./cases/custom_text.js?raw')).default,
-        await import('./cases/custom_text.js'),
+        (import('./cases/custom_text.js?raw')),
+        import('./cases/custom_text.js'),
         'Custom Text',
         <div>Customize the texts shown to.</div>,
       ],
     ],
     options3: [
       [
-        (await import('./cases/custom-ui/customUi.jsx?raw')).default,
-        await import('./cases/custom-ui/customUi.jsx'),
+        (import('./cases/custom-ui/customUi.jsx?raw')),
+        import('./cases/custom-ui/customUi.jsx'),
         'Custom UI',
         <div>Customize how messages are shown to the user.</div>,
       ],
