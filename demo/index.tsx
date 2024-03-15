@@ -153,11 +153,11 @@ function CaseExplanation({ children }) {
 }
 
 async function loadExamples() {
-  const examples: Record<string, ExampleType> = {
+  const examples: Record<string, ExampleType[]> = {
     expected: [
       [
-        (await import('./cases/success?raw')).default,
-        await import('./cases/success'),
+        import('./cases/success?raw')),
+        import('./cases/success'),
         'Success',
         <div>When the server replies with a 2xx status code.</div>,
       ],
@@ -248,13 +248,11 @@ function Examples({ examples }) {
   )
 }
 
-type ExampleType = [
-  string,
-  CodeModule,
-  string,
-  string,
-  { codeLang?: 'javascript' | 'css' | undefined | string; dontStrip?: boolean },
-]
+type ExampleTypeBase = [string, CodeModule, string, JSX.Element]
+type ExampleType =
+  | ExampleTypeBase
+  | [...ExampleTypeBase, { codeLang?: 'javascript' | 'css' | undefined | string; dontStrip?: boolean }]
+
 function Example({
   example: [codeSource, codeModule, title, description, { codeLang = 'javascript', dontStrip = false } = {}],
 }: { example: ExampleType }) {
