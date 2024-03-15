@@ -1,0 +1,1 @@
+import{h as o}from"./index-7yBawPm3.js";import{C as t}from"./utils-DHf2ZKMr.js";const e=new t;async function c(){const r=await o(async()=>{try{return await fetch("https://doesnt-exist.example.org")}catch{return"This error is custom handled."}});e.log("+++ Handled error +++",r)}export{e as console,c as run};
