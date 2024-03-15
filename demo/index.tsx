@@ -13,7 +13,7 @@ async function main() {
   ReactDOM.render(<LiveDemo examples={examples} />, document.body.appendChild(document.createElement('div')))
 }
 
-function LiveDemo({ examples }) {
+function LiveDemo({ examples }: { examples: ExampleType[] }) {
   return (
     <React.Fragment>
       <Header />
@@ -64,7 +64,7 @@ function Header() {
   )
 }
 
-function Intro({ examples }) {
+function Intro({ examples }: { examples: ExampleType[] }) {
   const handliBehavior = (
     <span>
       Handli blocks the UI, blocks the code (it doesn't resolve nor rejects the promise), and shows an error message to
@@ -79,19 +79,19 @@ function Intro({ examples }) {
             When the request succeeds or the request fails but your code handles the error.
           </CaseExplanation>
           <p>Handli does nothing and simply returns what your request function returns.</p>
-          <Examples examples={examples.expected} />
+          <Examples examples={examples.filter(([category]) => category === 'expected')} />
         </Column>
         <Column title={'Flaky Internet Connection'} className="cls_yellow">
           <CaseExplanation>When the user is offline or has a poor internet connection.</CaseExplanation>
           <p>{handliBehavior} The request is retried when the user reconnects.</p>
-          <Examples examples={examples.connection} />
+          <Examples examples={examples.filter(([category]) => category === 'connection')} />
         </Column>
         <Column title={'Bug'} className="cls_red">
           <CaseExplanation>
             When your server is not replying or replies with an error not handled by your code.
           </CaseExplanation>
           <p>{handliBehavior} The request is periodically retried.</p>
-          <Examples examples={examples.bug} />
+          <Examples examples={examples.filter(([category]) => category === 'bug')} />
         </Column>
       </Columns>
       {/*
@@ -102,15 +102,15 @@ function Intro({ examples }) {
       <Columns className="cls_gray">
         <Column>
           <ColumnTitle id="options">Options</ColumnTitle>
-          <Examples examples={examples.options1} />
+          <Examples examples={examples.filter(([category]) => category === 'options1')} />
         </Column>
         <Column>
           <ColumnTitlePlaceholder />
-          <Examples examples={examples.options2} />
+          <Examples examples={examples.filter(([category]) => category === 'options2')} />
         </Column>
         <Column>
           <ColumnTitlePlaceholder />
-          <Examples examples={examples.options3} />
+          <Examples examples={examples.filter(([category]) => category === 'options3')} />
         </Column>
       </Columns>
     </ColumnsWrapper>
@@ -153,91 +153,98 @@ function CaseExplanation({ children }) {
 }
 
 async function loadExamples() {
-  const examples: ExampleType[] = [
-      [
-        'expected',
-        import('./cases/success?raw')),
-        import('./cases/success'),
-        'Success',
-        <div>When the server replies with a 2xx status code.</div>,
-      ],
-      [
-        'expected',
-        import('./cases/expected_error.js?raw'),
-        import('./cases/expected_error.js'),
-        'Handled Error',
-        <div>When the server replies with an error handled by your code.</div>,
-      ],
-      [
-        'connection',
-        import('./cases/offline.js?raw'),
-        import('./cases/offline.js'),
-        'Offline',
-        <div>When the user is not connected to the internet.</div>,
-      ],
-      [
-        'connection',
-        import('./cases/slow.js?raw'),
-        import('./cases/slow.js'),
-        'Slow Internet',
-        <div>When the user has a slow internet connection.</div>,
-      ],
-      [
-        'bug',
-        import('./cases/bug.js?raw'),
-        import('./cases/bug.js'),
-        'Unhandled Error',
-        <div>When the server replies with an error not handled by your code.</div>,
-      ],
-      [
-        'bug',
-        import('./cases/server_slow.js?raw'),
-        import('./cases/server_slow.js'),
-        'Unresponsive Server',
-        <div>When the server is down or taking a long time to reply.</div>,
-      ],
-      [
-        'options1',
-        import('./cases/retryTimer.js?raw'),
-        import('./cases/retryTimer.js'),
-        'Retry Timer',
-        <div>Customize when the request is retried.</div>,
-      ],
-      [
-        'options1',
-        import('./cases/custom_slow.js?raw'),
-        import('./cases/custom_slow.js'),
-        'Custom Slow Threshold',
-        <div>Customize when Handli considers the network to be "slow".</div>,
-      ],
-      [
-        'options2',
-        import('./cases/custom-style/customStyle.css?raw'),
-        import('./cases/custom-style/customStyle.js'),
-        'Custom Style',
-        <div>Customize the modal.</div>,
-        { codeLang: 'css', dontStrip: true },
-      ],
-      [
-        'options2',
-        import('./cases/custom_text.js?raw'),
-        import('./cases/custom_text.js'),
-        'Custom Text',
-        <div>Customize the texts shown to.</div>,
-      ],
-      [
-        'options3',
-        import('./cases/custom-ui/customUi.jsx?raw'),
-        import('./cases/custom-ui/customUi.jsx'),
-        'Custom UI',
-        <div>Customize how messages are shown to the user.</div>,
-      ]
-    ]
+  const examplesPromise: ExamplePromise[] = [
+    [
+      'expected',
+      import('./cases/success?raw'),
+      import('./cases/success'),
+      'Success',
+      <div>When the server replies with a 2xx status code.</div>,
+    ],
+    [
+      'expected',
+      import('./cases/expected_error.js?raw'),
+      import('./cases/expected_error.js'),
+      'Handled Error',
+      <div>When the server replies with an error handled by your code.</div>,
+    ],
+    [
+      'connection',
+      import('./cases/offline.js?raw'),
+      import('./cases/offline.js'),
+      'Offline',
+      <div>When the user is not connected to the internet.</div>,
+    ],
+    [
+      'connection',
+      import('./cases/slow.js?raw'),
+      import('./cases/slow.js'),
+      'Slow Internet',
+      <div>When the user has a slow internet connection.</div>,
+    ],
+    [
+      'bug',
+      import('./cases/bug.js?raw'),
+      import('./cases/bug.js'),
+      'Unhandled Error',
+      <div>When the server replies with an error not handled by your code.</div>,
+    ],
+    [
+      'bug',
+      import('./cases/server_slow.js?raw'),
+      import('./cases/server_slow.js'),
+      'Unresponsive Server',
+      <div>When the server is down or taking a long time to reply.</div>,
+    ],
+    [
+      'options1',
+      import('./cases/retryTimer.js?raw'),
+      import('./cases/retryTimer.js'),
+      'Retry Timer',
+      <div>Customize when the request is retried.</div>,
+    ],
+    [
+      'options1',
+      import('./cases/custom_slow.js?raw'),
+      import('./cases/custom_slow.js'),
+      'Custom Slow Threshold',
+      <div>Customize when Handli considers the network to be "slow".</div>,
+    ],
+    [
+      'options2',
+      import('./cases/custom-style/customStyle.css?raw'),
+      import('./cases/custom-style/customStyle.js'),
+      'Custom Style',
+      <div>Customize the modal.</div>,
+      { codeLang: 'css', dontStrip: true },
+    ],
+    [
+      'options2',
+      import('./cases/custom_text.js?raw'),
+      import('./cases/custom_text.js'),
+      'Custom Text',
+      <div>Customize the texts shown to.</div>,
+    ],
+    [
+      'options3',
+      import('./cases/custom-ui/customUi.jsx?raw'),
+      import('./cases/custom-ui/customUi.jsx'),
+      'Custom UI',
+      <div>Customize how messages are shown to the user.</div>,
+    ],
+  ]
+  const examples: ExampleType[] = await Promise.all(
+    examplesPromise.map(async (examplePromise: ExamplePromise) => {
+      const [category, codeSourcePromise, codeModulePromise, title, description, options] = examplePromise
+      const [{ default: codeSource }, codeModule] = await Promise.all([codeSourcePromise, codeModulePromise])
+      return [category, codeSource, codeModule, title, description, options]
+    }),
+  )
 
   return examples
 }
 
-function Examples({ examples }) {
+function Examples({ examples }: { examples: ExampleType[] }) {
   return (
     <div>
       {examples.map((example, key) => (
@@ -247,18 +254,12 @@ function Examples({ examples }) {
   )
 }
 
-type Category  =
-  |'expected'
-  |      'connection'
-  |      'bug'
-  |      'options1'
-  |      'options2'
-  |      'options3'
-type ExampleTypeBase = [
-  Category, string, CodeModule, string, JSX.Element]
-type ExampleType =
-  | ExampleTypeBase
-  | [...ExampleTypeBase, { codeLang?: 'javascript' | 'css' | undefined | string; dontStrip?: boolean }]
+type Category = 'expected' | 'connection' | 'bug' | 'options1' | 'options2' | 'options3'
+type Options = { codeLang?: 'javascript' | 'css' | undefined | string; dontStrip?: boolean }
+type ExampleBase = [Category, string, CodeModule, string, JSX.Element]
+type ExampleBasePromise = [Category, Promise<{ default: string }>, Promise<CodeModule>, string, JSX.Element]
+type ExampleType = ExampleBase | [...ExampleBase, Options]
+type ExamplePromise = ExampleBasePromise | [...ExampleBasePromise, Options]
 
 function Example({
   example: [_category, codeSource, codeModule, title, description, { codeLang = 'javascript', dontStrip = false } = {}],
