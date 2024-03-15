@@ -135,7 +135,7 @@ function ColumnTitle({ children, ...props }) {
 function ColumnTitlePlaceholder() {
   return <ColumnTitle style={{ opacity: 0 }}>I'm invisible</ColumnTitle>
 }
-function Column({ title, children, className = '' }) {
+function Column({ title, children, className = '' }: any) {
   return (
     <div className={className + ' cls_column'}>
       {title && <ColumnTitle>{title}</ColumnTitle>}
@@ -156,13 +156,13 @@ async function loadExamples() {
   const examples = {
     expected: [
       [
-        (import('./cases/success?raw')),
+        import('./cases/success?raw'),
         import('./cases/success'),
         'Success',
         <div>When the server replies with a 2xx status code.</div>,
       ],
       [
-        (import('./cases/expected_error.js?raw')),
+        import('./cases/expected_error.js?raw'),
         import('./cases/expected_error.js'),
         'Handled Error',
         <div>When the server replies with an error handled by your code.</div>,
@@ -170,13 +170,13 @@ async function loadExamples() {
     ],
     connection: [
       [
-        (import('./cases/offline.js?raw')),
+        import('./cases/offline.js?raw'),
         import('./cases/offline.js'),
         'Offline',
         <div>When the user is not connected to the internet.</div>,
       ],
       [
-        (import('./cases/slow.js?raw')),
+        import('./cases/slow.js?raw'),
         import('./cases/slow.js'),
         'Slow Internet',
         <div>When the user has a slow internet connection.</div>,
@@ -184,13 +184,13 @@ async function loadExamples() {
     ],
     bug: [
       [
-        (import('./cases/bug.js?raw')),
+        import('./cases/bug.js?raw'),
         import('./cases/bug.js'),
         'Unhandled Error',
         <div>When the server replies with an error not handled by your code.</div>,
       ],
       [
-        (import('./cases/server_slow.js?raw')),
+        import('./cases/server_slow.js?raw'),
         import('./cases/server_slow.js'),
         'Unresponsive Server',
         <div>When the server is down or taking a long time to reply.</div>,
@@ -198,13 +198,13 @@ async function loadExamples() {
     ],
     options1: [
       [
-        (import('./cases/retryTimer.js?raw')),
+        import('./cases/retryTimer.js?raw'),
         import('./cases/retryTimer.js'),
         'Retry Timer',
         <div>Customize when the request is retried.</div>,
       ],
       [
-        (import('./cases/custom_slow.js?raw')),
+        import('./cases/custom_slow.js?raw'),
         import('./cases/custom_slow.js'),
         'Custom Slow Threshold',
         <div>Customize when Handli considers the network to be "slow".</div>,
@@ -212,14 +212,14 @@ async function loadExamples() {
     ],
     options2: [
       [
-        (import('./cases/custom-style/customStyle.css?raw')),
+        import('./cases/custom-style/customStyle.css?raw'),
         import('./cases/custom-style/customStyle.js'),
         'Custom Style',
         <div>Customize the modal.</div>,
         { codeLang: 'css', dontStrip: true },
       ],
       [
-        (import('./cases/custom_text.js?raw')),
+        import('./cases/custom_text.js?raw'),
         import('./cases/custom_text.js'),
         'Custom Text',
         <div>Customize the texts shown to.</div>,
@@ -227,7 +227,7 @@ async function loadExamples() {
     ],
     options3: [
       [
-        (import('./cases/custom-ui/customUi.jsx?raw')),
+        import('./cases/custom-ui/customUi.jsx?raw'),
         import('./cases/custom-ui/customUi.jsx'),
         'Custom UI',
         <div>Customize how messages are shown to the user.</div>,
@@ -248,9 +248,16 @@ function Examples({ examples }) {
   )
 }
 
+type ExampleType = [
+  string,
+  CodeModule,
+  string,
+  string,
+  { codeLang?: 'javascript' | 'css' | undefined | string; dontStrip?: boolean },
+]
 function Example({
-  example: [codeSource, codeModule, title, description, { codeLang = 'javascript', dontStrip } = {}],
-}) {
+  example: [codeSource, codeModule, title, description, { codeLang = 'javascript', dontStrip = false } = {}],
+}: { example: ExampleType }) {
   const headerId = title.toLowerCase().split(' ').join('-')
   const textView = (
     <div>
@@ -326,6 +333,10 @@ function ResultView({ codeModule }) {
     setHistory(codeModule.console.history)
   }
 }
+type CodeModule = {
+  run: () => void
+  console: { history: any }
+}
 
 const optionsPristine = { ...handli, messages: { ...handli.messages } }
 function revertOptions() {
@@ -347,7 +358,7 @@ function getCodView({ codeSource, codeLang, dontStrip }) {
   )
 }
 
-function stripContext(codeSource) {
+function stripContext(codeSource: string) {
   const codeSourceLines = codeSource.split('\n')
   const runFnLine = codeSourceLines.findIndex((line) => line.includes('function run'))
   return codeSourceLines.slice(runFnLine + 1, -2).join('\n')
