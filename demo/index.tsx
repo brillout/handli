@@ -153,65 +153,65 @@ function CaseExplanation({ children }) {
 }
 
 async function loadExamples() {
-  const examples: Record<string, ExampleType[]> = {
-    expected: [
+  const examples: ExampleType[] = [
       [
+        'expected',
         import('./cases/success?raw')),
         import('./cases/success'),
         'Success',
         <div>When the server replies with a 2xx status code.</div>,
       ],
       [
+        'expected',
         import('./cases/expected_error.js?raw'),
         import('./cases/expected_error.js'),
         'Handled Error',
         <div>When the server replies with an error handled by your code.</div>,
       ],
-    ],
-    connection: [
       [
+        'connection',
         import('./cases/offline.js?raw'),
         import('./cases/offline.js'),
         'Offline',
         <div>When the user is not connected to the internet.</div>,
       ],
       [
+        'connection',
         import('./cases/slow.js?raw'),
         import('./cases/slow.js'),
         'Slow Internet',
         <div>When the user has a slow internet connection.</div>,
       ],
-    ],
-    bug: [
       [
+        'bug',
         import('./cases/bug.js?raw'),
         import('./cases/bug.js'),
         'Unhandled Error',
         <div>When the server replies with an error not handled by your code.</div>,
       ],
       [
+        'bug',
         import('./cases/server_slow.js?raw'),
         import('./cases/server_slow.js'),
         'Unresponsive Server',
         <div>When the server is down or taking a long time to reply.</div>,
       ],
-    ],
-    options1: [
       [
+        'options1',
         import('./cases/retryTimer.js?raw'),
         import('./cases/retryTimer.js'),
         'Retry Timer',
         <div>Customize when the request is retried.</div>,
       ],
       [
+        'options1',
         import('./cases/custom_slow.js?raw'),
         import('./cases/custom_slow.js'),
         'Custom Slow Threshold',
         <div>Customize when Handli considers the network to be "slow".</div>,
       ],
-    ],
-    options2: [
       [
+        'options2',
         import('./cases/custom-style/customStyle.css?raw'),
         import('./cases/custom-style/customStyle.js'),
         'Custom Style',
@@ -219,21 +219,20 @@ async function loadExamples() {
         { codeLang: 'css', dontStrip: true },
       ],
       [
+        'options2',
         import('./cases/custom_text.js?raw'),
         import('./cases/custom_text.js'),
         'Custom Text',
         <div>Customize the texts shown to.</div>,
       ],
-    ],
-    options3: [
       [
+        'options3',
         import('./cases/custom-ui/customUi.jsx?raw'),
         import('./cases/custom-ui/customUi.jsx'),
         'Custom UI',
         <div>Customize how messages are shown to the user.</div>,
-      ],
-    ],
-  }
+      ]
+    ]
 
   return examples
 }
@@ -248,13 +247,21 @@ function Examples({ examples }) {
   )
 }
 
-type ExampleTypeBase = [string, CodeModule, string, JSX.Element]
+type Category  =
+  |'expected'
+  |      'connection'
+  |      'bug'
+  |      'options1'
+  |      'options2'
+  |      'options3'
+type ExampleTypeBase = [
+  Category, string, CodeModule, string, JSX.Element]
 type ExampleType =
   | ExampleTypeBase
   | [...ExampleTypeBase, { codeLang?: 'javascript' | 'css' | undefined | string; dontStrip?: boolean }]
 
 function Example({
-  example: [codeSource, codeModule, title, description, { codeLang = 'javascript', dontStrip = false } = {}],
+  example: [_category, codeSource, codeModule, title, description, { codeLang = 'javascript', dontStrip = false } = {}],
 }: { example: ExampleType }) {
   const headerId = title.toLowerCase().split(' ').join('-')
   const textView = (
