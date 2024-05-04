@@ -36,6 +36,13 @@ const response = await handli(() => fetch(url))
 
 That's it: all connection issues are now gracefully handled.
 
+> [!NOTE]  
+> The promise `await handli(...)` never rejects. (Although it may never resolve if the connection isssue never resolves.)
+>
+> Thus you can skip the usual `try...catch` for handling connection issues: instead you assume the promise to always resolve.
+>
+> In other words: you can develop your app as if connection issues are non-existent.
+
 Handli is [fully customizable](#usage-faq) and [progressively removable](#how-do-i-progressively-remove-handli).
 
 [**Live Demo**](https://brillout.github.io/handli)
