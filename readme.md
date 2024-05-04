@@ -6,7 +6,7 @@
 </p>
 <br/>
 
-JavaScript library to automatically handle network issues.
+JavaScript library to automatically handle connection issues.
 
 Handli brings sensible defaults to questions like:
 - What should happen when the user has a flaky internet connection?
@@ -15,27 +15,34 @@ Handli brings sensible defaults to questions like:
 - What should happen when the server replies `500 - Internal Server Error`?
 - ...
 
-With Handli, you can forget about network issues and let Handli handle these cases.
+With Handli, you can forget about connection issues and let Handli gracefully take care of these situations.
+
+> [!NOTE]  
+> The main idea of Handli is that, if there is a connection issue, the UI is made read-only (by displaying a temporary overlay that blocks user clicks, and thus blocks the user from interacting with the UI). The user can still read/scroll the page (see [#6](https://github.com/brillout/handli/issues/6)). When the connection issue resolves, then the UI returns to its normal state.
 
 If you have specific needs, you can (progressively) customize and override Handli's behavior.
 
 Handli covers all (edge) cases using sensible defaults, all you have to do is wrap your fetch requests:
 
 ~~~js
-// ❌ TODO: handle network issues.
+// ❌ TODO: handle connection issues.
 const response = await fetch(url)
 ~~~
 ~~~js
-// ✅ Network issues are hanlded by Handli.
+// ✅ Connection issues are hanlded by Handli.
 const response = await handli(() => fetch(url))
 ~~~
 
 
-Taht's it: all network issues are now gracefully handled.
+That's it: all connection issues are now gracefully handled.
 
 Handli is [fully customizable](#usage-faq) and [progressively removable](#how-do-i-progressively-remove-handli).
 
 [**Live Demo**](https://brillout.github.io/handli)
+
+> [!NOTE]  
+> 🚧 This project is work-in-progress and I'm looking for [contributions](https://github.com/brillout/handli/issues) and/or a lead maintainer. This project has the potential to have a significant impact.
+
 <br/><br/>
 
 
@@ -61,7 +68,7 @@ import handli from 'handli';
 ~~~
 
 That's it.
-Network issues are now automatically handled by Handli.
+Connection issues are now automatically handled by Handli.
 
 <br/>
 
@@ -278,7 +285,7 @@ That is, Handli works as long as:
 ### Does it handle errors on Node.js?
 
 No.
-Handli handles the network only in the browser.
+Handli handles connection issues only in the browser.
 
 ### What about Universal/Isomorphic/SSR?
 
@@ -315,7 +322,7 @@ at more and more places
 until you can remove your dependency on the `handli` package.
 
 This can be useful strategy
-to quickly ship a prototype wihtout worrying about network issues at first,
+to quickly ship a prototype wihtout worrying about connection issues at first,
 and later,
 as your prototype grows into a large application,
 progressively replace Handli with your own error handling.
