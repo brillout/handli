@@ -15,7 +15,7 @@
     "dist/"
   ],
   "devDependencies": {
-    "@brillout/release-me": "^0.1.14",
+    "@brillout/release-me": "^0.3.8",
     "typescript": "^5.4.2"
   }
 }
