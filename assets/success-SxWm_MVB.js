@@ -1,1 +1,0 @@
-import{h as n}from"./index-7yBawPm3.js";import{C as s}from"./utils-DHf2ZKMr.js";const t=s();async function r(){const o=await n(()=>fetch("data.json"));t.log("+++ Response +++",await o.text())}export{t as console,r as run};
