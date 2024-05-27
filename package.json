@@ -24,7 +24,6 @@
     "========= Only allow pnpm; forbid yarn & npm": "",
     "preinstall": "npx only-allow pnpm"
   },
-  "packageManager": "pnpm@9.1.2",
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
     "prettier": "3.2.5"
