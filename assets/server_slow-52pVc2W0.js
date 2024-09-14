@@ -1,1 +1,0 @@
-import{C as t,c as s}from"./utils-CG1_NOxg.js";import{h as o}from"./index-zzoy4YM_.js";const{slowServerSimulator:n,fetch:r}=s(),a=new t;async function c(){n.install(),o.timeoutServer=2e3;const e=await o(()=>r("data.json"));a.log("+++ Response +++",await e.text())}export{a as console,c as run};
