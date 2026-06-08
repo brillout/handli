@@ -1,3 +1,4 @@
 packages:
   - 'handli/'
   - 'demo/'
+minimumReleaseAge: 0
