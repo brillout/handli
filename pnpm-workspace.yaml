@@ -1,4 +1,7 @@
 packages:
   - 'handli/'
   - 'demo/'
+allowBuilds:
+  '@biomejs/biome': true
+  esbuild: true
 minimumReleaseAge: 0
