@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
     "outDir": "./dist/",
+    "rootDir": "./src/",
     "target": "ES2020",
     "module": "ES2020",
-    "declaration": true
+    "moduleResolution": "Bundler",
+    "declaration": true,
+    "strict": false
   },
-  "rootDir": "./src/",
   "include": ["src/**/*"]
 }
