@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
+    "@brillout/release-me": "^0.5.1",
     "prettier": "3.2.5"
   },
   "packageManager": "pnpm@9.10.0"

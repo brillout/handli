@@ -11,6 +11,9 @@ importers:
       '@biomejs/biome':
         specifier: 1.5.3
         version: 1.5.3
+      '@brillout/release-me':
+        specifier: ^0.5.1
+        version: 0.5.1(conventional-commits-filter@5.0.0)
       prettier:
         specifier: 3.2.5
         version: 3.2.5
@@ -48,9 +51,6 @@ importers:
 
   handli:
     devDependencies:
-      '@brillout/release-me':
-        specifier: ^0.4.18
-        version: 0.4.18(conventional-commits-filter@5.0.0)
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
@@ -120,8 +120,8 @@ packages:
   '@brillout/picocolors@1.0.31':
     resolution: {integrity: sha512-xFCPBefU/AevF8XkwXSd/jIHA0fWw+mZ/gd5x2WOc5ysG7keHnU8m0gwY2Bvq5lvTyjwT4tiyow6fnMoYdmSqw==}
 
-  '@brillout/release-me@0.4.18':
-    resolution: {integrity: sha512-X+IQ4pFYYuBiVgUxNTx/wpFQ4b/JLFI2OkDxW6IlA10TeJOGYrDSst1xuEzi7FmHw8kEzd0zU79yF+8bO4dnFA==}
+  '@brillout/release-me@0.5.1':
+    resolution: {integrity: sha512-RrASPtoJUmn+xrglplHzmMdGmtmw9YaRj2mY0oIroOxXHhyHJaKd1hvU57wHf2hQYLLoMNsF2/A1SVziseaA3w==}
     hasBin: true
 
   '@conventional-changelog/git-client@2.7.0':
@@ -863,7 +863,7 @@ snapshots:
 
   '@brillout/picocolors@1.0.31': {}
 
-  '@brillout/release-me@0.4.18(conventional-commits-filter@5.0.0)':
+  '@brillout/release-me@0.5.1(conventional-commits-filter@5.0.0)':
     dependencies:
       '@brillout/picocolors': 1.0.31
       commander: 11.1.0
