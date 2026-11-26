@@ -25,5 +25,6 @@
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
     "prettier": "3.2.5"
-  }
+  },
+  "packageManager": "pnpm@9.10.0"
 }
